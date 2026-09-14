@@ -2,19 +2,33 @@
  * Copyright (C) 2026 by Proyecta. All rights reserved.
  */
 import { resolve } from "node:path";
+import { createIdentityClient } from "@fonoster/identity-client";
 import { createApp } from "./app.js";
+import { loadConfig } from "./config.js";
 import { createDbClient } from "./db.js";
+import { createVerifyAccessToken } from "./identity/createVerifyAccessToken.js";
 import { logger } from "./logger.js";
 
-const databaseUrl = process.env.DATABASE_URL;
-if (!databaseUrl) throw new Error("DATABASE_URL is not set (see .env.example)");
+const config = loadConfig();
+const client = createDbClient(config.databaseUrl);
+const identity = createIdentityClient(config.identity.endpoint);
 
-const port = Number(process.env.PORT ?? 3000);
-const client = createDbClient(databaseUrl);
+const services = {
+  identity,
+  verifyAccessToken: createVerifyAccessToken({
+    loadPublicKey: async () => (await identity.getPublicKey()).publicKey,
+    issuer: config.identity.issuer,
+    audience: config.identity.audience
+  }),
+  dashboardUrl: config.dashboardUrl,
+  identityBridgeUrl: config.identity.bridgeUrl,
+  fetch
+};
 
-const isProduction = process.env.NODE_ENV === "production";
-const devMediaDir = isProduction ? undefined : resolve(import.meta.dirname, "../.data/media");
+const devMediaDir = config.isProduction
+  ? undefined
+  : resolve(import.meta.dirname, "../.data/media");
 
-createApp(client, { devMediaDir }).listen(port, () => {
-  logger.info(`api listening on :${port}`);
+createApp(client, services, { devMediaDir }).listen(config.port, () => {
+  logger.info(`api listening on :${config.port}`);
 });

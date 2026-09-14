@@ -13,10 +13,13 @@ Digital-out-of-home marketplace for the Dominican Republic. This repo holds the 
 ```bash
 npm install
 cp .env.example packages/api/.env
-npm run db:up            # Postgres 17 on localhost:5433
+npm run db:up            # Identity secrets + Postgres (5433), Fonoster Identity (50052), Mailpit (8026)
 npm run db:migrate
+scripts/generate-demo-ads.sh      # demo rotation served to linked players
 npx playwright install chromium   # once, for e2e
 ```
+
+Email sent in development (invites, password resets) lands in Mailpit: http://localhost:8026
 
 ## Develop
 

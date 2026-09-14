@@ -13536,9 +13536,324 @@
               "fill": {
                 "type": "image",
                 "enabled": true,
-                "url": "web-assets/LJTjX.png",
+                "url": "assets/app-buscar-pantallas-v2.png",
                 "mode": "fill"
               }
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "d3tJI",
+          "name": "Web/Nav Mobile",
+          "reusable": true,
+          "width": 390,
+          "height": 64,
+          "fill": "#0B0B0BCC",
+          "stroke": "$web-stage-line",
+          "strokeWidth": {
+            "bottom": 1
+          },
+          "strokeAlignment": "inner",
+          "padding": [
+            0,
+            "$web-gutter-mobile"
+          ],
+          "justifyContent": "space_between",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "D88nug",
+              "name": "Logo",
+              "gap": 8,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon",
+                  "id": "wT7as",
+                  "name": "Mark",
+                  "width": 20,
+                  "height": 20,
+                  "icon": "tv",
+                  "library": "Material Symbols Sharp",
+                  "fill": "$--primary"
+                },
+                {
+                  "type": "text",
+                  "id": "yBh14",
+                  "name": "Wordmark",
+                  "fill": "#FFFFFF",
+                  "content": "PROYECTA",
+                  "fontFamily": "$--font-primary",
+                  "fontSize": 15,
+                  "fontWeight": "700",
+                  "letterSpacing": 1
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "u8f6j",
+              "name": "Menu Button",
+              "width": 44,
+              "height": 44,
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon",
+                  "id": "E6eUE",
+                  "name": "Menu Icon",
+                  "width": 24,
+                  "height": 24,
+                  "icon": "menu",
+                  "library": "Material Symbols Sharp",
+                  "fill": "#FFFFFF"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "Z75xhc",
+          "name": "Web/Footer Mobile",
+          "reusable": true,
+          "width": 390,
+          "fill": "$web-stage",
+          "stroke": "$web-stage-line",
+          "strokeWidth": {
+            "top": 1
+          },
+          "strokeAlignment": "inner",
+          "layout": "vertical",
+          "gap": 40,
+          "padding": [
+            56,
+            20,
+            32,
+            20
+          ],
+          "children": [
+            {
+              "type": "frame",
+              "id": "sVAax",
+              "name": "Brand",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 14,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "Jl1WH",
+                  "name": "Logo",
+                  "gap": 8,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "qSiQS",
+                      "name": "Mark",
+                      "width": 20,
+                      "height": 20,
+                      "icon": "tv",
+                      "library": "Material Symbols Sharp",
+                      "fill": "$--primary"
+                    },
+                    {
+                      "type": "text",
+                      "id": "r8LgqC",
+                      "name": "Wordmark",
+                      "fill": "#FFFFFF",
+                      "content": "PROYECTA",
+                      "fontFamily": "$--font-primary",
+                      "fontSize": 15,
+                      "fontWeight": "700",
+                      "letterSpacing": 1
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "S7lZmB",
+                  "name": "Tagline",
+                  "fill": "$web-stage-muted",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Plataforma dominicana de publicidad en pantallas digitales.",
+                  "lineHeight": 1.5,
+                  "fontFamily": "$--font-secondary",
+                  "fontSize": 14,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "qy1ib",
+              "name": "Columns",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 28,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "z8UFn",
+                  "name": "Col Plataforma",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 12,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "IWuMR",
+                      "name": "Heading",
+                      "fill": "#8A8B88",
+                      "content": "PLATAFORMA",
+                      "fontFamily": "$--font-primary",
+                      "fontSize": 12,
+                      "fontWeight": "normal",
+                      "letterSpacing": 2
+                    },
+                    {
+                      "type": "text",
+                      "id": "b7VcF",
+                      "name": "Pantallas",
+                      "fill": "#D6D7D4",
+                      "content": "Pantallas",
+                      "fontFamily": "$--font-secondary",
+                      "fontSize": 15,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "EuG3d",
+                      "name": "Anunciantes",
+                      "fill": "#D6D7D4",
+                      "content": "Anunciantes",
+                      "fontFamily": "$--font-secondary",
+                      "fontSize": 15,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "IJRZ7",
+                      "name": "Agencias",
+                      "fill": "#D6D7D4",
+                      "content": "Agencias",
+                      "fontFamily": "$--font-secondary",
+                      "fontSize": 15,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "alUnz",
+                      "name": "Redes privadas",
+                      "fill": "#D6D7D4",
+                      "content": "Redes privadas",
+                      "fontFamily": "$--font-secondary",
+                      "fontSize": 15,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "djoUe",
+                  "name": "Col Proyecta",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 12,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "B7lmKB",
+                      "name": "Heading",
+                      "fill": "#8A8B88",
+                      "content": "PROYECTA",
+                      "fontFamily": "$--font-primary",
+                      "fontSize": 12,
+                      "fontWeight": "normal",
+                      "letterSpacing": 2
+                    },
+                    {
+                      "type": "text",
+                      "id": "JoxTF",
+                      "name": "Cómo funciona",
+                      "fill": "#D6D7D4",
+                      "content": "Cómo funciona",
+                      "fontFamily": "$--font-secondary",
+                      "fontSize": 15,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "THMlm",
+                      "name": "Contacto",
+                      "fill": "#D6D7D4",
+                      "content": "Contacto",
+                      "fontFamily": "$--font-secondary",
+                      "fontSize": 15,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "W5I9v",
+                      "name": "Iniciar sesión",
+                      "fill": "#D6D7D4",
+                      "content": "Iniciar sesión",
+                      "fontFamily": "$--font-secondary",
+                      "fontSize": 15,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "cqtRE",
+              "name": "Bottom",
+              "width": "fill_container",
+              "stroke": "$web-stage-line",
+              "strokeWidth": {
+                "top": 1
+              },
+              "strokeAlignment": "inner",
+              "layout": "vertical",
+              "gap": 8,
+              "padding": [
+                24,
+                0,
+                0,
+                0
+              ],
+              "children": [
+                {
+                  "type": "text",
+                  "id": "cTCSU",
+                  "name": "Copyright",
+                  "fill": "#8A8B88",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "© 2026 Proyecta · Santo Domingo, República Dominicana",
+                  "lineHeight": 1.4,
+                  "fontFamily": "$--font-secondary",
+                  "fontSize": 13,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "text",
+                  "id": "SWDoq",
+                  "name": "Domain",
+                  "fill": "#8A8B88",
+                  "content": "proyecta.do",
+                  "fontFamily": "$--font-primary",
+                  "fontSize": 13,
+                  "fontWeight": "normal"
+                }
+              ]
             }
           ]
         }
@@ -13576,7 +13891,7 @@
               "fill": {
                 "type": "image",
                 "enabled": true,
-                "url": "images/generated-1789404803678.png",
+                "url": "assets/web-hero.png",
                 "mode": "fill"
               }
             },
@@ -14472,7 +14787,7 @@
                       "fill": {
                         "type": "image",
                         "enabled": true,
-                        "url": "images/generated-1789404875823.png",
+                        "url": "assets/web-panel-valleros.png",
                         "mode": "fill"
                       }
                     },
@@ -14618,7 +14933,7 @@
                       "fill": {
                         "type": "image",
                         "enabled": true,
-                        "url": "images/generated-1789404875564.png",
+                        "url": "assets/web-panel-anunciantes.png",
                         "mode": "fill"
                       }
                     },
@@ -15513,7 +15828,7 @@
                           "fill": {
                             "type": "image",
                             "enabled": true,
-                            "url": "web-assets/LJTjX.png",
+                            "url": "assets/app-buscar-pantallas-v2.png",
                             "mode": "fill"
                           },
                           "width": 1038,
@@ -15705,7 +16020,7 @@
                       "fill": {
                         "type": "image",
                         "enabled": true,
-                        "url": "web-assets/PvUrR.png",
+                        "url": "assets/app-player-pairing.png",
                         "mode": "fill"
                       }
                     }
@@ -16699,7 +17014,7 @@
                   "fill": "$web-ink",
                   "textGrowth": "fixed-width",
                   "width": "fill_container",
-                  "content": "De Santo Domingo a Punta Cana.",
+                  "content": "De Puerto Plata a Punta Cana.",
                   "lineHeight": 1.12,
                   "fontFamily": "$--font-primary",
                   "fontSize": "$web-h2",
@@ -17113,6 +17428,51 @@
                   "fontSize": 11,
                   "fontWeight": "normal",
                   "letterSpacing": 2
+                },
+                {
+                  "type": "frame",
+                  "id": "mwSmL",
+                  "x": 204,
+                  "y": 110,
+                  "name": "Pin Puerto Plata",
+                  "gap": 10,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "ellipse",
+                      "id": "xuwhq",
+                      "name": "Dot",
+                      "fill": "$web-signal",
+                      "width": 14,
+                      "height": 14,
+                      "stroke": "#EC5E2B55",
+                      "strokeWidth": 6,
+                      "strokeAlignment": "outer"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "hSKkp",
+                      "name": "Label",
+                      "fill": "#0B0B0BCC",
+                      "cornerRadius": 6,
+                      "padding": [
+                        5,
+                        10
+                      ],
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "rvqHx",
+                          "name": "Text",
+                          "fill": "#FFFFFF",
+                          "content": "Puerto Plata",
+                          "fontFamily": "$--font-primary",
+                          "fontSize": 13,
+                          "fontWeight": "500"
+                        }
+                      ]
+                    }
+                  ]
                 }
               ]
             }
@@ -17337,7 +17697,7 @@
               "fill": {
                 "type": "image",
                 "enabled": true,
-                "url": "images/generated-1789405069422.png",
+                "url": "assets/web-final-cta.png",
                 "mode": "fill"
               }
             },
@@ -17462,6 +17822,1091 @@
           "type": "ref",
           "ref": "OF0n4",
           "name": "Footer",
+          "width": "fill_container"
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "wxNnc",
+      "x": 8600,
+      "y": 14490,
+      "name": "web-mock-buscar-pantallas",
+      "clip": true,
+      "width": 1440,
+      "height": 1100,
+      "fill": "$--background",
+      "children": [
+        {
+          "id": "e0UGy7",
+          "type": "ref",
+          "ref": "d5ZTS",
+          "height": "fill_container",
+          "name": "Sidebar",
+          "descendants": {
+            "FY0oG": {
+              "type": "icon",
+              "id": "c5oQDi",
+              "name": "Logo Mark",
+              "width": 32,
+              "height": 32,
+              "icon": "tv",
+              "library": "Material Symbols Sharp",
+              "fill": "#EC5E2B"
+            },
+            "MIpaj": {
+              "content": "PROYECTA"
+            },
+            "NvL81": {
+              "children": [
+                {
+                  "id": "b04HSC",
+                  "type": "ref",
+                  "ref": "dOLzc",
+                  "name": "Buscar Item",
+                  "descendants": {
+                    "xGT5g": {
+                      "icon": "search"
+                    },
+                    "TXca3": {
+                      "content": "Buscar pantallas"
+                    }
+                  }
+                },
+                {
+                  "id": "UGvUz",
+                  "type": "ref",
+                  "ref": "X6nwq",
+                  "name": "Recursos Item",
+                  "descendants": {
+                    "xGT5g": {
+                      "icon": "perm_media"
+                    },
+                    "TXca3": {
+                      "content": "Recursos"
+                    }
+                  }
+                },
+                {
+                  "id": "iVAYG",
+                  "type": "ref",
+                  "ref": "X6nwq",
+                  "name": "Anuncios Item",
+                  "descendants": {
+                    "xGT5g": {
+                      "icon": "campaign"
+                    },
+                    "TXca3": {
+                      "content": "Anuncios"
+                    }
+                  }
+                },
+                {
+                  "id": "D5ABXe",
+                  "type": "ref",
+                  "ref": "X6nwq",
+                  "name": "Calendario Item",
+                  "descendants": {
+                    "xGT5g": {
+                      "icon": "calendar_month"
+                    },
+                    "TXca3": {
+                      "content": "Calendario"
+                    }
+                  }
+                },
+                {
+                  "id": "UAfDR",
+                  "type": "ref",
+                  "ref": "X6nwq",
+                  "name": "Config Item",
+                  "descendants": {
+                    "xGT5g": {
+                      "icon": "settings"
+                    },
+                    "TXca3": {
+                      "content": "Configuración"
+                    }
+                  }
+                }
+              ]
+            },
+            "uiUgV": {
+              "content": "Café Aroma"
+            },
+            "eUcmA": {
+              "content": "contacto@cafearoma.com"
+            }
+          }
+        },
+        {
+          "type": "frame",
+          "id": "K7nrsn",
+          "name": "Main",
+          "width": "fill_container",
+          "height": "fill_container",
+          "layout": "vertical",
+          "gap": 28,
+          "padding": 40,
+          "children": [
+            {
+              "type": "frame",
+              "id": "yuqx1",
+              "name": "Page Header",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 4,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "GbKhP",
+                  "fill": "$--foreground",
+                  "content": "Buscar pantallas",
+                  "fontFamily": "$--font-primary",
+                  "fontSize": 24,
+                  "fontWeight": "500"
+                },
+                {
+                  "type": "text",
+                  "id": "exM0F",
+                  "fill": "$--muted-foreground",
+                  "content": "Encuentra el espacio publicitario ideal para tu anuncio.",
+                  "fontFamily": "$--font-secondary",
+                  "fontSize": 14,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "id": "y9zGj",
+              "type": "ref",
+              "ref": "ERkuB",
+              "name": "Filters Card",
+              "width": "fill_container",
+              "descendants": {
+                "4zoFt": {
+                  "enabled": false
+                },
+                "QMHOm": {
+                  "layout": "horizontal",
+                  "gap": 16,
+                  "alignItems": "end",
+                  "padding": 24,
+                  "children": [
+                    {
+                      "id": "X2JGan",
+                      "type": "ref",
+                      "ref": "XhJWF",
+                      "width": "fill_container",
+                      "descendants": {
+                        "uEVNH": {
+                          "content": "Tipo de pantalla"
+                        },
+                        "q2CuU": {
+                          "content": "Todos los tipos"
+                        }
+                      }
+                    },
+                    {
+                      "id": "mFO8V",
+                      "type": "ref",
+                      "ref": "XhJWF",
+                      "width": "fill_container",
+                      "descendants": {
+                        "uEVNH": {
+                          "content": "Ciudad"
+                        },
+                        "q2CuU": {
+                          "content": "Todas las ciudades"
+                        }
+                      }
+                    },
+                    {
+                      "id": "ynlJb",
+                      "type": "ref",
+                      "ref": "gKpi4",
+                      "width": "fill_container",
+                      "descendants": {
+                        "6olUK": {
+                          "content": "Palabras clave (opcional)"
+                        },
+                        "FU4Re": {
+                          "content": "ej. alto tráfico, zona norte"
+                        }
+                      }
+                    },
+                    {
+                      "id": "GRp7j",
+                      "type": "ref",
+                      "ref": "ZETEA",
+                      "name": "Search Button",
+                      "descendants": {
+                        "mRGd3": {
+                          "enabled": false
+                        },
+                        "q5Hn5": {
+                          "content": "Buscar"
+                        }
+                      }
+                    }
+                  ]
+                },
+                "tiojM": {
+                  "enabled": false
+                }
+              }
+            },
+            {
+              "type": "text",
+              "id": "DD6DK",
+              "name": "Results Count",
+              "fill": "$--muted-foreground",
+              "content": "6 pantallas encontradas",
+              "fontFamily": "$--font-secondary",
+              "fontSize": 13,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "frame",
+              "id": "o49YL",
+              "name": "Results Row 1",
+              "width": "fill_container",
+              "gap": 20,
+              "children": [
+                {
+                  "id": "daLNw",
+                  "type": "ref",
+                  "ref": "ERkuB",
+                  "name": "Pantalla Recepción Norte Card",
+                  "width": "fill_container",
+                  "descendants": {
+                    "4zoFt": {
+                      "enabled": false
+                    },
+                    "QMHOm": {
+                      "layout": "vertical",
+                      "gap": 0,
+                      "padding": 0,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "JYprY",
+                          "name": "Thumb",
+                          "width": "fill_container",
+                          "height": 110,
+                          "fill": "$--secondary",
+                          "justifyContent": "center",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "icon",
+                              "id": "F6OBE",
+                              "width": 32,
+                              "height": 32,
+                              "icon": "tv",
+                              "library": "Material Symbols Sharp",
+                              "fill": "$--secondary-foreground"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "iwg4O",
+                          "name": "Body",
+                          "width": "fill_container",
+                          "layout": "vertical",
+                          "gap": 10,
+                          "padding": 16,
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "oJjkp",
+                              "fill": "$--foreground",
+                              "content": "Pantalla Recepción Norte",
+                              "fontFamily": "$--font-secondary",
+                              "fontSize": 15,
+                              "fontWeight": "600"
+                            },
+                            {
+                              "type": "frame",
+                              "id": "bPngQ",
+                              "name": "Loc",
+                              "gap": 6,
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "icon",
+                                  "id": "NuBvw",
+                                  "width": 14,
+                                  "height": 14,
+                                  "icon": "location_on",
+                                  "library": "Material Symbols Sharp",
+                                  "fill": "$--muted-foreground"
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "Z3X6gW",
+                                  "fill": "$--muted-foreground",
+                                  "content": "Hospital Central · Santo Domingo",
+                                  "fontFamily": "$--font-secondary",
+                                  "fontSize": 13,
+                                  "fontWeight": "normal"
+                                }
+                              ]
+                            },
+                            {
+                              "id": "bn3TV",
+                              "type": "ref",
+                              "ref": "it00G",
+                              "name": "Tag",
+                              "descendants": {
+                                "izLyj": {
+                                  "content": "Hospital"
+                                }
+                              }
+                            },
+                            {
+                              "type": "text",
+                              "id": "C6TfMI",
+                              "fill": "$--foreground",
+                              "content": "Desde RD$2,700/hora",
+                              "fontFamily": "$--font-secondary",
+                              "fontSize": 13,
+                              "fontWeight": "600"
+                            },
+                            {
+                              "type": "text",
+                              "id": "T196i",
+                              "fill": "$--muted-foreground",
+                              "content": "Lun–Vie · 8:00–20:00",
+                              "fontFamily": "$--font-secondary",
+                              "fontSize": 12,
+                              "fontWeight": "normal"
+                            },
+                            {
+                              "id": "JJaMR",
+                              "type": "ref",
+                              "ref": "4x7RU",
+                              "name": "Detail Button",
+                              "width": "fill_container",
+                              "descendants": {
+                                "r97g1": {
+                                  "enabled": false
+                                },
+                                "7ZVG7": {
+                                  "content": "Ver detalle"
+                                }
+                              }
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    "tiojM": {
+                      "enabled": false
+                    }
+                  }
+                },
+                {
+                  "id": "w1BSIj",
+                  "type": "ref",
+                  "ref": "ERkuB",
+                  "name": "Vitrina Local Chapinero Card",
+                  "width": "fill_container",
+                  "descendants": {
+                    "4zoFt": {
+                      "enabled": false
+                    },
+                    "QMHOm": {
+                      "layout": "vertical",
+                      "gap": 0,
+                      "padding": 0,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "mFHmC",
+                          "name": "Thumb",
+                          "width": "fill_container",
+                          "height": 110,
+                          "fill": "$--secondary",
+                          "justifyContent": "center",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "icon",
+                              "id": "ObpDd",
+                              "width": 32,
+                              "height": 32,
+                              "icon": "storefront",
+                              "library": "Material Symbols Sharp",
+                              "fill": "$--secondary-foreground"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "Zg1gM",
+                          "name": "Body",
+                          "width": "fill_container",
+                          "layout": "vertical",
+                          "gap": 10,
+                          "padding": 16,
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "Fy6E7",
+                              "fill": "$--foreground",
+                              "content": "Vitrina Local Piantini",
+                              "fontFamily": "$--font-secondary",
+                              "fontSize": 15,
+                              "fontWeight": "600"
+                            },
+                            {
+                              "type": "frame",
+                              "id": "cKsy8",
+                              "name": "Loc",
+                              "gap": 6,
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "icon",
+                                  "id": "z97G4D",
+                                  "width": 14,
+                                  "height": 14,
+                                  "icon": "location_on",
+                                  "library": "Material Symbols Sharp",
+                                  "fill": "$--muted-foreground"
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "d9tQf8",
+                                  "fill": "$--muted-foreground",
+                                  "content": "Café Origen · Santo Domingo",
+                                  "fontFamily": "$--font-secondary",
+                                  "fontSize": 13,
+                                  "fontWeight": "normal"
+                                }
+                              ]
+                            },
+                            {
+                              "id": "l2qczP",
+                              "type": "ref",
+                              "ref": "it00G",
+                              "name": "Tag",
+                              "descendants": {
+                                "izLyj": {
+                                  "content": "Restaurante"
+                                }
+                              }
+                            },
+                            {
+                              "type": "text",
+                              "id": "pkEz6",
+                              "fill": "$--foreground",
+                              "content": "Desde RD$1,800/hora",
+                              "fontFamily": "$--font-secondary",
+                              "fontSize": 13,
+                              "fontWeight": "600"
+                            },
+                            {
+                              "type": "text",
+                              "id": "VIo5M",
+                              "fill": "$--muted-foreground",
+                              "content": "Todos los días · 9:00–22:00",
+                              "fontFamily": "$--font-secondary",
+                              "fontSize": 12,
+                              "fontWeight": "normal"
+                            },
+                            {
+                              "id": "Q5YZd",
+                              "type": "ref",
+                              "ref": "4x7RU",
+                              "name": "Detail Button",
+                              "width": "fill_container",
+                              "descendants": {
+                                "r97g1": {
+                                  "enabled": false
+                                },
+                                "7ZVG7": {
+                                  "content": "Ver detalle"
+                                }
+                              }
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    "tiojM": {
+                      "enabled": false
+                    }
+                  }
+                },
+                {
+                  "id": "DcWJm",
+                  "type": "ref",
+                  "ref": "ERkuB",
+                  "name": "Pantalla Zona T Card",
+                  "width": "fill_container",
+                  "descendants": {
+                    "4zoFt": {
+                      "enabled": false
+                    },
+                    "QMHOm": {
+                      "layout": "vertical",
+                      "gap": 0,
+                      "padding": 0,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "xdeXW",
+                          "name": "Thumb",
+                          "width": "fill_container",
+                          "height": 110,
+                          "fill": "$--secondary",
+                          "justifyContent": "center",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "icon",
+                              "id": "N1mlvv",
+                              "width": 32,
+                              "height": 32,
+                              "icon": "local_mall",
+                              "library": "Material Symbols Sharp",
+                              "fill": "$--secondary-foreground"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "tlJlH",
+                          "name": "Body",
+                          "width": "fill_container",
+                          "layout": "vertical",
+                          "gap": 10,
+                          "padding": 16,
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "C1gvB",
+                              "fill": "$--foreground",
+                              "content": "Pantalla Blue Mall",
+                              "fontFamily": "$--font-secondary",
+                              "fontSize": 15,
+                              "fontWeight": "600"
+                            },
+                            {
+                              "type": "frame",
+                              "id": "N5eiUe",
+                              "name": "Loc",
+                              "gap": 6,
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "icon",
+                                  "id": "DNHFs",
+                                  "width": 14,
+                                  "height": 14,
+                                  "icon": "location_on",
+                                  "library": "Material Symbols Sharp",
+                                  "fill": "$--muted-foreground"
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "UT23R",
+                                  "fill": "$--muted-foreground",
+                                  "content": "Blue Mall Punta Cana · Punta Cana",
+                                  "fontFamily": "$--font-secondary",
+                                  "fontSize": 13,
+                                  "fontWeight": "normal"
+                                }
+                              ]
+                            },
+                            {
+                              "id": "Y4rTYc",
+                              "type": "ref",
+                              "ref": "it00G",
+                              "name": "Tag",
+                              "descendants": {
+                                "izLyj": {
+                                  "content": "Centro comercial"
+                                }
+                              }
+                            },
+                            {
+                              "type": "text",
+                              "id": "Oh2TL",
+                              "fill": "$--foreground",
+                              "content": "Desde RD$3,600/hora",
+                              "fontFamily": "$--font-secondary",
+                              "fontSize": 13,
+                              "fontWeight": "600"
+                            },
+                            {
+                              "type": "text",
+                              "id": "C1zvLH",
+                              "fill": "$--muted-foreground",
+                              "content": "Lun–Dom · 10:00–21:00",
+                              "fontFamily": "$--font-secondary",
+                              "fontSize": 12,
+                              "fontWeight": "normal"
+                            },
+                            {
+                              "id": "WoW91",
+                              "type": "ref",
+                              "ref": "4x7RU",
+                              "name": "Detail Button",
+                              "width": "fill_container",
+                              "descendants": {
+                                "r97g1": {
+                                  "enabled": false
+                                },
+                                "7ZVG7": {
+                                  "content": "Ver detalle"
+                                }
+                              }
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    "tiojM": {
+                      "enabled": false
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "JPiz0",
+              "name": "Results Row 2",
+              "width": "fill_container",
+              "gap": 20,
+              "children": [
+                {
+                  "id": "c9uQex",
+                  "type": "ref",
+                  "ref": "ERkuB",
+                  "name": "Pantalla Terminal Medellín Card",
+                  "width": "fill_container",
+                  "descendants": {
+                    "4zoFt": {
+                      "enabled": false
+                    },
+                    "QMHOm": {
+                      "layout": "vertical",
+                      "gap": 0,
+                      "padding": 0,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "b0kbbc",
+                          "name": "Thumb",
+                          "width": "fill_container",
+                          "height": 110,
+                          "fill": "$--secondary",
+                          "justifyContent": "center",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "icon",
+                              "id": "LDWEv",
+                              "width": 32,
+                              "height": 32,
+                              "icon": "directions_bus",
+                              "library": "Material Symbols Sharp",
+                              "fill": "$--secondary-foreground"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "nUpiq",
+                          "name": "Body",
+                          "width": "fill_container",
+                          "layout": "vertical",
+                          "gap": 10,
+                          "padding": 16,
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "FSmBO",
+                              "fill": "$--foreground",
+                              "content": "Pantalla Terminal Santiago",
+                              "fontFamily": "$--font-secondary",
+                              "fontSize": 15,
+                              "fontWeight": "600"
+                            },
+                            {
+                              "type": "frame",
+                              "id": "i03HF",
+                              "name": "Loc",
+                              "gap": 6,
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "icon",
+                                  "id": "L9FNLi",
+                                  "width": 14,
+                                  "height": 14,
+                                  "icon": "location_on",
+                                  "library": "Material Symbols Sharp",
+                                  "fill": "$--muted-foreground"
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "dZwo2",
+                                  "fill": "$--muted-foreground",
+                                  "content": "Terminal del Norte · Santiago",
+                                  "fontFamily": "$--font-secondary",
+                                  "fontSize": 13,
+                                  "fontWeight": "normal"
+                                }
+                              ]
+                            },
+                            {
+                              "id": "tln8N",
+                              "type": "ref",
+                              "ref": "it00G",
+                              "name": "Tag",
+                              "descendants": {
+                                "izLyj": {
+                                  "content": "Terminal"
+                                }
+                              }
+                            },
+                            {
+                              "type": "text",
+                              "id": "x72ON",
+                              "fill": "$--foreground",
+                              "content": "Desde RD$3,300/hora",
+                              "fontFamily": "$--font-secondary",
+                              "fontSize": 13,
+                              "fontWeight": "600"
+                            },
+                            {
+                              "type": "text",
+                              "id": "sLu85",
+                              "fill": "$--muted-foreground",
+                              "content": "Lun–Dom · 5:00–23:00",
+                              "fontFamily": "$--font-secondary",
+                              "fontSize": 12,
+                              "fontWeight": "normal"
+                            },
+                            {
+                              "id": "Ucc54",
+                              "type": "ref",
+                              "ref": "4x7RU",
+                              "name": "Detail Button",
+                              "width": "fill_container",
+                              "descendants": {
+                                "r97g1": {
+                                  "enabled": false
+                                },
+                                "7ZVG7": {
+                                  "content": "Ver detalle"
+                                }
+                              }
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    "tiojM": {
+                      "enabled": false
+                    }
+                  }
+                },
+                {
+                  "id": "txY2w",
+                  "type": "ref",
+                  "ref": "ERkuB",
+                  "name": "Pantalla Gimnasio Central Card",
+                  "width": "fill_container",
+                  "descendants": {
+                    "4zoFt": {
+                      "enabled": false
+                    },
+                    "QMHOm": {
+                      "layout": "vertical",
+                      "gap": 0,
+                      "padding": 0,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "Y9uxyI",
+                          "name": "Thumb",
+                          "width": "fill_container",
+                          "height": 110,
+                          "fill": "$--secondary",
+                          "justifyContent": "center",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "icon",
+                              "id": "iJDGJ",
+                              "width": 32,
+                              "height": 32,
+                              "icon": "fitness_center",
+                              "library": "Material Symbols Sharp",
+                              "fill": "$--secondary-foreground"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "WWZjg",
+                          "name": "Body",
+                          "width": "fill_container",
+                          "layout": "vertical",
+                          "gap": 10,
+                          "padding": 16,
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "Y7cRVW",
+                              "fill": "$--foreground",
+                              "content": "Pantalla Gimnasio Central",
+                              "fontFamily": "$--font-secondary",
+                              "fontSize": 15,
+                              "fontWeight": "600"
+                            },
+                            {
+                              "type": "frame",
+                              "id": "PEfal",
+                              "name": "Loc",
+                              "gap": 6,
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "icon",
+                                  "id": "C0dRro",
+                                  "width": 14,
+                                  "height": 14,
+                                  "icon": "location_on",
+                                  "library": "Material Symbols Sharp",
+                                  "fill": "$--muted-foreground"
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "ZVsDN",
+                                  "fill": "$--muted-foreground",
+                                  "content": "FitZone Puerto Plata · Puerto Plata",
+                                  "fontFamily": "$--font-secondary",
+                                  "fontSize": 13,
+                                  "fontWeight": "normal"
+                                }
+                              ]
+                            },
+                            {
+                              "id": "fCsHk",
+                              "type": "ref",
+                              "ref": "it00G",
+                              "name": "Tag",
+                              "descendants": {
+                                "izLyj": {
+                                  "content": "Gimnasio"
+                                }
+                              }
+                            },
+                            {
+                              "type": "text",
+                              "id": "R3GbD6",
+                              "fill": "$--foreground",
+                              "content": "Desde RD$1,500/hora",
+                              "fontFamily": "$--font-secondary",
+                              "fontSize": 13,
+                              "fontWeight": "600"
+                            },
+                            {
+                              "type": "text",
+                              "id": "ICvhr",
+                              "fill": "$--muted-foreground",
+                              "content": "Lun–Sáb · 6:00–22:00",
+                              "fontFamily": "$--font-secondary",
+                              "fontSize": 12,
+                              "fontWeight": "normal"
+                            },
+                            {
+                              "id": "qFN3S",
+                              "type": "ref",
+                              "ref": "4x7RU",
+                              "name": "Detail Button",
+                              "width": "fill_container",
+                              "descendants": {
+                                "r97g1": {
+                                  "enabled": false
+                                },
+                                "7ZVG7": {
+                                  "content": "Ver detalle"
+                                }
+                              }
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    "tiojM": {
+                      "enabled": false
+                    }
+                  }
+                },
+                {
+                  "id": "BFbIA",
+                  "type": "ref",
+                  "ref": "ERkuB",
+                  "name": "Pantalla Lobby Ejecutivo Card",
+                  "width": "fill_container",
+                  "descendants": {
+                    "4zoFt": {
+                      "enabled": false
+                    },
+                    "QMHOm": {
+                      "layout": "vertical",
+                      "gap": 0,
+                      "padding": 0,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "UbQyR",
+                          "name": "Thumb",
+                          "width": "fill_container",
+                          "height": 110,
+                          "fill": "$--secondary",
+                          "justifyContent": "center",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "icon",
+                              "id": "WWsc7",
+                              "width": 32,
+                              "height": 32,
+                              "icon": "apartment",
+                              "library": "Material Symbols Sharp",
+                              "fill": "$--secondary-foreground"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "uKmyL",
+                          "name": "Body",
+                          "width": "fill_container",
+                          "layout": "vertical",
+                          "gap": 10,
+                          "padding": 16,
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "DGyi5",
+                              "fill": "$--foreground",
+                              "content": "Pantalla Lobby Ejecutivo",
+                              "fontFamily": "$--font-secondary",
+                              "fontSize": 15,
+                              "fontWeight": "600"
+                            },
+                            {
+                              "type": "frame",
+                              "id": "oY45d",
+                              "name": "Loc",
+                              "gap": 6,
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "icon",
+                                  "id": "xVuQd",
+                                  "width": 14,
+                                  "height": 14,
+                                  "icon": "location_on",
+                                  "library": "Material Symbols Sharp",
+                                  "fill": "$--muted-foreground"
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "akijl",
+                                  "fill": "$--muted-foreground",
+                                  "content": "Torre Corporativa Norte · Santo Domingo",
+                                  "fontFamily": "$--font-secondary",
+                                  "fontSize": 13,
+                                  "fontWeight": "normal"
+                                }
+                              ]
+                            },
+                            {
+                              "id": "rGyAf",
+                              "type": "ref",
+                              "ref": "it00G",
+                              "name": "Tag",
+                              "descendants": {
+                                "izLyj": {
+                                  "content": "Oficina"
+                                }
+                              }
+                            },
+                            {
+                              "type": "text",
+                              "id": "uM7F7",
+                              "fill": "$--foreground",
+                              "content": "Desde RD$2,100/hora",
+                              "fontFamily": "$--font-secondary",
+                              "fontSize": 13,
+                              "fontWeight": "600"
+                            },
+                            {
+                              "type": "text",
+                              "id": "qHkOi",
+                              "fill": "$--muted-foreground",
+                              "content": "Lun–Vie · 7:00–19:00",
+                              "fontFamily": "$--font-secondary",
+                              "fontSize": 12,
+                              "fontWeight": "normal"
+                            },
+                            {
+                              "id": "lFav2",
+                              "type": "ref",
+                              "ref": "4x7RU",
+                              "name": "Detail Button",
+                              "width": "fill_container",
+                              "descendants": {
+                                "r97g1": {
+                                  "enabled": false
+                                },
+                                "7ZVG7": {
+                                  "content": "Ver detalle"
+                                }
+                              }
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    "tiojM": {
+                      "enabled": false
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "dqHbv",
+      "x": 10160,
+      "y": 4320,
+      "name": "web-home-mobile",
+      "clip": true,
+      "width": 390,
+      "layout": "vertical",
+      "children": [
+        {
+          "id": "y5XwVu",
+          "type": "ref",
+          "ref": "d3tJI",
+          "name": "Nav",
           "width": "fill_container"
         }
       ]
@@ -18139,6 +19584,42 @@
     "web-gutter": {
       "type": "number",
       "value": 120
+    },
+    "web-gutter-mobile": {
+      "type": "number",
+      "value": 20
+    },
+    "web-section-y-mobile": {
+      "type": "number",
+      "value": 56
+    },
+    "web-display-mobile": {
+      "type": "number",
+      "value": 34
+    },
+    "web-h2-mobile": {
+      "type": "number",
+      "value": 28
+    },
+    "web-h3-mobile": {
+      "type": "number",
+      "value": 19
+    },
+    "web-body-mobile": {
+      "type": "number",
+      "value": 15
+    },
+    "web-eyebrow-mobile": {
+      "type": "number",
+      "value": 11
+    },
+    "web-nav-height-mobile": {
+      "type": "number",
+      "value": 64
+    },
+    "web-tap-min": {
+      "type": "number",
+      "value": 44
     }
   },
   "fileToken": "ba02dc9a-7469-47a5-a9d3-c00a00c9ef2d"

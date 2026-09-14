@@ -1,0 +1,37 @@
+{
+  "server": {
+    "bindAddr": "0.0.0.0:50051",
+    "httpBridgePort": 9110
+  },
+  "database": {
+    "url": "postgresql://proyecta:proyecta@postgres:5432/identity?schema=public"
+  },
+  "encryptionKey": "__ENCRYPTION_KEY__",
+  "issuer": "proyecta",
+  "audience": "proyecta",
+  "keys": {
+    "privateKeyPath": "/service/config/keys/private.pem",
+    "publicKeyPath": "/service/config/keys/public.pem"
+  },
+  "tokens": {
+    "accessTokenExpiresIn": "15m",
+    "refreshTokenExpiresIn": "30d",
+    "idTokenExpiresIn": "15m"
+  },
+  "security": {
+    "contactVerificationRequired": false,
+    "twoFactorAuthenticationRequired": false
+  },
+  "appUrl": "http://localhost:5173/ingresar",
+  "invite": {
+    "url": "http://localhost:5173/invitacion",
+    "failUrl": "http://localhost:5173/invitacion-invalida",
+    "expiration": "7d"
+  },
+  "smtp": {
+    "host": "mailpit",
+    "port": 1025,
+    "secure": false,
+    "sender": "Proyecta <no-reply@proyecta.local>"
+  }
+}

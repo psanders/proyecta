@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="es-DO">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Proyecta — Invitación</title>
+  <style>
+    body { margin: 0; padding: 0; background-color: #f2f3f0; }
+    .wrap { width: 100%; background-color: #f2f3f0; padding: 32px 0; }
+    .card { max-width: 480px; margin: 0 auto; background: #ffffff; border: 1px solid #cbccc9; border-radius: 16px;
+      padding: 32px; font-family: Arial, Helvetica, sans-serif; color: #111111; line-height: 1.6; }
+    .brand { font-family: "Courier New", monospace; font-weight: 700; font-size: 18px; letter-spacing: 1px; color: #111111; }
+    .dot { display: inline-block; width: 12px; height: 12px; border-radius: 3px; background: #ec5e2b; margin-right: 8px; vertical-align: middle; }
+    .code { display: inline-block; padding: 8px 14px; font-family: "Courier New", monospace; font-size: 20px; font-weight: 700;
+      letter-spacing: 3px; color: #ec5e2b; background: #18181b; border-radius: 10px; }
+    .button { display: inline-block; padding: 12px 24px; background: #ec5e2b; color: #ffffff !important; text-decoration: none;
+      border-radius: 999px; font-weight: bold; }
+    .muted { color: #666666; font-size: 13px; }
+    .hr { height: 1px; background: #e7e8e5; border: 0; margin: 24px 0; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <div class="brand"><span class="dot"></span>PROYECTA</div>
+      <hr class="hr" />
+      <p style="margin:0 0 12px;">Te invitaron a unirte a <b>{{workspaceName}}</b> en Proyecta.</p>
+      <p style="margin:0 0 12px;">Tu contraseña temporal es:</p>
+      <p style="margin:0 0 20px;"><span class="code">{{oneTimePassword}}</span></p>
+      <p style="margin:0 0 24px;">Acepta la invitación y luego ingresa con tu correo y esta contraseña. Te pediremos que la cambies.</p>
+      <p style="margin:0 0 12px;"><a href="{{inviteUrl}}" class="button">Aceptar invitación</a></p>
+      <p class="muted" style="margin:16px 0 0;">Si no esperabas esta invitación, puedes ignorar este correo.</p>
+      <hr class="hr" />
+      <p class="muted" style="margin:0;">Proyecta · Pantallas digitales en toda la República Dominicana.</p>
+    </div>
+  </div>
+</body>
+</html>

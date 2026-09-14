@@ -25,7 +25,9 @@
     "db:reset": "prisma migrate reset --force"
   },
   "dependencies": {
+    "@fonoster/identity-client": "^0.25.0",
     "@fonoster/logger": "^0.25.0",
+    "@grpc/grpc-js": "~1.10.6",
     "@prisma/adapter-pg": "^7.10.0",
     "@prisma/client": "^7.10.0",
     "@proyecta/common": "^0.1.0",

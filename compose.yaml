@@ -9,12 +9,40 @@ services:
       - "5433:5432"
     volumes:
       - postgres-data:/var/lib/postgresql/data
-      - ./docker/postgres-init.sql:/docker-entrypoint-initdb.d/10-test-db.sql:ro
+      - ./docker/postgres-init.sql:/docker-entrypoint-initdb.d/10-init.sql:ro
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U proyecta -d proyecta"]
       interval: 2s
       timeout: 3s
       retries: 30
+
+  # Fonoster Identity: users, workspaces, roles, invites, tokens. Configured only by the mounted
+  # file (run scripts/setup-identity.sh first). Host ports avoid clashing with other local stacks.
+  identity:
+    image: fonoster/identity:0.25.2
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ./config/identity:/service/config:ro
+      # Proyecta-branded Spanish emails over Identity's stock templates.
+      - ./config/identity/templates/inviteNewUser.hbs:/service/mods/identity/dist/templates/inviteNewUser.hbs:ro
+      - ./config/identity/templates/inviteExistingUser.hbs:/service/mods/identity/dist/templates/inviteExistingUser.hbs:ro
+      - ./config/identity/templates/resetPassword.hbs:/service/mods/identity/dist/templates/resetPassword.hbs:ro
+      - ./config/identity/templates/verifyEmail.hbs:/service/mods/identity/dist/templates/verifyEmail.hbs:ro
+      - ./config/identity/templates/verifyPhone.hbs:/service/mods/identity/dist/templates/verifyPhone.hbs:ro
+    ports:
+      - "50052:50051" # gRPC
+      - "9111:9110" # invite acceptance bridge
+
+  # Catches outgoing email in development. UI: http://localhost:8026
+  mailpit:
+    image: axllent/mailpit:latest
+    restart: unless-stopped
+    ports:
+      - "1026:1025"
+      - "8026:8025"
 
 volumes:
   postgres-data:

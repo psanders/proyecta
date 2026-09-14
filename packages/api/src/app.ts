@@ -6,6 +6,7 @@ import { createExpressMiddleware } from "@trpc/server/adapters/express";
 import type { DeviceDbClient } from "@proyecta/common";
 import { createDevRouter } from "./dev/router.js";
 import { createDeviceRouter } from "./device/router.js";
+import { resolveContext, type Services } from "./trpc/context.js";
 import { appRouter } from "./trpc/router.js";
 
 export interface AppOptions {
@@ -14,7 +15,11 @@ export interface AppOptions {
 }
 
 /** Builds the HTTP app: tRPC for the dashboard, /device/v1 for players. */
-export function createApp(client: DeviceDbClient, options: AppOptions = {}): Express {
+export function createApp(
+  client: DeviceDbClient,
+  services: Services,
+  options: AppOptions = {}
+): Express {
   const app = express();
   app.use(express.json({ limit: "1mb" }));
   app.get("/healthz", (_req, res) => {
@@ -22,6 +27,12 @@ export function createApp(client: DeviceDbClient, options: AppOptions = {}): Exp
   });
   app.use("/device/v1", createDeviceRouter(client));
   if (options.devMediaDir) app.use("/dev", createDevRouter(options.devMediaDir));
-  app.use("/trpc", createExpressMiddleware({ router: appRouter, createContext: () => ({}) }));
+  app.use(
+    "/trpc",
+    createExpressMiddleware({
+      router: appRouter,
+      createContext: ({ req }) => resolveContext(services, req.headers)
+    })
+  );
   return app;
 }

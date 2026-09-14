@@ -34,6 +34,7 @@ Proyecta is a digital-out-of-home marketplace for the Dominican Republic. Screen
   - Minted only by the server and keyed to a hardware id. Never generate codes on the device.
   - Stored canonically without the dash.
 - **`/device/v1` is a frozen contract.** Devices in the field update on their own schedule. Only additive, backward-compatible changes; breaking changes need `/device/v2`. The dashboard uses tRPC; devices never do.
+- **Accounts come from Fonoster Identity** (users, workspaces = businesses, roles, invites, tokens). Proyecta never stores passwords. Resources are owned by the workspace `accessKeyId` (`WO…`). tRPC guards: `protectedProcedure` → `workspaceProcedure` (`x-workspace` header) → `adminProcedure` / `ownerProcedure`. Parse router inputs with `validate(schema)` so errors carry Spanish field errors.
 - **Playback never depends on the network.** Sync modes: realtime (SSE), polling, offline.
 - **Engines:** Chromium, not Chrome; Edge on Windows. Provisional player floor: Chromium 108 (confirm after the device spike).
 - **Player branding:**
@@ -70,7 +71,7 @@ Full guide, rationale, and scaffolding: `/ps:create-validated-function` (source:
 
 ### Commands
 
-- `npm run db:up`: local Postgres 17 on port **5433** (dev database `proyecta`, test database `proyecta_test`).
+- `npm run db:up`: generates Identity secrets (`scripts/setup-identity.sh`) and starts Postgres 17 on **5433** (`proyecta`, `proyecta_test`, `identity` databases), Fonoster Identity (gRPC **50052**, invite bridge **9111**) and Mailpit (SMTP 1026, UI **8026**).
 - `npm run db:migrate` / `db:generate` / `db:studio`
 - `npm run lint && npm run typecheck && npm test`: the green gate before any spec sync.
 - `npm run test:integration`: needs `db:up`.
