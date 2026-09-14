@@ -8,12 +8,16 @@
     "dev": "vite",
     "build": "tsc --noEmit && vite build",
     "typecheck": "tsc --noEmit",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test": "mocha"
   },
   "dependencies": {
+    "@fontsource/geist-sans": "^5.3.0",
+    "@fontsource/jetbrains-mono": "^5.3.0",
     "@proyecta/common": "^0.1.0"
   },
   "devDependencies": {
+    "@material-symbols/svg-400": "^0.47.2",
     "vite": "^8.3.0"
   }
 }

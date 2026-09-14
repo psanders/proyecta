@@ -6,3 +6,4 @@ export * from "./utils/withErrorHandlingAndValidation.js";
 export * from "./utils/pairingCode.js";
 export * from "./schemas/device.schema.js";
 export * from "./types/device.js";
+export * from "./schemas/manifest.schema.js";

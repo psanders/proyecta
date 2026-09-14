@@ -13,3 +13,6 @@ test-results/
 .DS_Store
 .claude/settings.local.json
 .claude/ship/*.local.md
+
+# Generated demo media and local data
+.data/

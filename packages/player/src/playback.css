@@ -1,0 +1,222 @@
+/**
+ * Copyright (C) 2026 by Proyecta. All rights reserved.
+ *
+ * Playback stage and debug overlay. Layout mirrors Pencil frame player-now-playing (1600x900).
+ */
+.ad-area {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background: var(--stage);
+}
+
+.stage.is-debug .ad-area {
+  bottom: calc(56 * var(--px));
+}
+
+.layer {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  visibility: hidden;
+}
+
+.layer.is-active {
+  visibility: visible;
+  z-index: 1;
+}
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  display: none;
+}
+
+.stage.is-debug .overlay {
+  display: block;
+}
+
+.overlay .scrim-top,
+.overlay .scrim-bottom {
+  position: absolute;
+  left: 0;
+  right: 0;
+}
+
+.overlay .scrim-top {
+  top: 0;
+  height: calc(120 * var(--px));
+  background: linear-gradient(#00000073, #00000000);
+}
+
+.overlay .scrim-bottom {
+  bottom: 0;
+  height: calc(220 * var(--px));
+  background: linear-gradient(#00000000, #00000026 45%, #000000b8);
+}
+
+.pill {
+  position: absolute;
+  top: calc(28 * var(--px));
+  display: flex;
+  align-items: center;
+  height: calc(32 * var(--px));
+  box-sizing: border-box;
+  padding: 0 calc(14 * var(--px));
+  border-radius: 999px;
+  background: var(--glass);
+  border: 1px solid var(--glass-line);
+  font-family: var(--font-mono);
+  font-size: calc(12 * var(--px));
+  color: var(--text);
+}
+
+.pill.now-playing {
+  left: calc(32 * var(--px));
+  gap: calc(8 * var(--px));
+  font-weight: 700;
+  letter-spacing: calc(1.2 * var(--px));
+}
+
+.pill.now-playing .dot {
+  background: var(--signal);
+}
+
+.pill.countdown {
+  right: calc(32 * var(--px));
+  gap: calc(6 * var(--px));
+  font-weight: 500;
+}
+
+.pill.countdown svg {
+  width: calc(14 * var(--px));
+  height: calc(14 * var(--px));
+  color: var(--muted);
+}
+
+.bottom {
+  position: absolute;
+  left: calc(32 * var(--px));
+  right: calc(32 * var(--px));
+  bottom: calc(26 * var(--px));
+}
+
+.meta-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: calc(18 * var(--px));
+}
+
+.next-up {
+  display: flex;
+  align-items: center;
+  gap: calc(10 * var(--px));
+  font-size: calc(14 * var(--px));
+  color: var(--muted);
+}
+
+.next-up svg {
+  width: calc(16 * var(--px));
+  height: calc(16 * var(--px));
+  color: var(--muted-2);
+}
+
+.time-code {
+  font-family: var(--font-mono);
+  font-weight: 500;
+  font-size: calc(14 * var(--px));
+  color: var(--text-3);
+}
+
+.track {
+  margin-top: calc(14 * var(--px));
+  height: calc(4 * var(--px));
+  border-radius: 999px;
+  background: var(--track);
+  overflow: hidden;
+}
+
+.track .fill {
+  height: 100%;
+  width: 0;
+  border-radius: 999px;
+  background: var(--signal);
+}
+
+.status-bar {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: calc(56 * var(--px));
+  box-sizing: border-box;
+  padding: 0 calc(28 * var(--px));
+  display: none;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--surface);
+  border-top: 1px solid var(--line-2);
+  font-size: calc(13 * var(--px));
+}
+
+.stage.is-debug .status-bar {
+  display: flex;
+}
+
+.status-bar .brand {
+  display: flex;
+  align-items: center;
+  gap: calc(8 * var(--px));
+  font-family: var(--font-mono);
+  font-weight: 700;
+  color: var(--text);
+}
+
+.status-bar .brand svg {
+  width: calc(18 * var(--px));
+  height: calc(18 * var(--px));
+  color: var(--signal);
+}
+
+.status-bar .playlist {
+  display: flex;
+  align-items: center;
+  gap: calc(8 * var(--px));
+  color: var(--muted-2);
+}
+
+.status-bar .playlist svg {
+  width: calc(16 * var(--px));
+  height: calc(16 * var(--px));
+  color: var(--muted-3);
+}
+
+.status-bar .right {
+  display: flex;
+  align-items: center;
+  gap: calc(20 * var(--px));
+}
+
+.status-bar .live {
+  display: flex;
+  align-items: center;
+  gap: calc(8 * var(--px));
+  color: var(--muted);
+}
+
+.status-bar .live .dot {
+  background: var(--live);
+}
+
+.status-bar .live.is-offline .dot {
+  background: var(--signal);
+}
+
+.status-bar .clock {
+  color: var(--muted-2);
+}

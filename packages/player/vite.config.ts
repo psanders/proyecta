@@ -7,5 +7,8 @@ import { defineConfig } from "vite";
 export default defineConfig({
   resolve: { conditions: ["source"] },
   build: { target: "chrome108" },
-  server: { port: 5174, proxy: { "/device": "http://localhost:3000" } }
+  server: {
+    port: 5174,
+    proxy: { "/device": "http://localhost:3000", "/dev": "http://localhost:3000" }
+  }
 });

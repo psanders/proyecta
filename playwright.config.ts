@@ -11,6 +11,11 @@ export default defineConfig({
   projects: [{ name: "chromium", use: { ...devices["Desktop Chrome"], channel: "chromium" } }],
   webServer: [
     {
+      command: "npm run dev:api",
+      url: "http://localhost:3000/healthz",
+      reuseExistingServer: true
+    },
+    {
       command: "npm run dev:player",
       url: "http://localhost:5174",
       reuseExistingServer: true
