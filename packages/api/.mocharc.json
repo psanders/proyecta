@@ -1,0 +1,5 @@
+{
+  "node-option": ["import=tsx", "conditions=source"],
+  "spec": "test/api/**/*.test.ts",
+  "extension": ["ts"]
+}

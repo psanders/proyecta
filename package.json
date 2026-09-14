@@ -1,0 +1,70 @@
+{
+  "name": "proyecta",
+  "private": true,
+  "license": "UNLICENSED",
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "workspaces": [
+    "packages/common",
+    "packages/api",
+    "packages/dashboard",
+    "packages/player"
+  ],
+  "scripts": {
+    "build": "tsc -b packages/common packages/api && npm run build -w @proyecta/dashboard -w @proyecta/player",
+    "typecheck": "tsc -b packages/common packages/api && npm run typecheck -w @proyecta/dashboard -w @proyecta/player",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "test": "npm test --workspaces --if-present",
+    "test:integration": "npm run test:integration -w @proyecta/api",
+    "test:e2e": "playwright test",
+    "dev:api": "npm run dev -w @proyecta/api",
+    "dev:dashboard": "npm run dev -w @proyecta/dashboard",
+    "dev:player": "npm run dev -w @proyecta/player",
+    "db:up": "docker compose up -d --wait postgres",
+    "db:down": "docker compose down",
+    "db:generate": "npm run db:generate -w @proyecta/api",
+    "db:migrate": "npm run db:migrate -w @proyecta/api",
+    "db:push": "npm run db:push -w @proyecta/api",
+    "db:studio": "npm run db:studio -w @proyecta/api",
+    "db:seed": "npm run db:seed -w @proyecta/api",
+    "db:reset": "npm run db:reset -w @proyecta/api",
+    "prepare": "husky"
+  },
+  "lint-staged": {
+    "*.{ts,tsx}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{js,mjs,json,md,css,html,yaml,yml}": [
+      "prettier --write"
+    ]
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^21.2.2",
+    "@commitlint/config-conventional": "^21.2.2",
+    "@eslint/js": "^10.0.1",
+    "@fission-ai/openspec": "^1.13.0",
+    "@playwright/test": "^1.63.0",
+    "@types/chai": "^5.2.3",
+    "@types/mocha": "^10.0.10",
+    "@types/node": "^26.5.1",
+    "@types/sinon": "^22.0.0",
+    "@types/sinon-chai": "^4.0.0",
+    "chai": "^6.2.2",
+    "eslint": "^10.10.0",
+    "husky": "^9.1.7",
+    "lerna": "^10.0.1",
+    "lint-staged": "^16.4.0",
+    "mocha": "^11.8.0",
+    "nodemon": "^3.1.14",
+    "prettier": "^3.9.6",
+    "sinon": "^22.1.0",
+    "sinon-chai": "^4.0.1",
+    "tsx": "^4.23.13",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.70.0"
+  }
+}

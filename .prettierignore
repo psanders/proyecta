@@ -1,0 +1,7 @@
+cleanup/
+design/
+dist/
+**/src/generated/
+openspec/
+package-lock.json
+.claude/

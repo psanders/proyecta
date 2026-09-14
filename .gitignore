@@ -1,0 +1,15 @@
+# Temporary context, deleted manually later. Contains confidential material: never commit.
+cleanup/
+
+node_modules/
+dist/
+**/src/generated/
+*.tsbuildinfo
+.env
+.env.*
+!.env.example
+playwright-report/
+test-results/
+.DS_Store
+.claude/settings.local.json
+.claude/ship/*.local.md

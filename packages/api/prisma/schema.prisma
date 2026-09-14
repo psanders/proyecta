@@ -1,0 +1,37 @@
+// Copyright (C) 2026 by Proyecta. All rights reserved.
+
+generator client {
+  provider     = "prisma-client"
+  output       = "../src/generated/prisma"
+  moduleFormat = "esm"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+/// Which shell runs the player core on the physical device.
+enum DeviceShell {
+  ANDROID
+  KIOSK_LINUX
+  KIOSK_WINDOWS
+  BROWSER
+
+  @@map("device_shell")
+}
+
+/// A physical player. Its pairing code is permanent and tied to the hardware id.
+model Device {
+  id              String      @id @default(uuid()) @db.Uuid
+  /// Canonical pairing code without the dash, e.g. 8F3K2QLM.
+  code            String      @unique @db.Char(8)
+  hwId            String      @unique @map("hw_id")
+  shell           DeviceShell
+  chromiumVersion String?     @map("chromium_version")
+  resolution      String?
+  lastSeenAt      DateTime    @default(now()) @map("last_seen_at")
+  createdAt       DateTime    @default(now()) @map("created_at")
+  updatedAt       DateTime    @updatedAt @map("updated_at")
+
+  @@map("devices")
+}

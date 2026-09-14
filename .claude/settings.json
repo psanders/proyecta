@@ -1,0 +1,6 @@
+{
+  "extraKnownMarketplaces": {
+    "psstack": { "source": { "source": "github", "repo": "psanders/psstack" } }
+  },
+  "enabledPlugins": { "ps@psstack": true }
+}

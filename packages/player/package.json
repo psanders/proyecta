@@ -1,0 +1,19 @@
+{
+  "name": "@proyecta/player",
+  "version": "0.1.0",
+  "private": true,
+  "license": "UNLICENSED",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "typecheck": "tsc --noEmit",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@proyecta/common": "^0.1.0"
+  },
+  "devDependencies": {
+    "vite": "^8.3.0"
+  }
+}

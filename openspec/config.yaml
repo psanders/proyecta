@@ -1,0 +1,33 @@
+schema: spec-driven
+
+context: |
+  Proyecta is a DOOH marketplace for the Dominican Republic: screen owners ("valleros") publish
+  screens, advertisers buy spots. v0 focuses on the PLAYER: a Chromium web core wrapped in thin
+  shells (Kotlin Android WebView app; Chromium kiosk on Linux; Edge kiosk on Windows).
+  All user-facing text is Spanish (es-DO).
+
+  Stack: TypeScript monorepo (npm workspaces + Lerna). packages/common (Zod schemas, validated-
+  function spine), packages/api (Express + Prisma/Postgres; tRPC for the dashboard, frozen
+  versioned HTTP + SSE under /device/v1 for devices), packages/dashboard (minimal React + Tailwind,
+  no design pass), packages/player (vanilla TS, SQLite-wasm on OPFS, Pencil branding),
+  shells/android (Kotlin), shells/kiosk (scripts). Design source: design/pencil.pen (Pencil MCP only).
+
+  Domain invariants:
+  - Device (physical player) != Screen (virtual listing). Linked through DeviceBinding history.
+  - A device's 8-char pairing code (display XXXX-XXXX, alphabet without 0/O/1/I) is permanent,
+    minted by the server and keyed to a hardware id; reinstalls never change it.
+  - Owners can unlink a device (screen moved) and relink it; old screens are archived (history
+    kept) or soft-deleted. Play logs are never deleted.
+  - Playback never depends on the network: sync modes are realtime (SSE), polling, offline.
+
+  v0 approved plan: 4 changes shipped in order with /ps:ship — device-protocol, player-core,
+  owner-dashboard, player-shells.
+
+rules:
+  proposal:
+    - Include a "Non-goals" section; v0 excludes advertiser screens, pricing, scheduling/dayparts.
+  specs:
+    - Specify observable, testable behavior (API responses, player states, persisted data), not styling.
+    - Device protocol changes must stay backward compatible within /device/v1.
+  design:
+    - For player UI, reference the Pencil frame names in design/pencil.pen.

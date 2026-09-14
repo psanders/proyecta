@@ -1,0 +1,41 @@
+/**
+ * Copyright (C) 2026 by Proyecta. All rights reserved.
+ *
+ * Player tokens, taken from design/pencil.pen frames player-pairing and player-now-playing.
+ * Keep in sync with Pencil; never invent colors here. Fonts get self-hosted with player-core.
+ */
+:root {
+  --stage: #0e0e10;
+  --surface: #18181b;
+  --signal: #ec5e2b;
+  --text: #ffffff;
+  --text-2: #e4e4e7;
+  --text-3: #d4d4d8;
+  --muted: #a1a1aa;
+  --muted-2: #71717a;
+  --muted-3: #52525b;
+  --live: #22c55e;
+  --highlight: #f6c453;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+  --font-sans: "Geist", system-ui, sans-serif;
+  /* Designed at 1600x900: 1 design px = 1/16vw, capped by height for wide LED panels. */
+  --px: min(0.0625vw, 0.1111vh);
+}
+
+html,
+body {
+  margin: 0;
+  height: 100%;
+  background: var(--stage);
+  color: var(--text);
+  overflow: hidden;
+  cursor: none;
+}
+
+.stage {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-family: var(--font-sans);
+}

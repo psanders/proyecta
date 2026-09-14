@@ -1,0 +1,21 @@
+{
+  "name": "@proyecta/common",
+  "version": "0.1.0",
+  "private": true,
+  "license": "UNLICENSED",
+  "type": "module",
+  "exports": {
+    ".": {
+      "source": "./src/index.ts",
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc -b",
+    "test": "mocha"
+  },
+  "dependencies": {
+    "zod": "^4.6.5"
+  }
+}
