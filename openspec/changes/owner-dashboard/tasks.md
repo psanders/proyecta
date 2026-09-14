@@ -6,15 +6,15 @@
 
 ## 2. App foundation
 
-- [ ] 2.1 Tailwind theme from Pencil tokens, self-hosted fonts, router, session module, tRPC client with auth/workspace headers and refresh-retry; verify unit tests for the session module and refresh link
-- [ ] 2.2 Components mirroring Pencil (shell, page header, stat card, status badge, screen row, form section, day picker, device panel, member row, empty state, dialogs, auth card); verify they render in a components preview route
+- [x] 2.1 Tailwind theme from Pencil tokens, self-hosted fonts, router, session module, tRPC client with auth/workspace headers and refresh-retry; verify unit tests for the session module and refresh link
+- [x] 2.2 Components mirroring Pencil (shell, page header, stat card, status badge, screen row, form section, day picker, device panel, member row, empty state, dialogs, auth card); verify they render in a components preview route
 
 ## 3. Pages
 
-- [ ] 3.1 Auth pages (sign in, sign up, forgot, reset, invitation); verify Playwright: sign up → lands on onboarding
-- [ ] 3.2 Onboarding + screens overview (live status, archived filter, empty state); verify Playwright: pair the demo player by its code → status En línea
-- [ ] 3.3 Add/edit screen and screen detail with link/unlink/archive/delete dialogs; verify Playwright: unlink → player shows code; archive → appears under Archivadas
-- [ ] 3.4 Team page (invite, resend, remove) and profile; verify Playwright: invite → Mailpit has the email → accept link → member Activo
+- [x] 3.1 Auth pages (sign in, sign up, forgot, reset, invitation); verify Playwright: sign up → lands on onboarding
+- [x] 3.2 Onboarding + screens overview (live status, archived filter, empty state); verify Playwright: pair the demo player by its code → status En línea
+- [x] 3.3 Add/edit screen and screen detail with link/unlink/archive/delete dialogs; verify Playwright: unlink → player shows code; archive → appears under Archivadas
+- [x] 3.4 Team page (invite, resend, remove) and profile; verify Playwright: invite → Mailpit has the email → accept link → member Activo
 
 ## 4. Verification
 

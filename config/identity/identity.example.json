@@ -22,10 +22,10 @@
     "contactVerificationRequired": false,
     "twoFactorAuthenticationRequired": false
   },
-  "appUrl": "http://localhost:5173/ingresar",
+  "appUrl": "http://localhost:5175/ingresar",
   "invite": {
-    "url": "http://localhost:5173/invitacion",
-    "failUrl": "http://localhost:5173/invitacion-invalida",
+    "url": "http://localhost:5175/invitacion",
+    "failUrl": "http://localhost:5175/invitacion-invalida",
     "expiration": "7d"
   },
   "smtp": {

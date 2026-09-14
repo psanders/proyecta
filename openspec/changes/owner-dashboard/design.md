@@ -24,7 +24,10 @@ stay in lockstep; live status without polling loops in every page.
 - **Live status**: one `screens.onStatus` subscription per session (`httpSubscriptionLink`) that patches the React Query
   cache for list and detail queries.
 - **Forms**: controlled forms validated with the same `@proyecta/common` Zod schemas the API uses (errors in Spanish).
-- **Icons**: lucide-react (the Lunaris kit's icon set in Pencil).
+- **Icons**: Material Symbols Sharp (the set the Pencil screens actually use), inlined from `@material-symbols/svg-400`.
+- **Onboarding links on save**: the code is checked live, carried to the add-screen form, and the player is linked right
+  after the screen is created, so abandoning the form never leaves an empty linked screen behind.
+- **Port**: the dashboard dev server runs on 5175 (5173 is used by another local project); Identity invite/reset URLs match.
 
 ## Risks / Trade-offs
 

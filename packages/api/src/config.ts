@@ -14,7 +14,7 @@ export function loadConfig() {
     port: Number(process.env.PORT ?? 3000),
     isProduction: process.env.NODE_ENV === "production",
     databaseUrl: required("DATABASE_URL"),
-    dashboardUrl: process.env.DASHBOARD_URL ?? "http://localhost:5173",
+    dashboardUrl: process.env.DASHBOARD_URL ?? "http://localhost:5175",
     identity: {
       endpoint: required("IDENTITY_ENDPOINT"),
       bridgeUrl: required("IDENTITY_BRIDGE_URL"),

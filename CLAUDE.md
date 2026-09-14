@@ -76,7 +76,7 @@ Full guide, rationale, and scaffolding: `/ps:create-validated-function` (source:
 - `npm run lint && npm run typecheck && npm test`: the green gate before any spec sync.
 - `npm run test:integration`: needs `db:up`.
 - `npm run test:e2e`: needs `npx playwright install chromium` once.
-- `npm run dev:api` / `dev:dashboard` (5173) / `dev:player` (5174)
+- `npm run dev:api` / `dev:dashboard` (5175) / `dev:player` (5174)
 
 ## Commits
 

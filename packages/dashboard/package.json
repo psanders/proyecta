@@ -8,21 +8,24 @@
     "dev": "vite",
     "build": "tsc --noEmit && vite build",
     "typecheck": "tsc --noEmit",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test": "mocha"
   },
   "dependencies": {
+    "@fontsource/geist-sans": "^5.3.0",
+    "@fontsource/jetbrains-mono": "^5.3.0",
     "@proyecta/common": "^0.1.0",
     "@tanstack/react-query": "^5.102.8",
     "@trpc/client": "^11.18.0",
     "@trpc/react-query": "^11.18.0",
     "clsx": "^2.1.1",
-    "lucide-react": "^1.46.0",
     "react": "^19.3.0",
     "react-dom": "^19.3.0",
     "react-router-dom": "^7.18.3",
     "tailwind-merge": "^3.7.0"
   },
   "devDependencies": {
+    "@material-symbols/svg-400": "^0.47.2",
     "@proyecta/api": "^0.1.0",
     "@tailwindcss/vite": "^4.3.3",
     "@types/react": "^19.3.0",

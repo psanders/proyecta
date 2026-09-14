@@ -1,1 +1,62 @@
+/**
+ * Copyright (C) 2026 by Proyecta. All rights reserved.
+ *
+ * Dashboard tokens from design/pencil.pen (Lunaris, light mode). Keep in sync with Pencil variables.
+ */
 @import "tailwindcss";
+@import "@fontsource/jetbrains-mono/400.css";
+@import "@fontsource/jetbrains-mono/500.css";
+@import "@fontsource/jetbrains-mono/700.css";
+@import "@fontsource/geist-sans/400.css";
+@import "@fontsource/geist-sans/500.css";
+@import "@fontsource/geist-sans/600.css";
+
+@theme {
+  --color-background: #f2f3f0;
+  --color-foreground: #111111;
+  --color-card: #ffffff;
+  --color-muted: #f2f3f0;
+  --color-muted-foreground: #666666;
+  --color-secondary: #e7e8e5;
+  --color-border: #cbccc9;
+  --color-input: #cbccc9;
+  --color-primary: #ec5e2b;
+  --color-primary-foreground: #ffffff;
+  --color-destructive: #d93c15;
+  --color-success: #dfe6e1;
+  --color-success-foreground: #004d1a;
+  --color-warning: #e9e3d8;
+  --color-warning-foreground: #762f16;
+  --color-error: #e5dcda;
+  --color-error-foreground: #8c1c00;
+  --color-info: #dfdfe6;
+  --color-info-foreground: #000066;
+  --color-sidebar: #e7e8e5;
+  --color-sidebar-border: #cbccc9;
+  --color-sidebar-accent: #cbccc9;
+  --color-brand-panel: #18181b;
+  --color-brand-muted: #b8b9b6;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+  --font-sans: "Geist Sans", "Geist", system-ui, sans-serif;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--color-background);
+  color: var(--color-foreground);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+.icon svg {
+  width: 100%;
+  height: 100%;
+  fill: currentColor;
+  display: block;
+}

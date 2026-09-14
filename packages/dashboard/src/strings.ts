@@ -1,11 +1,234 @@
 /**
  * Copyright (C) 2026 by Proyecta. All rights reserved.
  */
-// All user-facing text for the dashboard (Spanish, DR). No i18n library: v0 is Spanish-only.
+// All user-facing dashboard text (Spanish, DR). No i18n library: v0 is Spanish-only.
 export const strings = {
-  appName: "Proyecta",
-  panelTitle: "Panel de pantallas",
-  apiOnline: "API conectada",
-  apiOffline: "API sin conexión",
-  apiChecking: "Verificando API..."
+  brand: "PROYECTA",
+  copyright: "© 2026 Proyecta",
+  authHeadline: "Convierte tus pantallas en un canal publicitario.",
+  authSubtext:
+    "Publica tus pantallas digitales en la red de Proyecta y comienza a generar ingresos con tu espacio publicitario.",
+  signIn: {
+    title: "Bienvenido de nuevo",
+    subtitle: "Ingresa a tu cuenta para administrar tus pantallas.",
+    email: "Correo electrónico",
+    emailPlaceholder: "tucorreo@empresa.com",
+    password: "Contraseña",
+    forgot: "¿Olvidaste tu contraseña?",
+    submit: "Iniciar sesión",
+    noAccount: "¿No tienes cuenta?",
+    createAccount: "Crear cuenta"
+  },
+  signUp: {
+    title: "Crea tu cuenta",
+    subtitle: "Publica tus pantallas y administra tu negocio en un solo lugar.",
+    name: "Tu nombre",
+    namePlaceholder: "Ej. Rosa Almonte",
+    business: "Nombre del negocio",
+    businessPlaceholder: "Ej. Vallas del Cibao",
+    submit: "Crear cuenta",
+    haveAccount: "¿Ya tienes cuenta?",
+    signIn: "Iniciar sesión",
+    passwordHint: "Mínimo 8 caracteres"
+  },
+  forgot: {
+    title: "Recupera tu contraseña",
+    subtitle: "Te enviaremos un enlace para crear una nueva.",
+    submit: "Enviar enlace",
+    sent: "Si existe una cuenta con ese correo, te enviamos un enlace para restablecer tu contraseña.",
+    back: "Volver a iniciar sesión"
+  },
+  reset: {
+    title: "Crea una nueva contraseña",
+    subtitle: "Escríbela dos veces para confirmarla.",
+    password: "Nueva contraseña",
+    confirm: "Confirmar contraseña",
+    mismatch: "Las contraseñas no coinciden",
+    submit: "Guardar contraseña",
+    done: "Listo. Ya puedes ingresar con tu nueva contraseña."
+  },
+  invitation: {
+    accepting: "Validando tu invitación...",
+    acceptedTitle: "¡Invitación aceptada!",
+    acceptedBody:
+      "Ya eres parte del negocio. Ingresa con tu correo para continuar. Si te llegó una contraseña temporal, úsala y luego cámbiala en Mi perfil.",
+    invalidTitle: "Esta invitación no es válida",
+    invalidBody:
+      "Puede que haya expirado o que ya se haya usado. Pide a quien te invitó que te la reenvíe.",
+    goSignIn: "Ir a iniciar sesión"
+  },
+  nav: {
+    screens: "Pantallas",
+    team: "Equipo",
+    profile: "Mi perfil",
+    signOut: "Cerrar sesión",
+    switchBusiness: "Cambiar de negocio"
+  },
+  screens: {
+    title: "Mis pantallas",
+    subtitle: "Administra tus pantallas y su disponibilidad publicitaria",
+    add: "Agregar pantalla",
+    total: "Pantallas",
+    online: "En línea",
+    incomplete: "Información incompleta",
+    yours: "Tus pantallas",
+    archived: "Archivadas",
+    active: "Activas",
+    noArchived: "No tienes pantallas archivadas.",
+    emptyTitle: "Aún no tienes pantallas",
+    emptyBody:
+      "Agrega tu primera pantalla y empieza a generar ingresos con tu espacio publicitario.",
+    availabilityUnset: "Disponibilidad sin definir",
+    loadError: "No pudimos cargar tus pantallas."
+  },
+  onboarding: {
+    exit: "Salir",
+    pill: "Paso único · 2 minutos",
+    title: "Publiquemos tu primera pantalla",
+    body: "Proyecta conecta tus pantallas digitales con anunciantes que buscan espacios comerciales. Conecta el reproductor y completa la información de tu pantalla.",
+    cardTitle: "Conecta tu pantalla física",
+    cardBody: "Antes de publicarla, confirmemos que tu pantalla está encendida y lista.",
+    step1: "Descarga el reproductor Proyecta",
+    step1Body: "Instálalo en el dispositivo conectado a tu pantalla.",
+    download: "Descargar",
+    step2: "Ingresa el código de vinculación",
+    step2Body: "Aparece en tu pantalla luego de instalar el reproductor.",
+    skip: "Prefiero configurarlo más tarde",
+    submit: "Vincular y continuar",
+    found: "Pantalla encontrada"
+  },
+  form: {
+    newTitle: "Agregar pantalla",
+    newSubtitle: "Completa la información para publicar tu pantalla en la red de Proyecta.",
+    editTitle: "Editar pantalla",
+    editSubtitle: "Actualiza la información de tu pantalla en la red de Proyecta.",
+    basic: "Información básica",
+    basicHint: "Cómo y dónde se ve tu pantalla",
+    name: "Nombre de la pantalla",
+    namePlaceholder: "Ej. Valla Av. 27 de Febrero",
+    placeType: "Tipo de lugar",
+    environment: "Ambiente",
+    city: "Ciudad",
+    cityPlaceholder: "Ej. Santo Domingo",
+    address: "Dirección o ubicación",
+    addressPlaceholder: "Ej. Av. Winston Churchill esq. Gustavo Mejía Ricart",
+    technical: "Información técnica",
+    technicalHint: "Especificaciones del panel",
+    width: "Ancho (cm)",
+    height: "Alto (cm)",
+    orientation: "Orientación",
+    resolution: "Resolución",
+    resolutionPlaceholder: "Ej. 1920x1080",
+    availability: "Disponibilidad",
+    availabilityHint: "¿Cuándo puede usarse tu pantalla para anuncios?",
+    days: "Días disponibles",
+    start: "Hora de inicio",
+    end: "Hora de fin",
+    commercial: "Información comercial",
+    commercialHint: "Tu tarifa de referencia para anunciantes",
+    price: "Precio de referencia (RD$)",
+    pricePlaceholder: "Ej. 2,500",
+    priceModel: "Modelo de precio",
+    select: "Selecciona una opción",
+    cancel: "Cancelar",
+    create: "Guardar y publicar pantalla",
+    save: "Guardar cambios",
+    pairingNotice: (code: string) =>
+      `Al guardar, vincularemos el reproductor ${code} a esta pantalla.`
+  },
+  detail: {
+    back: "Volver a Mis pantallas",
+    edit: "Editar",
+    device: "Estado del dispositivo",
+    deviceHint: "Información del reproductor conectado a esta pantalla",
+    lastActivity: "Última actividad",
+    code: "Código de vinculación",
+    version: "Versión del reproductor",
+    codec: "Formato de video",
+    uptime: "Encendido hace",
+    memory: "Memoria (RAM)",
+    storage: "Almacenamiento",
+    noDevice: "Esta pantalla no tiene un reproductor vinculado.",
+    linkTitle: "Vincular reproductor",
+    linkBody: "Ingresa el código que aparece en la pantalla.",
+    link: "Vincular",
+    unlink: "Desvincular reproductor",
+    info: "Información",
+    availability: "Disponibilidad",
+    schedule: "Horario",
+    price: "Precio",
+    reference: "Tarifa de referencia",
+    model: "Modelo",
+    activity: "Actividad publicitaria",
+    activityBody:
+      "Próximamente: aquí verás las campañas activas y el historial de anuncios reproducidos en esta pantalla.",
+    archive: "Archivar",
+    remove: "Eliminar",
+    archivedNotice: "Esta pantalla está archivada. Solo puedes consultarla.",
+    notSet: "Sin definir"
+  },
+  dialogs: {
+    cancel: "Cancelar",
+    unlinkTitle: "¿Desvincular el reproductor?",
+    unlinkBody:
+      "La pantalla dejará de reproducir anuncios y el dispositivo volverá a mostrar su código para vincularse a otra pantalla. El historial se conserva.",
+    unlinkConfirm: "Desvincular",
+    archiveTitle: "¿Archivar esta pantalla?",
+    archiveBody:
+      "Dejará de aparecer en tu lista y no aceptará reproductores. Conservarás su historial y podrás consultarla en Archivadas.",
+    archiveConfirm: "Archivar",
+    deleteTitle: "¿Eliminar esta pantalla?",
+    deleteBody:
+      "Desaparecerá de Proyecta. El historial de reproducciones se conserva para tus reportes. Esta acción no se puede deshacer.",
+    deleteConfirm: "Eliminar",
+    unlinkFirst: "Primero desvincula el reproductor."
+  },
+  team: {
+    title: "Equipo",
+    subtitle: "Invita a las personas que te ayudan a operar tus pantallas",
+    invite: "Invitar persona",
+    active: "Activo",
+    pending: "Pendiente",
+    resend: "Reenviar invitación",
+    remove: "Quitar",
+    inviteTitle: "Invitar a tu equipo",
+    inviteBody: "Le enviaremos un correo con el enlace para unirse a tu negocio.",
+    email: "Correo electrónico",
+    name: "Nombre (opcional)",
+    role: "Rol",
+    sendInvite: "Enviar invitación",
+    removeTitle: "¿Quitar a esta persona?",
+    removeBody: "Perderá el acceso a este negocio de inmediato.",
+    resent: "Invitación reenviada",
+    adminHint: "Puede administrar pantallas y equipo",
+    memberHint: "Puede ver pantallas y su estado",
+    you: "Tú"
+  },
+  profile: {
+    title: "Mi perfil",
+    subtitle: "Tus datos y tu contraseña",
+    personal: "Datos personales",
+    name: "Nombre",
+    email: "Correo electrónico",
+    saveName: "Guardar nombre",
+    password: "Contraseña",
+    current: "Contraseña actual",
+    newPassword: "Nueva contraseña",
+    changePassword: "Cambiar contraseña",
+    saved: "Cambios guardados",
+    business: "Negocio",
+    businessName: "Nombre del negocio",
+    rename: "Guardar nombre del negocio"
+  },
+  errors: {
+    generic: "Algo salió mal. Intenta de nuevo.",
+    network: "No hay conexión con Proyecta. Revisa tu internet.",
+    notFound: "No encontramos lo que buscas."
+  },
+  relative: {
+    now: "hace un momento",
+    minutes: (n: number) => `hace ${n} min`,
+    hours: (n: number) => `hace ${n} h`,
+    days: (n: number) => `hace ${n} d`
+  }
 } as const;

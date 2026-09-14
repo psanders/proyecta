@@ -50,8 +50,8 @@ without a device.
 #### Scenario: Pair during onboarding
 
 - **WHEN** an owner types the code of an online, unlinked player and continues
-- **THEN** a screen is created and linked, the add-screen form opens with its resolution filled from the device, and
-  the TV starts playing
+- **THEN** the add-screen form opens with the screen's resolution filled from the device and a notice naming the code
+- **AND** saving the form creates the screen, links the player, and the TV starts playing
 
 #### Scenario: Code not available
 

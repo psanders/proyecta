@@ -16,6 +16,11 @@ export default defineConfig({
       reuseExistingServer: true
     },
     {
+      command: "npm run dev:dashboard",
+      url: "http://localhost:5175",
+      reuseExistingServer: true
+    },
+    {
       command: "npm run dev:player",
       url: "http://localhost:5174",
       reuseExistingServer: true

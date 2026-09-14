@@ -36,6 +36,7 @@ test.describe("player on the device protocol", () => {
     await page.goto(`${PLAYER}?debug=1&slotMs=1500&hw=${hw}`);
     await expect(page.getByRole("heading", { name: "Vincula esta pantalla" })).toBeVisible();
     await expect(page.getByText("Esperando conexión...")).toBeVisible();
+    await expect(page.locator(".code-box")).toHaveText(CODE);
     const code = (await page.locator(".code-box").textContent())!.trim();
     expect(code).toMatch(CODE);
 

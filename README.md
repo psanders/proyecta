@@ -25,7 +25,7 @@ Email sent in development (invites, password resets) lands in Mailpit: http://lo
 
 ```bash
 npm run dev:api          # http://localhost:3000  (/trpc, /device/v1)
-npm run dev:dashboard    # http://localhost:5173
+npm run dev:dashboard    # http://localhost:5175
 npm run dev:player       # http://localhost:5174
 ```
 
