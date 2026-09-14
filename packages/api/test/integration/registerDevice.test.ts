@@ -12,7 +12,6 @@ describe("registerDevice (integration, Postgres)", () => {
     const url = process.env.TEST_DATABASE_URL;
     if (!url) throw new Error("TEST_DATABASE_URL is not set (see .env.example)");
     client = createDbClient(url);
-    await client.device.deleteMany();
   });
 
   after(async () => {
@@ -22,7 +21,7 @@ describe("registerDevice (integration, Postgres)", () => {
   it("should give the same hardware id the same code, even when registering concurrently", async () => {
     // Arrange
     const registerDevice = createRegisterDevice({ client });
-    const input = { hwId: "machine-id-integration-0001", shell: "KIOSK_LINUX" };
+    const input = { hwId: `machine-id-integration-${Date.now()}`, shell: "KIOSK_LINUX" };
 
     // Act
     const results = await Promise.all([registerDevice(input), registerDevice(input)]);
@@ -30,7 +29,7 @@ describe("registerDevice (integration, Postgres)", () => {
 
     // Assert
     expect(results[0]!.code).to.equal(results[1]!.code);
-    expect(again).to.deep.equal({ code: results[0]!.code, created: false });
-    expect(await client.device.count()).to.equal(1);
+    expect(again).to.include({ code: results[0]!.code, created: false });
+    expect(await client.device.count({ where: { hwId: input.hwId } })).to.equal(1);
   });
 });

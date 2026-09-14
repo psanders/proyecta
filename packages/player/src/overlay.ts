@@ -9,18 +9,17 @@ import { strings } from "./strings.js";
 export interface Overlay {
   slotStart(slot: SlotInfo): void;
   setOnline(online: boolean): void;
+  setContext(rotationName: string, screenName: string): void;
 }
 
 /**
  * Operator overlay from Pencil frame player-now-playing: now-playing pill, countdown, next-up,
  * time code, progress, and the status bar. Only visible when the stage has `is-debug`.
  */
-export function createOverlay(
-  adArea: HTMLElement,
-  stage: HTMLElement,
-  rotationName: string,
-  screenName: string
-): Overlay {
+export function createOverlay(adArea: HTMLElement, stage: HTMLElement): Overlay {
+  let rotationName = "";
+  let screenName = "";
+  let online = true;
   const overlay = el("div", "overlay");
   const nowPlaying = el("div", "pill now-playing");
   nowPlaying.append(el("span", "dot"), el("span", "", strings.nowPlaying));
@@ -84,9 +83,15 @@ export function createOverlay(
       playlistLabel.textContent = strings.playlist(rotationName, next.index + 1, next.total);
       render();
     },
-    setOnline(online) {
+    setOnline(next) {
+      online = next;
       live.classList.toggle("is-offline", !online);
       liveLabel.textContent = `${screenName} · ${online ? strings.connected : strings.offline}`;
+    },
+    setContext(nextRotation, nextScreen) {
+      rotationName = nextRotation;
+      screenName = nextScreen;
+      this.setOnline(online);
     }
   };
 }

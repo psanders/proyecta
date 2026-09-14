@@ -4,7 +4,7 @@
 # Generates a demo rotation of 6 fictional ads (3 images, 3 videos) for local player testing:
 # masters are rendered with ffmpeg, then scripts/transcode.sh produces the player renditions
 # (WebP for images, VP9 WebM + H.264 MP4 for video) and a manifest.json is written.
-# Brands are invented. Output: packages/api/.data/media (gitignored), served by the API at /dev.
+# Brands are invented. Output: packages/api/.data/media (gitignored), served by the API at /media.
 # Usage: scripts/generate-demo-ads.sh [WIDTHxHEIGHT]   (default 1920x1080)
 set -euo pipefail
 
@@ -109,12 +109,12 @@ for ad in "${ads[@]}"; do
   IFS='|' read -r id type advertiser title duration <<< "$ad"
   if [[ "$type" == "image" ]]; then
     "$root/scripts/transcode.sh" "$work/$id.png" "$size" "$out" > /dev/null
-    renditions="{\"webp\":\"/dev/media/$id.webp\"}"
+    renditions="{\"webp\":\"/media/$id.webp\"}"
   else
     "$root/scripts/transcode.sh" "$work/$id.mov" "$size" "$out" > /dev/null
     secs="$(ffprobe -v error -show_entries format=duration -of csv=p=0 "$out/$id.mp4")"
     duration="$(awk -v d="$secs" 'BEGIN { printf "%d", d * 1000 }')"
-    renditions="{\"webm\":\"/dev/media/$id.webm\",\"mp4\":\"/dev/media/$id.mp4\"}"
+    renditions="{\"webm\":\"/media/$id.webm\",\"mp4\":\"/media/$id.mp4\"}"
   fi
   items+=("{\"id\":\"$id\",\"type\":\"$type\",\"advertiser\":\"$advertiser\",\"title\":\"$title\",\"durationMs\":$duration,\"renditions\":$renditions}")
   echo "  ✓ $id ($type, ${duration}ms)"

@@ -9,6 +9,6 @@ export default defineConfig({
   build: { target: "chrome108" },
   server: {
     port: 5174,
-    proxy: { "/device": "http://localhost:3000", "/dev": "http://localhost:3000" }
+    proxy: { "/device": "http://localhost:3000", "/media": "http://localhost:3000" }
   }
 });

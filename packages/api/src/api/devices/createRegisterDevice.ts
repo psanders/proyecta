@@ -10,12 +10,14 @@ import {
   type RegisterDeviceResult
 } from "@proyecta/common";
 import { logger } from "../../logger.js";
+import { generateDeviceToken, hashDeviceToken } from "./deviceToken.js";
 
 const MAX_CODE_ATTEMPTS = 5;
 
 interface RegisterDeviceDeps {
   client: DeviceDbClient;
   generateCode?: () => string;
+  generateToken?: () => string;
   now?: () => Date;
 }
 
@@ -25,17 +27,26 @@ function isUniqueViolation(err: unknown): boolean {
 }
 
 /**
- * Creates a function that registers a physical device and returns its permanent pairing code.
- * The same hardware id always gets the same code back, so reinstalls never change it.
+ * Creates a function that registers a physical device and returns its permanent pairing code and
+ * a fresh device token. The same hardware id always gets the same code back, so reinstalls never
+ * change it; every registration rotates the token (the previous one stops working).
  *
  * @param deps - Injected database client, code generator and clock
  * @returns A validated function that registers a device
  */
 export function createRegisterDevice(deps: RegisterDeviceDeps) {
-  const { client, generateCode = generatePairingCode, now = () => new Date() } = deps;
+  const {
+    client,
+    generateCode = generatePairingCode,
+    generateToken = generateDeviceToken,
+    now = () => new Date()
+  } = deps;
 
   const fn = async (params: RegisterDeviceInput): Promise<RegisterDeviceResult> => {
     logger.verbose("registering device", { shell: params.shell });
+
+    const deviceToken = generateToken();
+    const tokenHash = hashDeviceToken(deviceToken);
 
     const existing = await client.device.findUnique({ where: { hwId: params.hwId } });
     if (existing) {
@@ -45,11 +56,12 @@ export function createRegisterDevice(deps: RegisterDeviceDeps) {
           shell: params.shell,
           chromiumVersion: params.chromiumVersion ?? existing.chromiumVersion,
           resolution: params.resolution ?? existing.resolution,
-          lastSeenAt: now()
+          lastSeenAt: now(),
+          tokenHash
         }
       });
       logger.verbose("device already registered", { id: existing.id });
-      return { code: existing.code, created: false };
+      return { code: existing.code, deviceToken, created: false };
     }
 
     for (let attempt = 1; attempt <= MAX_CODE_ATTEMPTS; attempt++) {
@@ -60,16 +72,23 @@ export function createRegisterDevice(deps: RegisterDeviceDeps) {
             hwId: params.hwId,
             shell: params.shell,
             chromiumVersion: params.chromiumVersion,
-            resolution: params.resolution
+            resolution: params.resolution,
+            tokenHash
           }
         });
         logger.verbose("device registered", { id: device.id });
-        return { code: device.code, created: true };
+        return { code: device.code, deviceToken, created: true };
       } catch (err) {
         if (!isUniqueViolation(err)) throw err;
         // Either the code collided or the same hwId registered concurrently: re-check the hwId.
         const raced = await client.device.findUnique({ where: { hwId: params.hwId } });
-        if (raced) return { code: raced.code, created: false };
+        if (raced) {
+          await client.device.update({
+            where: { id: raced.id },
+            data: { lastSeenAt: now(), tokenHash }
+          });
+          return { code: raced.code, deviceToken, created: false };
+        }
       }
     }
 

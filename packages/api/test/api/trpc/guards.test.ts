@@ -19,7 +19,9 @@ function services(principal: Awaited<ReturnType<Services["verifyAccessToken"]>>)
     verifyAccessToken: sinon.stub().resolves(principal),
     dashboardUrl: "http://app",
     identityBridgeUrl: "http://bridge",
-    fetch: sinon.stub() as unknown as typeof fetch
+    fetch: sinon.stub() as unknown as typeof fetch,
+    sync: {} as Services["sync"],
+    pairingLimiter: { take: () => true }
   };
 }
 

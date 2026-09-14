@@ -88,6 +88,13 @@ export class PlaybackEngine {
     for (const video of this.videos) release(video);
   }
 
+  /** Stops playback and removes the engine's layers from the page. */
+  destroy(): void {
+    this.stop();
+    for (const layer of [...this.videos, ...this.images]) layer.remove();
+    this.active = null;
+  }
+
   private async advance(): Promise<void> {
     for (let attempt = 0; attempt < this.items.length && !this.stopped; attempt++) {
       this.index = (this.index + 1) % this.items.length;

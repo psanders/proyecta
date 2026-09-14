@@ -2,6 +2,7 @@
  * Copyright (C) 2026 by Proyecta. All rights reserved.
  */
 import type { IncomingHttpHeaders } from "node:http";
+import type { DeviceSyncDeps } from "../api/screens/deps.js";
 import type { IdentityApi, Principal, WorkspaceAccess } from "../identity/types.js";
 
 export const WORKSPACE_HEADER = "x-workspace";
@@ -13,6 +14,8 @@ export interface Services {
   dashboardUrl: string;
   identityBridgeUrl: string;
   fetch: typeof fetch;
+  sync: DeviceSyncDeps;
+  pairingLimiter: { take: (key: string) => boolean };
 }
 
 export interface Context extends Services {
@@ -27,15 +30,23 @@ function header(headers: IncomingHttpHeaders, name: string): string | null {
   return (Array.isArray(value) ? value[0] : value) ?? null;
 }
 
-/** Resolves the caller from the bearer token and the active workspace from x-workspace. */
+/**
+ * Resolves the caller from the bearer token and the active workspace from x-workspace. Event
+ * stream subscriptions can't send headers, so they pass `{ token, workspace }` as tRPC
+ * connection params instead.
+ */
 export async function resolveContext(
   services: Services,
-  headers: IncomingHttpHeaders
+  headers: IncomingHttpHeaders,
+  connectionParams?: Record<string, string> | null
 ): Promise<Context> {
   const authorization = header(headers, "authorization");
-  const token = authorization?.startsWith("Bearer ") ? authorization.slice(7) : null;
+  const token =
+    (authorization?.startsWith("Bearer ") ? authorization.slice(7) : null) ??
+    connectionParams?.token ??
+    null;
   const principal = token ? await services.verifyAccessToken(token) : null;
-  const requested = header(headers, WORKSPACE_HEADER);
+  const requested = header(headers, WORKSPACE_HEADER) ?? connectionParams?.workspace ?? null;
   const workspace =
     (principal && requested && principal.access.find((a) => a.accessKeyId === requested)) || null;
   return { ...services, token: principal ? token : null, principal, workspace };

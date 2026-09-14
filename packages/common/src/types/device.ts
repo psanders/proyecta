@@ -18,6 +18,8 @@ export interface Device {
 export interface RegisterDeviceResult {
   /** Canonical pairing code, e.g. "8F3K2QLM". */
   code: string;
+  /** Bearer credential for every other /device/v1 call. Returned only here; stored hashed. */
+  deviceToken: string;
   /** True when this call minted the code; false when the hardware id was already known. */
   created: boolean;
 }
@@ -31,11 +33,13 @@ export interface DeviceDbClient {
     findUnique(args: { where: { hwId: string } }): Promise<Device | null>;
     update(args: {
       where: { id: string };
-      data: Partial<Pick<Device, "shell" | "chromiumVersion" | "resolution" | "lastSeenAt">>;
+      data: Partial<Pick<Device, "shell" | "chromiumVersion" | "resolution" | "lastSeenAt">> & {
+        tokenHash?: string;
+      };
     }): Promise<Device>;
     create(args: {
       data: Pick<Device, "code" | "hwId" | "shell"> &
-        Partial<Pick<Device, "chromiumVersion" | "resolution">>;
+        Partial<Pick<Device, "chromiumVersion" | "resolution">> & { tokenHash?: string };
     }): Promise<Device>;
   };
 }

@@ -1,0 +1,23 @@
+/**
+ * Copyright (C) 2026 by Proyecta. All rights reserved.
+ */
+import type { DeviceState } from "@proyecta/common";
+import type { DeviceSyncDeps } from "../screens/deps.js";
+
+/** The device's current state: link, screen name and the rotation to play. */
+export async function buildDeviceState(
+  deps: DeviceSyncDeps,
+  deviceId: string
+): Promise<DeviceState> {
+  const binding = await deps.db.deviceBinding.findFirst({
+    where: { deviceId, unlinkedAt: null },
+    include: { screen: { select: { id: true, name: true } } }
+  });
+  const now = deps.now ?? (() => new Date());
+  return {
+    linked: !!binding,
+    screen: binding ? { id: binding.screen.id, name: binding.screen.name } : null,
+    rotation: binding ? await deps.loadRotation() : null,
+    serverTime: now().toISOString()
+  };
+}

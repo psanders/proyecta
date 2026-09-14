@@ -6,12 +6,21 @@ import { createIdentityClient } from "@fonoster/identity-client";
 import { createApp } from "./app.js";
 import { loadConfig } from "./config.js";
 import { createDbClient } from "./db.js";
+import { createRateLimiter } from "./events/createRateLimiter.js";
+import { createStatusSweeper } from "./events/createStatusSweeper.js";
+import { EventHub } from "./events/hub.js";
+import { createRotationLoader } from "./events/rotation.js";
 import { createVerifyAccessToken } from "./identity/createVerifyAccessToken.js";
 import { logger } from "./logger.js";
 
 const config = loadConfig();
-const client = createDbClient(config.databaseUrl);
+const db = createDbClient(config.databaseUrl);
 const identity = createIdentityClient(config.identity.endpoint);
+// Default rotation (generated demo ads) until advertisers exist.
+const mediaDir = resolve(import.meta.dirname, "../.data/media");
+const sync = { db, hub: new EventHub(), loadRotation: createRotationLoader(mediaDir) };
+
+createStatusSweeper(sync);
 
 const services = {
   identity,
@@ -22,13 +31,11 @@ const services = {
   }),
   dashboardUrl: config.dashboardUrl,
   identityBridgeUrl: config.identity.bridgeUrl,
-  fetch
+  fetch,
+  sync,
+  pairingLimiter: createRateLimiter(10, 60_000)
 };
 
-const devMediaDir = config.isProduction
-  ? undefined
-  : resolve(import.meta.dirname, "../.data/media");
-
-createApp(client, services, { devMediaDir }).listen(config.port, () => {
+createApp(services, { mediaDir }).listen(config.port, () => {
   logger.info(`api listening on :${config.port}`);
 });

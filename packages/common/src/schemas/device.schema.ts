@@ -25,7 +25,8 @@ export const registerDeviceSchema = z.object({
     .string()
     .trim()
     .regex(/^\d{2,5}x\d{2,5}$/, "Resolution must look like 1920x1080")
-    .optional()
+    .optional(),
+  playerVersion: z.string().trim().max(32, "Player version is too long").optional()
 });
 
 /** A pairing code as typed by a person: forgiving on case and dashes, strict on content. */

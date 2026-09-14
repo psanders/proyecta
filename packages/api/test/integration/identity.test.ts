@@ -7,6 +7,8 @@ import { expect } from "chai";
 import { createIdentityClient } from "@fonoster/identity-client";
 import { TRPCError } from "@trpc/server";
 import { loadConfig } from "../../src/config.js";
+import { createDbClient } from "../../src/db.js";
+import { EventHub } from "../../src/events/hub.js";
 import { createVerifyAccessToken } from "../../src/identity/createVerifyAccessToken.js";
 import { resolveContext, type Services } from "../../src/trpc/context.js";
 import { appRouter } from "../../src/trpc/router.js";
@@ -24,7 +26,13 @@ const services: Services = {
   }),
   dashboardUrl: config.dashboardUrl,
   identityBridgeUrl: config.identity.bridgeUrl,
-  fetch
+  fetch,
+  sync: {
+    db: createDbClient(process.env.TEST_DATABASE_URL!),
+    hub: new EventHub(),
+    loadRotation: async () => null
+  },
+  pairingLimiter: { take: () => true }
 };
 const createCaller = createCallerFactory(appRouter);
 

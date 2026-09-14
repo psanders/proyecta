@@ -9,3 +9,6 @@ export * from "./types/device.js";
 export * from "./schemas/manifest.schema.js";
 export * from "./schemas/auth.schema.js";
 export * from "./schemas/workspace.schema.js";
+export * from "./schemas/screen.schema.js";
+export * from "./schemas/deviceProtocol.schema.js";
+export * from "./utils/sse.js";
