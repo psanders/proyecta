@@ -156,6 +156,16 @@ export function AdDetailPage() {
                         {t("adDetail.pendingHint")}
                       </span>
                     ) : null}
+                    {screen.reasonCode || screen.note ? (
+                      <span data-testid="screen-reason" className="text-xs text-muted-foreground">
+                        {[
+                          screen.reasonCode ? t(`reason.${screen.reasonCode}` as MessageId) : null,
+                          screen.note ? `«${screen.note}»` : null
+                        ]
+                          .filter(Boolean)
+                          .join(" · ")}
+                      </span>
+                    ) : null}
                     {screen.newFilePending ? (
                       <span className="text-xs text-muted-foreground">
                         {t("adDetail.newFilePending")}

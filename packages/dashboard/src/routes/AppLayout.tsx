@@ -3,6 +3,7 @@
  */
 import { Navigate, Outlet, useLocation } from "react-router-dom";
 import { AppSidebar } from "../components/AppSidebar.js";
+import { HiddenSideBanner } from "../components/HiddenSideBanner.js";
 import { Icon } from "../components/ui/Icon.js";
 import { useLiveStatus } from "../lib/useLiveStatus.js";
 import { usePreferenceSync } from "../lib/usePreferenceSync.js";
@@ -40,7 +41,10 @@ function SignedIn() {
         ) : hasNone ? (
           <CreateBusinessPage />
         ) : (
-          <Outlet />
+          <>
+            <HiddenSideBanner />
+            <Outlet />
+          </>
         )}
       </main>
     </div>

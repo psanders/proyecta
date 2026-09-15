@@ -9,6 +9,7 @@ import { cn } from "../lib/cn.js";
 import { session } from "../lib/session.js";
 import { trpc } from "../lib/trpc.js";
 import { useDashboardView } from "../lib/useDashboardView.js";
+import { usePendingRequests } from "../lib/usePendingRequests.js";
 import { useWorkspace } from "../lib/useWorkspace.js";
 import type { MessageId } from "../lib/i18n.js";
 import { useI18n } from "../lib/useI18n.js";
@@ -19,6 +20,8 @@ interface NavItem {
   label: MessageId;
   icon: IconName;
   end?: boolean;
+  /** Shows the pending request count. */
+  countsRequests?: boolean;
 }
 
 interface NavGroup {
@@ -26,7 +29,10 @@ interface NavGroup {
   items: NavItem[];
 }
 
-const SCREENS: NavItem[] = [{ to: "/", label: "nav.screens", icon: "tv", end: true }];
+const SCREENS: NavItem[] = [
+  { to: "/", label: "nav.screens", icon: "tv", end: true },
+  { to: "/requests", label: "nav.requests", icon: "inbox", countsRequests: true }
+];
 const ADS: NavItem[] = [
   { to: "/explore", label: "nav.explore", icon: "search" },
   { to: "/ads", label: "nav.ads", icon: "campaign" },
@@ -79,6 +85,7 @@ export function AppSidebar() {
   const { workspaces, active } = useWorkspace();
   const { view } = useDashboardView();
   const groups = navGroups(view);
+  const pendingRequests = usePendingRequests();
   const profile = trpc.profile.get.useQuery(undefined, { staleTime: 60_000 });
   const utils = trpc.useUtils();
   const queryClient = useQueryClient();
@@ -193,8 +200,25 @@ export function AppSidebar() {
                   )
                 }
               >
-                <Icon name={item.icon} className="size-6" />
-                {collapsed ? null : t(item.label)}
+                <span className="relative">
+                  <Icon name={item.icon} className="size-6" />
+                  {collapsed && item.countsRequests && pendingRequests > 0 ? (
+                    <span className="absolute -top-0.5 -right-0.5 size-2 rounded-full bg-primary" />
+                  ) : null}
+                </span>
+                {collapsed ? null : (
+                  <>
+                    <span className="flex-1">{t(item.label)}</span>
+                    {item.countsRequests && pendingRequests > 0 ? (
+                      <span
+                        data-testid="requests-count"
+                        className="rounded-full bg-primary px-2 py-0.5 font-mono text-xs text-primary-foreground"
+                      >
+                        {pendingRequests}
+                      </span>
+                    ) : null}
+                  </>
+                )}
               </NavLink>
             ))}
           </div>
