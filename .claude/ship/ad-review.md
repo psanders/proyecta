@@ -1,7 +1,7 @@
 # Ship checkpoint — ad-review
 
 Started: 2026-09-15
-Current stage: 5 — Sync (waiting for PR review and merge)
+Current stage: done
 
 **Scope:** Owners decide on other businesses' ads on their screens: requests inbox with a pending count, approve per
 screen (unchecked ones declined), reject with reasons, approval reuse, stop (revoke), "Sin respuesta"; advertisers see
@@ -16,8 +16,8 @@ Rechazado / Detenido por el vallero / Sin respuesta / Requiere atención with re
 | 2 | Spec reconcile | done | create/add only notify screens whose placement starts approved (behavior unchanged for players) |
 | 3 | Build | done | common schemas/statuses, migration, API review functions + reuse, router, dashboard pages, banner, screen card |
 | 4 | Test | done | lint, typecheck, prettier; unit 225; integration 19/19; e2e 18/18 (new e2e/adReview.spec.ts) |
-| 5 | Sync | pending | gate: after PR merge |
-| 6 | Archive | pending | gate: after PR merge |
+| 5 | Sync | done | after #28 merged |
+| 6 | Archive | done | openspec/changes/archive/2026-09-15-ad-review |
 
 Status values: `pending` · `in-progress` · `done` · `skipped` (with reason).
 
@@ -25,6 +25,7 @@ Status values: `pending` · `in-progress` · `done` · `skipped` (with reason).
 
 Newest first. One line per meaningful decision or stage transition.
 
+- 2026-09-15 — #28 merged; specs synced (ad-review added; ads, device-sync, workspace-view updated) and change archived.
 - 2026-09-15 — Rebased onto main after #26 and #23 (config/proyecta.json); worktree config points at proyecta_ads DBs.
 - 2026-09-15 — Branch feat/ad-review stacked on chore/sync-archive-advertiser-ads (#26, open) so synced specs exist.
 - 2026-09-15 — A request is derived (ad × owner business), not stored; decisions live on AdPlacement.
