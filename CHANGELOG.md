@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.0](https://github.com/psanders/proyecta/compare/v0.3.0...v0.4.0) (2026-09-15)
+
+
+### Features
+
+* owner review of ads on their screens ([#28](https://github.com/psanders/proyecta/issues/28)) ([5e94ee6](https://github.com/psanders/proyecta/commit/5e94ee6cd3ff7a8b7a56b6de0da9e39739a1cb07))
+
 ## [0.3.0](https://github.com/psanders/proyecta/compare/v0.2.1...v0.3.0) (2026-09-15)
 
 
