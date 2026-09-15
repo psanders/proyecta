@@ -62,14 +62,19 @@ export const strings = {
     team: "Equipo",
     profile: "Mi perfil",
     signOut: "Cerrar sesión",
-    switchBusiness: "Cambiar de negocio"
+    switchBusiness: "Cambiar de negocio",
+    collapse: "Contraer menú",
+    expand: "Expandir menú",
+    account: "Negocio y cuenta",
+    settings: "Configuración",
+    businesses: "Negocios"
   },
   screens: {
     title: "Mis pantallas",
     subtitle: "Administra tus pantallas y su disponibilidad publicitaria",
     add: "Agregar pantalla",
     total: "Pantallas",
-    online: "En línea",
+    online: "Activas",
     incomplete: "Información incompleta",
     yours: "Tus pantallas",
     archived: "Archivadas",
@@ -85,7 +90,7 @@ export const strings = {
     exit: "Salir",
     pill: "Paso único · 2 minutos",
     title: "Publiquemos tu primera pantalla",
-    body: "Proyecta conecta tus pantallas digitales con anunciantes que buscan espacios comerciales. Conecta el reproductor y completa la información de tu pantalla.",
+    body: "Proyecta conecta tus pantallas digitales con anunciantes que buscan espacios como el tuyo. Cuéntanos sobre tu pantalla y hazla parte de la red.",
     cardTitle: "Conecta tu pantalla física",
     cardBody: "Antes de publicarla, confirmemos que tu pantalla está encendida y lista.",
     step1: "Descarga el reproductor Proyecta",
@@ -95,7 +100,7 @@ export const strings = {
     step2Body: "Aparece en tu pantalla luego de instalar el reproductor.",
     skip: "Prefiero configurarlo más tarde",
     submit: "Vincular y continuar",
-    found: "Pantalla encontrada"
+    found: "Pantalla encontrada · lista para vincular"
   },
   form: {
     newTitle: "Agregar pantalla",
@@ -125,16 +130,23 @@ export const strings = {
     start: "Hora de inicio",
     end: "Hora de fin",
     commercial: "Información comercial",
-    commercialHint: "Tu tarifa de referencia para anunciantes",
-    price: "Precio de referencia (RD$)",
-    pricePlaceholder: "Ej. 2,500",
-    priceModel: "Modelo de precio",
+    commercialHint: "Se cobra por cada 5 segundos que se muestra un anuncio",
+    rate: "Tarifa por 5 segundos (US$)",
+    ratePlaceholder: "Ej. 0.25",
+    rateHelper: "Ej.: un anuncio de 15 s = 3 × tarifa",
     select: "Selecciona una opción",
+    placeTypePlaceholder: "Selecciona un tipo",
+    environmentPlaceholder: "Interior / Exterior",
+    widthPlaceholder: "Ej. 120",
+    heightPlaceholder: "Ej. 70",
+    startPlaceholder: "08:00",
+    endPlaceholder: "20:00",
+    pairingNoticeTitle: (code: string) => `Reproductor ${code} listo`,
+    pairingNoticeBody:
+      "Al guardar, vincularemos este reproductor a la pantalla y empezará a reproducir anuncios.",
     cancel: "Cancelar",
     create: "Guardar y publicar pantalla",
-    save: "Guardar cambios",
-    pairingNotice: (code: string) =>
-      `Al guardar, vincularemos el reproductor ${code} a esta pantalla.`
+    save: "Guardar cambios"
   },
   detail: {
     back: "Volver a Mis pantallas",
@@ -154,17 +166,21 @@ export const strings = {
     link: "Vincular",
     unlink: "Desvincular reproductor",
     moreActions: "Más acciones",
+    copyCode: "Copiar código",
+    copied: "Código copiado",
+    cpu: "CPU",
+    notReported: "—",
     pause: "Pausar pantalla",
     comingSoon: "Próximamente",
     info: "Información",
     availability: "Disponibilidad",
     schedule: "Horario",
     price: "Precio",
-    reference: "Tarifa de referencia",
-    model: "Modelo",
+    rate: "Tarifa por 5 segundos",
     activity: "Actividad publicitaria",
-    activityBody:
-      "Próximamente: aquí verás las campañas activas y el historial de anuncios reproducidos en esta pantalla.",
+    noRate: "Configura una tarifa en Editar pantalla para ver cuánto ha generado esta pantalla.",
+    today: "Hoy",
+    last7Days: "Últimos 7 días",
     archive: "Archivar",
     remove: "Eliminar",
     archivedNotice: "Esta pantalla está archivada. Solo puedes consultarla.",
@@ -207,6 +223,32 @@ export const strings = {
     memberHint: "Puede ver pantallas y su estado",
     you: "Tú"
   },
+  settings: {
+    title: "Configuración",
+    subtitle: "Administra el nombre, la moneda y la zona horaria de tu negocio.",
+    preferences: "Preferencias",
+    preferencesHint: "Así se muestra tu negocio y así contamos tus reproducciones del día.",
+    name: "Nombre del negocio",
+    currency: "Moneda",
+    currencyValue: "Dólar estadounidense (US$)",
+    currencyHint: "Las tarifas por 5 segundos se cobran en dólares estadounidenses.",
+    timezone: "Zona horaria",
+    save: "Guardar cambios",
+    saved: "Cambios guardados",
+    readOnly: "Solo los administradores pueden cambiar la configuración.",
+    deleteTitle: "Eliminar negocio",
+    deleteBody:
+      "Elimina el negocio para todo tu equipo y oculta sus pantallas. El historial de reproducciones se conserva. Primero desvincula todos los reproductores.",
+    deleteDialogTitle: (name: string) => `¿Eliminar ${name}?`,
+    deleteDialogBody:
+      "Tu equipo perderá el acceso y las pantallas dejarán de aparecer. El historial de reproducciones se conserva. Esta acción no se puede deshacer.",
+    deleteConfirmLabel: "Escribe ELIMINAR para confirmar"
+  },
+  createBusiness: {
+    title: "Crea tu negocio",
+    subtitle: "Necesitas un negocio para publicar pantallas y trabajar con tu equipo.",
+    submit: "Crear negocio"
+  },
   profile: {
     title: "Mi perfil",
     subtitle: "Tus datos y tu contraseña",
@@ -218,10 +260,7 @@ export const strings = {
     current: "Contraseña actual",
     newPassword: "Nueva contraseña",
     changePassword: "Cambiar contraseña",
-    saved: "Cambios guardados",
-    business: "Negocio",
-    businessName: "Nombre del negocio",
-    rename: "Guardar nombre del negocio"
+    saved: "Cambios guardados"
   },
   errors: {
     generic: "Algo salió mal. Intenta de nuevo.",

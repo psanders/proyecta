@@ -34,12 +34,6 @@ export const PLACE_TYPE_LABELS: Record<PlaceType, string> = {
 
 export const ENVIRONMENT_LABELS = { INDOOR: "Interior", OUTDOOR: "Exterior" } as const;
 export const ORIENTATION_LABELS = { LANDSCAPE: "Horizontal", PORTRAIT: "Vertical" } as const;
-export const PRICE_MODEL_LABELS = {
-  PER_HOUR: "Por hora",
-  PER_DAY: "Por día",
-  PER_WEEK: "Por semana",
-  PER_MONTH: "Por mes"
-} as const;
 
 /** ISO weekday (1 = lunes … 7 = domingo) → short Spanish label. */
 export const WEEKDAY_LABELS: Record<number, string> = {
@@ -90,6 +84,36 @@ const optionalText = (max: number, label: string) =>
     .transform((v) => (v === "" ? undefined : v))
     .optional();
 
+const CENTS_PER_DOLLAR = 100;
+
+/**
+ * Converts a validated pay-per-display rate from US dollars into integer US$ cents, e.g.
+ * `2.5 -> 250`. A plain function, not a schema `.transform()`: this codebase re-validates
+ * mutation input against the same schema both at the tRPC boundary and again inside the
+ * validated function (see `withErrorHandlingAndValidation`), so a schema-level transform would
+ * run twice and double-convert. Callers apply this exactly once, at the point of writing to the
+ * database.
+ */
+export function rateDollarsToCents(dollars: number): number {
+  return Math.round(dollars * CENTS_PER_DOLLAR);
+}
+
+/**
+ * Pay-per-display rate, in US dollars with cent precision (converted to cents with
+ * {@link rateDollarsToCents} before it's persisted). Comparing `dollars * 100` to its rounded value
+ * (with a small float tolerance) rather than `% 0.01` avoids float-precision false rejections for
+ * an exact cent amount like 2.50.
+ */
+const ratePerFiveSecondsDollars = z
+  .number({ error: "La tarifa es obligatoria" })
+  .min(0, "La tarifa no puede ser negativa")
+  .max(1_000_000, "La tarifa es demasiado alta")
+  .refine((dollars) => {
+    const cents = dollars * CENTS_PER_DOLLAR;
+    return Math.abs(cents - Math.round(cents)) < 1e-6;
+  }, "Usa como máximo dos decimales")
+  .optional();
+
 const screenFieldsSchema = z.object({
   name: z
     .string({ error: "El nombre de la pantalla es obligatorio" })
@@ -129,15 +153,7 @@ const screenFieldsSchema = z.object({
     .transform((days) => [...new Set(days)].sort((a, b) => a - b)),
   startTime: time.optional(),
   endTime: time.optional(),
-  priceReference: z
-    .number()
-    .int("Usa pesos enteros")
-    .min(0, "El precio no puede ser negativo")
-    .max(100_000_000)
-    .optional(),
-  priceModel: z
-    .enum(["PER_HOUR", "PER_DAY", "PER_WEEK", "PER_MONTH"], { error: "Modelo de precio no válido" })
-    .optional()
+  ratePerFiveSecondsDollars
 });
 
 function checkHours(
@@ -191,15 +207,13 @@ export function isScreenComplete(screen: {
   availableDays: number[];
   startTime?: string | null;
   endTime?: string | null;
-  priceReference?: number | null;
-  priceModel?: string | null;
+  ratePerFiveSecondsCents?: number | null;
 }): boolean {
   return (
     screen.availableDays.length > 0 &&
     !!screen.startTime &&
     !!screen.endTime &&
-    screen.priceReference !== null &&
-    screen.priceReference !== undefined &&
-    !!screen.priceModel
+    screen.ratePerFiveSecondsCents !== null &&
+    screen.ratePerFiveSecondsCents !== undefined
   );
 }

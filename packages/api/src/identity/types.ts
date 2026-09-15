@@ -11,6 +11,7 @@ export type IdentityApi = Pick<
   | "exchangeCredentials"
   | "exchangeRefreshToken"
   | "createWorkspace"
+  | "deleteWorkspace"
   | "getWorkspace"
   | "listWorkspaces"
   | "updateWorkspace"

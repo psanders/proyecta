@@ -3,3 +3,4 @@
  */
 export * from "./createAcceptInvitation.js";
 export * from "./createRemoveMember.js";
+export * from "./createWorkspaceSettingsFunctions.js";

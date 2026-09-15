@@ -129,6 +129,7 @@ describe("pairing and play attribution", () => {
             { screenId: "screen-after", linkedAt: moved, unlinkedAt: null }
           ])
         },
+        screen: { findMany: sinon.stub().resolves([]) },
         playLog: { createMany: sinon.stub().resolves({ count: 3 }) }
       };
       const play = (startedAt: string) => ({

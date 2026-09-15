@@ -35,7 +35,14 @@ export function ScreenRow({ screen }: { screen: ScreenRowData }) {
     >
       <div className="flex min-w-0 items-center gap-4">
         <div className="flex size-12 shrink-0 items-center justify-center rounded-2xl bg-secondary">
-          <Icon name="tv" className="size-[22px]" />
+          <Icon
+            name={
+              screen.placeType === "RESTAURANT" || screen.placeType === "SUPERMARKET"
+                ? "storefront"
+                : "tv"
+            }
+            className="size-[22px]"
+          />
         </div>
         <div className="flex min-w-0 flex-col gap-0.5">
           <span className="truncate text-[15px] font-semibold text-foreground">{screen.name}</span>

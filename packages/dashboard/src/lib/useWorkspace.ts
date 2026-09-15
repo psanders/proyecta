@@ -28,6 +28,8 @@ export function useWorkspace() {
   return {
     workspaces: items,
     active,
+    /** Signed in but not part of any business (e.g. after deleting the last one). */
+    hasNone: workspaces.isSuccess && items.length === 0,
     canManage: canManage(active?.role),
     isLoading: workspaces.isLoading || (workspaces.isSuccess && items.length > 0 && !active)
   };

@@ -48,7 +48,7 @@ test.describe("owner dashboard", () => {
     await shot(page, "00-sign-in");
     await signUp(page, stamp);
     await page.getByLabel("Ingresa el código de vinculación").fill(code.toLowerCase());
-    await expect(page.getByText("Pantalla encontrada")).toBeVisible();
+    await expect(page.getByText("Pantalla encontrada · lista para vincular")).toBeVisible();
     await shot(page, "02-onboarding-found");
     await page.getByRole("button", { name: "Vincular y continuar" }).click();
 
@@ -60,15 +60,22 @@ test.describe("owner dashboard", () => {
       await page.getByRole("button", { name: day, exact: true }).click();
     await page.getByLabel("Hora de inicio").fill("08:00");
     await page.getByLabel("Hora de fin").fill("22:00");
-    await page.getByLabel("Precio de referencia (RD$)").fill("2500");
-    await page.getByLabel("Modelo de precio").selectOption("PER_HOUR");
+    await page.getByLabel("Tarifa por 5 segundos (US$)").fill("2.50");
     await shot(page, "03-add-screen");
     await page.getByRole("button", { name: "Guardar y publicar pantalla" }).click();
 
     await expect(page.getByRole("heading", { name: "Valla Av. 27 de Febrero" })).toBeVisible();
     await expect(page.getByTestId("status-badge").first()).toHaveText("En línea");
-    await expect(page.getByText(code)).toBeVisible();
+    await expect(page.getByTestId("pairing-code")).toHaveText(code);
+    await context.grantPermissions(["clipboard-read", "clipboard-write"]);
+    await page.getByRole("button", { name: "Copiar código" }).click();
+    await expect(page.getByRole("button", { name: "Código copiado" })).toBeVisible();
+    expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(code);
     await expect(player.locator(".code-box")).toBeHidden();
+    // Pay-per-display: the rate saved above, and an earnings summary instead of "Próximamente".
+    await expect(page.getByText("US$ 2.50")).toBeVisible();
+    await expect(page.getByText(/^Hoy · \d+ reproducci/)).toBeVisible();
+    await expect(page.getByText(/^Últimos 7 días · \d+ reproducci/)).toBeVisible();
     await shot(page, "04-screen-detail-linked");
 
     await page.getByRole("link", { name: "Volver a Mis pantallas" }).click();
@@ -92,6 +99,28 @@ test.describe("owner dashboard", () => {
     await shot(page, "08-screens-empty");
   });
 
+  test("collapses the navigation to an icon rail and remembers it", async ({ page }) => {
+    await signUp(page, Date.now());
+    await page.goto(APP);
+    const nav = page.locator("aside");
+    await expect(nav).toHaveAttribute("data-collapsed", "false");
+    await expect(page.getByRole("heading", { name: "Aún no tienes pantallas" })).toBeVisible();
+    await shot(page, "11-nav-expanded");
+
+    await page.getByRole("button", { name: "Contraer menú" }).click();
+    await expect(nav).toHaveAttribute("data-collapsed", "true");
+    await expect(page.getByRole("link", { name: "Configuración" })).toBeVisible();
+    await expect(page.getByRole("button", { name: "Expandir menú" })).toBeVisible();
+    await expect.poll(async () => (await nav.boundingBox())?.width).toBe(72);
+    await expect(page.getByRole("button", { name: "Negocio y cuenta" })).toHaveText("VC");
+    await shot(page, "12-nav-collapsed");
+
+    await page.reload();
+    await expect(nav).toHaveAttribute("data-collapsed", "true");
+    await page.getByRole("button", { name: "Expandir menú" }).click();
+    await expect(nav).toHaveAttribute("data-collapsed", "false");
+  });
+
   test("invite a teammate who accepts from the email and appears as active", async ({
     page,
     request
@@ -99,7 +128,11 @@ test.describe("owner dashboard", () => {
     const stamp = Date.now();
     const teammate = `staff-${stamp}@proyecta.local`;
     await signUp(page, stamp);
-    await page.goto(`${APP}/equipo`);
+    await page.goto(APP);
+    await page.getByRole("button", { name: "Negocio y cuenta" }).click();
+    await shot(page, "16-account-menu");
+    await page.getByRole("menuitem", { name: "Equipo" }).click();
+    await expect(page.getByRole("heading", { name: "Equipo" })).toBeVisible();
     await page.getByRole("button", { name: "Invitar persona" }).click();
     const dialog = page.getByRole("dialog");
     await dialog.getByLabel("Correo electrónico").fill(teammate);
@@ -138,5 +171,45 @@ test.describe("owner dashboard", () => {
     await expect(page.getByTestId("member-row").filter({ hasText: teammate })).toContainText(
       "Activo"
     );
+  });
+
+  test("changes the time zone, deletes the business and creates a new one", async ({ page }) => {
+    const stamp = Date.now();
+    await signUp(page, stamp);
+    await page.goto(APP);
+
+    await page.getByRole("link", { name: "Configuración" }).click();
+    await expect(page.getByRole("heading", { name: "Configuración" })).toBeVisible();
+    await shot(page, "13-settings");
+
+    await page.getByLabel("Zona horaria").selectOption("America/New_York");
+    await page.getByRole("button", { name: "Guardar cambios" }).click();
+    await expect(page.getByText("Cambios guardados")).toBeVisible();
+
+    await page.reload();
+    await expect(page.getByLabel("Zona horaria")).toHaveValue("America/New_York");
+
+    await page.getByRole("button", { name: "Eliminar negocio" }).first().click();
+    const dialog = page.getByRole("dialog");
+    await expect(
+      dialog.getByRole("heading", { name: "¿Eliminar Vallas del Cibao?" })
+    ).toBeVisible();
+    await shot(page, "14-delete-dialog");
+    const confirmButton = dialog.getByRole("button", { name: "Eliminar negocio" });
+    await expect(confirmButton).toBeDisabled();
+    await dialog.getByLabel("Escribe ELIMINAR para confirmar").fill("ELIMINAR");
+    await expect(confirmButton).toBeEnabled();
+    await confirmButton.click();
+
+    await expect(page.getByRole("heading", { name: "Crea tu negocio" })).toBeVisible();
+    await shot(page, "15-create-business");
+    await page.getByLabel("Nombre del negocio").fill("Pantallas Punta Cana");
+    await page.getByRole("button", { name: "Crear negocio" }).click();
+
+    await expect(page.getByRole("heading", { name: "Mis pantallas" })).toBeVisible();
+    await page.getByRole("button", { name: "Negocio y cuenta" }).click();
+    const businessRow = page.getByRole("menuitem", { name: /Pantallas Punta Cana/ });
+    await expect(businessRow).toBeVisible();
+    await expect(businessRow.locator(".icon")).toHaveCount(1);
   });
 });

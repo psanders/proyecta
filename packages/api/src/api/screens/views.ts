@@ -40,8 +40,7 @@ export interface ScreenView {
   availableDays: number[];
   startTime: string | null;
   endTime: string | null;
-  priceReference: number | null;
-  priceModel: string | null;
+  ratePerFiveSecondsCents: number | null;
   archived: boolean;
   complete: boolean;
   status: ScreenStatusView;
@@ -68,8 +67,7 @@ export function toScreenView(row: ScreenRow, hub: EventHub, now: Date): ScreenVi
     availableDays: row.availableDays,
     startTime: row.startTime,
     endTime: row.endTime,
-    priceReference: row.priceReference,
-    priceModel: row.priceModel,
+    ratePerFiveSecondsCents: row.ratePerFiveSecondsCents,
     archived: row.status === "ARCHIVED",
     complete: isScreenComplete(row),
     status: deriveStatus({

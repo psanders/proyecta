@@ -5,6 +5,7 @@ import { z } from "zod/v4";
 import {
   createScreenSchema,
   listScreensSchema,
+  rateDollarsToCents,
   screenIdSchema,
   updateScreenSchema,
   withErrorHandlingAndValidation
@@ -37,7 +38,17 @@ export function createCreateScreen(deps: ScreenDeps) {
 
   const fn = async (params: z.infer<typeof schema>): Promise<ScreenView> => {
     logger.verbose("creating screen", { workspace: params.workspaceAccessKeyId });
-    const row = await deps.db.screen.create({ data: params, include: screenWithDevice });
+    const { ratePerFiveSecondsDollars, ...fields } = params;
+    const row = await deps.db.screen.create({
+      data: {
+        ...fields,
+        ratePerFiveSecondsCents:
+          ratePerFiveSecondsDollars === undefined
+            ? undefined
+            : rateDollarsToCents(ratePerFiveSecondsDollars)
+      },
+      include: screenWithDevice
+    });
     logger.verbose("screen created", { id: row.id });
     return toScreenView(row, deps.hub, now());
   };
@@ -71,15 +82,22 @@ export function createUpdateScreen(deps: ScreenDeps) {
           "orientation",
           "resolution",
           "startTime",
-          "endTime",
-          "priceReference",
-          "priceModel"
+          "endTime"
         ] as const
       ).map((key) => [key, fields[key] ?? null])
     );
     const row = await deps.db.screen.update({
       where: { id },
-      data: { ...unset, name: fields.name, city: fields.city, availableDays: fields.availableDays },
+      data: {
+        ...unset,
+        ratePerFiveSecondsCents:
+          fields.ratePerFiveSecondsDollars === undefined
+            ? null
+            : rateDollarsToCents(fields.ratePerFiveSecondsDollars),
+        name: fields.name,
+        city: fields.city,
+        availableDays: fields.availableDays
+      },
       include: screenWithDevice
     });
     logger.verbose("screen updated", { id });

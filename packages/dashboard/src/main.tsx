@@ -18,6 +18,7 @@ import {
 } from "./routes/auth/AuthPages.js";
 import { ProfilePage } from "./routes/profile/ProfilePage.js";
 import { OnboardingPage } from "./routes/screens/OnboardingPage.js";
+import { SettingsPage } from "./routes/settings/SettingsPage.js";
 import { ScreenDetailPage } from "./routes/screens/ScreenDetailPage.js";
 import { ScreenFormPage } from "./routes/screens/ScreenFormPage.js";
 import { ScreensPage } from "./routes/screens/ScreensPage.js";
@@ -59,7 +60,8 @@ const router = createBrowserRouter([
       { path: "pantallas/:id", element: <ScreenDetailPage /> },
       { path: "pantallas/:id/editar", element: <ScreenFormPage /> },
       { path: "equipo", element: <TeamPage /> },
-      { path: "perfil", element: <ProfilePage /> }
+      { path: "perfil", element: <ProfilePage /> },
+      { path: "configuracion", element: <SettingsPage /> }
     ]
   },
   { path: "*", element: <Navigate to="/" replace /> }

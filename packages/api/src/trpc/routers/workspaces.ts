@@ -4,16 +4,27 @@
 import { TRPCError } from "@trpc/server";
 import {
   acceptInvitationSchema,
+  createWorkspaceSchema,
+  deleteWorkspaceSchema,
+  updateWorkspaceSettingsSchema,
   inviteMemberSchema,
   memberRefSchema,
   renameWorkspaceSchema,
   type WorkspaceRole
 } from "@proyecta/common";
-import { createAcceptInvitation, createRemoveMember } from "../../api/workspaces/index.js";
+import {
+  createAcceptInvitation,
+  createCreateWorkspace,
+  createDeleteWorkspace,
+  createGetWorkspaceSettings,
+  createRemoveMember,
+  createUpdateWorkspaceSettings
+} from "../../api/workspaces/index.js";
 import { grpcStatus, hasGrpcStatus } from "../../identity/grpc.js";
 import { validate } from "../validate.js";
 import {
   adminProcedure,
+  ownerProcedure,
   protectedProcedure,
   publicProcedure,
   router,
@@ -128,5 +139,39 @@ export const workspacesRouter = router({
         failPath: INVITE_FAIL_PATH,
         fetch: ctx.fetch
       })(input)
+    ),
+
+  settings: workspaceProcedure.query(({ ctx }) =>
+    createGetWorkspaceSettings({ db: ctx.sync.db, identity: ctx.identity })({
+      workspaceAccessKeyId: ctx.workspace.accessKeyId,
+      role: ctx.workspace.role,
+      token: ctx.token
+    })
+  ),
+
+  updateSettings: adminProcedure
+    .input(validate(updateWorkspaceSettingsSchema))
+    .mutation(({ ctx, input }) =>
+      createUpdateWorkspaceSettings({ db: ctx.sync.db, identity: ctx.identity })({
+        ...input,
+        workspaceAccessKeyId: ctx.workspace.accessKeyId,
+        role: ctx.workspace.role,
+        token: ctx.token
+      })
+    ),
+
+  delete: ownerProcedure.input(validate(deleteWorkspaceSchema)).mutation(({ ctx, input }) =>
+    createDeleteWorkspace({ db: ctx.sync.db, identity: ctx.identity })({
+      ...input,
+      workspaceAccessKeyId: ctx.workspace.accessKeyId,
+      role: ctx.workspace.role,
+      token: ctx.token
+    })
+  ),
+
+  create: protectedProcedure
+    .input(validate(createWorkspaceSchema))
+    .mutation(({ ctx, input }) =>
+      createCreateWorkspace(ctx.identity)({ ...input, token: ctx.token })
     )
 });

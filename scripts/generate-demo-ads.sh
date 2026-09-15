@@ -96,11 +96,11 @@ photo_video_ad arena-blanca web-hero.png 0xFDE68A 15
 
 # Renditions + manifest (order = rotation order).
 ads=(
-  "cafe-aroma|image|Café Aroma|Tu mañana empieza aquí|8000"
+  "cafe-aroma|image|Café Aroma|Tu mañana empieza aquí|10000"
   "cerveceria-caribe|video|Cervecería del Caribe|El sabor de la isla, bien fría|"
-  "farmacia-luz|image|Farmacia Luz|Abierta 24 horas|8000"
+  "farmacia-luz|image|Farmacia Luz|Abierta 24 horas|10000"
   "motores-quisqueya|video|Motores Quisqueya|Estrena tu yipeta este mes|"
-  "banco-brisa|image|Banco Brisa|Tu préstamo en 24 horas|8000"
+  "banco-brisa|image|Banco Brisa|Tu préstamo en 24 horas|10000"
   "arena-blanca|video|Resort Arena Blanca|Escápate este fin de semana|"
 )
 

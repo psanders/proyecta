@@ -3,6 +3,7 @@
  */
 import { PAIRING_CODE_ALPHABET, formatPairingCode, normalizePairingCode } from "@proyecta/common";
 import { useId } from "react";
+import { cn } from "../lib/cn.js";
 
 /** Keeps only valid code characters (case-insensitive), max 8. */
 export function cleanCode(raw: string): string {
@@ -18,12 +19,15 @@ export function CodeInput({
   value,
   onChange,
   label,
-  error
+  error,
+  success
 }: {
   value: string;
   onChange: (code: string) => void;
   label: string;
   error?: string;
+  /** Code verified (Pencil onboarding-code-found: green border). */
+  success?: boolean;
 }) {
   const id = useId();
   const display = value.length > 4 ? formatPairingCode(value) : value;
@@ -41,7 +45,10 @@ export function CodeInput({
         spellCheck={false}
         inputMode="text"
         aria-invalid={!!error}
-        className="h-12 w-52 rounded-full border border-input bg-background px-4 text-center font-mono text-lg font-bold tracking-[0.2em] text-foreground uppercase outline-none placeholder:text-muted-foreground/60 focus:border-foreground aria-invalid:border-destructive"
+        className={cn(
+          "h-10 w-40 rounded-full border border-input bg-background px-4 text-sm text-foreground uppercase outline-none placeholder:text-muted-foreground focus:border-foreground aria-invalid:border-destructive",
+          success && "border-success-foreground focus:border-success-foreground"
+        )}
       />
     </div>
   );

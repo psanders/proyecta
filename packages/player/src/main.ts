@@ -159,7 +159,8 @@ async function applyState(state: DeviceState, session: StoredSession) {
           codec: record.codec,
           result: record.result,
           startedAt: new Date(record.startedAt).toISOString(),
-          endedAt: new Date(record.endedAt).toISOString()
+          endedAt: new Date(record.endedAt).toISOString(),
+          durationMs: record.durationMs
         });
         queuedPlays.splice(0, Math.max(0, queuedPlays.length - MAX_QUEUED_PLAYS));
       }

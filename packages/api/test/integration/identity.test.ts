@@ -197,6 +197,35 @@ describe("identity-auth (integration: Identity + Mailpit)", function () {
     expect((await owner.workspaces.members()).map((m) => m.email)).to.deep.equal([ownerEmail]);
   });
 
+  it("creates another business, saves its settings and lets only the owner delete it", async () => {
+    const created = await (
+      await caller(ownerToken)
+    ).workspaces.create({ name: "Pantallas Punta Cana" });
+    const session = await (
+      await caller()
+    ).auth.signIn({ email: ownerEmail, password: "supersecreta1" });
+    const second = (await (await caller(session.accessToken)).workspaces.list()).find(
+      (w) => w.ref === created.ref
+    )!;
+    const owner = await caller(session.accessToken, second.accessKeyId);
+
+    await owner.workspaces.updateSettings({
+      name: "Pantallas Punta Cana",
+      timezone: "America/New_York"
+    });
+    expect(await owner.workspaces.settings()).to.deep.include({
+      timezone: "America/New_York",
+      currency: "USD",
+      isOwner: true
+    });
+
+    await expectCode(owner.workspaces.delete({ confirmation: "BORRAR" }), "BAD_REQUEST");
+    await owner.workspaces.delete({ confirmation: "ELIMINAR" });
+    const remaining = await (await caller(session.accessToken)).workspaces.list();
+    expect(remaining.map((w) => w.ref)).to.not.include(created.ref);
+    ownerToken = session.accessToken;
+  });
+
   it("resets a forgotten password from the emailed link", async () => {
     await (await caller()).auth.requestPasswordReset({ email: ownerEmail });
     const { match } = await waitForEmail(ownerEmail, /restablecer\?token=([^"&\s]+)/);

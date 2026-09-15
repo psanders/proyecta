@@ -21,13 +21,30 @@ export function availabilitySummary(
   return `${label} · ${hours}`;
 }
 
+/** "20:00" → "8:00 PM" (screen detail schedule, as in Pencil). */
+export function formatTime12(time: string): string {
+  const [h = 0, m = 0] = time.split(":").map(Number);
+  const suffix = h >= 12 ? "PM" : "AM";
+  const hour = h % 12 === 0 ? 12 : h % 12;
+  return `${hour}:${String(m).padStart(2, "0")} ${suffix}`;
+}
+
 function trimHour(time: string): string {
   return time.replace(/^0(\d)/, "$1");
 }
 
-/** "RD$ 2,500" */
-export function formatPesos(amount: number): string {
-  return `RD$ ${new Intl.NumberFormat("es-DO", { maximumFractionDigits: 0 }).format(amount)}`;
+/** "US$ 2.50" — `cents` are integer US$ cents (pay-per-display rates and earnings). */
+export function formatCents(cents: number): string {
+  const dollars = cents / 100;
+  return `US$ ${new Intl.NumberFormat("es-DO", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+  }).format(dollars)}`;
+}
+
+/** "1 reproducción" / "12 reproducciones" */
+export function formatPlays(n: number): string {
+  return n === 1 ? "1 reproducción" : `${n} reproducciones`;
 }
 
 /** "hace 5 min" */

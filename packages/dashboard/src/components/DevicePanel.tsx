@@ -7,15 +7,15 @@ import {
   formatPairingCode,
   type ScreenStatusView
 } from "@proyecta/common";
-import { formatDuration, relativeTime } from "../lib/format.js";
+import { relativeTime } from "../lib/format.js";
 import { errorMessage } from "../lib/errors.js";
 import { trpc } from "../lib/trpc.js";
 import { strings } from "../strings.js";
 import { CodeInput } from "./CodeInput.js";
-import { KeyValueRow } from "./PageHeader.js";
 import { StatusBadge } from "./StatusBadge.js";
 import { Alert } from "./ui/Alert.js";
 import { Button } from "./ui/Button.js";
+import { Icon } from "./ui/Icon.js";
 import { SectionCard } from "./ui/Card.js";
 import { MoreMenu } from "./ui/MoreMenu.js";
 
@@ -26,21 +26,79 @@ export interface DeviceData {
   health: Record<string, unknown> | null;
 }
 
-function Meter({ label, used, total }: { label: string; used?: number; total?: number }) {
-  if (used === undefined || !total) return null;
-  const pct = Math.min(100, Math.round((used / total) * 100));
-  const fmt = (mb: number) => (mb >= 1024 ? `${(mb / 1024).toFixed(1)} GB` : `${mb} MB`);
+const MB = 1024;
+
+function formatMb(mb: number): string {
+  return mb >= MB ? `${Number((mb / MB).toFixed(1))} GB` : `${Math.round(mb)} MB`;
+}
+
+/** One column of the Pencil "Device Metrics" row: label, value, 8 px bar. */
+function Meter({
+  label,
+  value,
+  percent
+}: {
+  label: string;
+  value: string;
+  percent: number | null;
+}) {
   return (
-    <div className="flex flex-1 flex-col gap-2">
-      <div className="flex justify-between text-[13px]">
-        <span className="text-muted-foreground">{label}</span>
-        <span className="font-mono">
-          {fmt(used)} / {fmt(total)}
-        </span>
+    <div className="flex min-w-0 flex-1 flex-col gap-2" data-testid="device-metric">
+      <div className="flex items-center justify-between gap-2 text-[13px]">
+        <span className="truncate text-muted-foreground">{label}</span>
+        <span className="shrink-0 font-semibold text-foreground">{value}</span>
       </div>
-      <div className="h-1.5 rounded-full bg-secondary">
-        <div className="h-full rounded-full bg-primary" style={{ width: `${pct}%` }} />
+      <div className="h-2 overflow-hidden rounded-full bg-secondary">
+        <div className="h-full rounded-full bg-primary" style={{ width: `${percent ?? 0}%` }} />
       </div>
+    </div>
+  );
+}
+
+/** Used/total meter; "—" and an empty bar when the player didn't report it. */
+function capacity(used: unknown, total: unknown): { value: string; percent: number | null } {
+  if (typeof used !== "number" || typeof total !== "number" || total <= 0) {
+    return { value: strings.detail.notReported, percent: null };
+  }
+  return {
+    value: `${formatMb(used)} / ${formatMb(total)}`,
+    percent: Math.min(100, (used / total) * 100)
+  };
+}
+
+/** Pairing code chip with a copy-to-clipboard button (Pencil "Code Row"). */
+function CodeChip({ code }: { code: string }) {
+  const [copied, setCopied] = useState(false);
+  const formatted = formatPairingCode(code);
+  const copy = async () => {
+    try {
+      await navigator.clipboard.writeText(formatted);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1800);
+    } catch {
+      // Clipboard blocked (insecure context): the code stays selectable.
+    }
+  };
+  return (
+    <div className="flex items-center gap-2">
+      <span
+        className="rounded-2xl bg-secondary px-3 py-1.5 font-mono text-[13px] font-medium text-foreground select-all"
+        data-testid="pairing-code"
+      >
+        {formatted}
+      </span>
+      <button
+        type="button"
+        onClick={() => void copy()}
+        aria-label={copied ? strings.detail.copied : strings.detail.copyCode}
+        title={copied ? strings.detail.copied : strings.detail.copyCode}
+        className="flex size-7 items-center justify-center rounded-full text-muted-foreground hover:bg-secondary hover:text-foreground"
+      >
+        <Icon name={copied ? "check" : "copy"} className="size-4" />
+      </button>
+      <span aria-live="polite" className="sr-only">
+        {copied ? strings.detail.copied : ""}
+      </span>
     </div>
   );
 }
@@ -128,39 +186,24 @@ export function DevicePanel({
               {strings.detail.lastActivity}: {relativeTime(device.lastSeenAt)}
             </span>
           </div>
-          <KeyValueRow
-            label={strings.detail.code}
-            value={
-              <span className="rounded-full bg-secondary px-3 py-1 font-mono text-sm font-bold tracking-widest">
-                {formatPairingCode(device.code)}
-              </span>
-            }
-          />
-          {health.playerVersion ? (
-            <KeyValueRow
-              label={strings.detail.version}
-              value={<span className="font-mono">{String(health.playerVersion)}</span>}
-            />
-          ) : null}
-          {health.codec ? (
-            <KeyValueRow
-              label={strings.detail.codec}
-              value={<span className="font-mono uppercase">{String(health.codec)}</span>}
-            />
-          ) : null}
-          {typeof health.uptimeSec === "number" ? (
-            <KeyValueRow label={strings.detail.uptime} value={formatDuration(health.uptimeSec)} />
-          ) : null}
+          <div className="flex items-center justify-between gap-4">
+            <span className="text-sm text-muted-foreground">{strings.detail.code}</span>
+            <CodeChip code={device.code} />
+          </div>
           <div className="flex gap-6">
             <Meter
-              label={strings.detail.memory}
-              used={health.memoryUsedMb as number | undefined}
-              total={health.memoryTotalMb as number | undefined}
+              label={strings.detail.cpu}
+              {...(typeof health.cpuPercent === "number"
+                ? { value: `${Math.round(health.cpuPercent)}%`, percent: health.cpuPercent }
+                : { value: strings.detail.notReported, percent: null })}
             />
             <Meter
               label={strings.detail.storage}
-              used={health.storageUsedMb as number | undefined}
-              total={health.storageQuotaMb as number | undefined}
+              {...capacity(health.storageUsedMb, health.storageQuotaMb)}
+            />
+            <Meter
+              label={strings.detail.memory}
+              {...capacity(health.memoryUsedMb, health.memoryTotalMb)}
             />
           </div>
         </>

@@ -13,7 +13,7 @@ export function PageHeader({
   badge
 }: {
   title: string;
-  subtitle?: string;
+  subtitle?: ReactNode;
   actions?: ReactNode;
   badge?: ReactNode;
 }) {
@@ -26,7 +26,9 @@ export function PageHeader({
           </h1>
           {badge}
         </div>
-        {subtitle ? <p className="text-sm text-muted-foreground">{subtitle}</p> : null}
+        {subtitle ? (
+          <div className="flex items-center gap-1 text-sm text-muted-foreground">{subtitle}</div>
+        ) : null}
       </div>
       {actions ? <div className="flex shrink-0 items-center gap-2">{actions}</div> : null}
     </header>
@@ -46,12 +48,12 @@ export function BackLink({ to, label }: { to: string; label: string }) {
   );
 }
 
-/** Pencil Dashboard/Stat Card. */
+/** Pencil Dashboard/Stat Card: compact 68 px card, label over value. */
 export function StatCard({ label, value }: { label: string; value: number | string }) {
   return (
-    <div className="flex flex-1 flex-col gap-1 border border-border bg-card p-6 shadow-[0_1px_1.75px_#0000000d]">
-      <span className="text-[13px] text-muted-foreground">{label}</span>
-      <span className="font-mono text-[28px] leading-tight font-medium text-foreground">
+    <div className="flex h-[68px] flex-1 flex-col justify-center border border-border bg-card px-6 shadow-[0_1px_1.75px_#0000000d]">
+      <span className="text-[13px] leading-tight text-muted-foreground">{label}</span>
+      <span className="font-mono text-[28px] leading-none font-medium text-foreground">
         {value}
       </span>
     </div>
@@ -68,7 +70,7 @@ export function KeyValueRow({ label, value }: { label: string; value: ReactNode 
   );
 }
 
-/** Pencil screen-dashboard-empty: icon, title, body, action. */
+/** Pencil screen-dashboard-empty: centered icon, title, body and action, no card. */
 export function EmptyState({
   title,
   body,
@@ -79,12 +81,12 @@ export function EmptyState({
   action?: ReactNode;
 }) {
   return (
-    <div className="flex flex-col items-center gap-3 border border-border bg-card px-6 py-16 text-center">
-      <div className="flex size-14 items-center justify-center rounded-2xl bg-secondary">
-        <Icon name="tv" className="size-7" />
+    <div className="flex flex-col items-center gap-3 px-6 py-24 text-center">
+      <div className="flex size-14 items-center justify-center rounded-full bg-secondary">
+        <Icon name="tv" className="size-6" />
       </div>
-      <h2 className="font-mono text-lg font-medium">{title}</h2>
-      <p className="max-w-md text-sm text-muted-foreground">{body}</p>
+      <h2 className="font-mono text-base font-medium">{title}</h2>
+      <p className="max-w-xs text-[13px] text-muted-foreground">{body}</p>
       {action ? <div className="mt-2">{action}</div> : null}
     </div>
   );

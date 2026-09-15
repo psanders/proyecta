@@ -27,6 +27,8 @@ export interface PlayRecord {
   startedAt: number;
   endedAt: number;
   result: PlayResult;
+  /** The ad's planned duration (ms), for pay-per-display billing. Not the `maxSlotMs`-capped value. */
+  durationMs: number;
 }
 
 export interface EngineHooks {
@@ -210,7 +212,8 @@ export class PlaybackEngine {
       codec: rendition.codec,
       startedAt,
       endedAt: Date.now(),
-      result
+      result,
+      durationMs: item.durationMs
     });
   }
 
