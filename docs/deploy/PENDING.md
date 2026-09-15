@@ -9,13 +9,11 @@ it from this file in the release PR.
 
 <!-- Add steps as: - [ ] **<PR #>** what to change, and why. -->
 
-- [ ] **proyecta-config** The apiserver reads `config/proyecta.json` instead of environment
-      variables and won't start without it. Create `/opt/proyecta/config/proyecta.json` from
-      `config/proyecta.example.json` with the real Postgres password in `database.url`,
-      then `chmod 644 config/proyecta.json`. Afterwards `IDENTITY_ISSUER` and `IDENTITY_AUDIENCE`
-      can be removed from `.env`.
-
 - [ ] **#16** Dashboard routes are now English. In `config/identity/identity.json` set `appUrl` to
       `https://app.proyecta.do/sign-in`, `invite.url` to `https://app.proyecta.do/invitation` and
       `invite.failUrl` to `https://app.proyecta.do/invitation-invalid`, then
       `docker compose restart identity`. Otherwise invite emails link to a page that no longer exists.
+
+- [ ] **deploy-env-cleanup** Once a release with this change is deployed, remove `TLS_DOMAIN` and
+      `TLS_EXTRA_DOMAINS` from `/opt/proyecta/.env`: `tls.sh` now derives them from `APP_HOST`,
+      `PLAY_HOST` and `API_HOST`. Not before: the running release's `tls.sh` still needs them.

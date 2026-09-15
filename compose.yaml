@@ -13,7 +13,7 @@
 # docker compose up -d` — never re-tag images locally.
 #
 # Required .env values: PROYECTA_VERSION, APP_HOST, PLAY_HOST, API_HOST,
-# POSTGRES_PASSWORD (plus TLS_* for scripts/deploy/tls.sh). The apiserver reads
+# POSTGRES_PASSWORD (plus TLS_EMAIL for scripts/deploy/tls.sh). The apiserver reads
 # its own settings from config/proyecta.json, never from .env. See
 # docs/deploy/README.md for how to generate them.
 

@@ -11,7 +11,7 @@
 #   - Later runs: checks days-to-expiry and ONLY calls certbot when the cert is
 #     inside the renewal window (default 30 days) — a fast no-op otherwise, so
 #     it never burns Let's Encrypt rate limits.
-#   - If TLS_EXTRA_DOMAINS names hosts the existing cert doesn't cover yet, an
+#   - If the extra domains name hosts the existing cert doesn't cover yet, an
 #     --expand issuance adds them as SANs. After that, normal renewals keep
 #     the full SAN list automatically.
 #
@@ -23,10 +23,12 @@
 #   scripts/deploy/tls.sh [--domain <d>] [--extra-domains <d1,d2>] [--email <e>] [--days <n>] [--force]
 #
 # Config resolution (first wins): CLI flag -> environment -> .env in repo root.
-#   TLS_DOMAIN         primary domain to certify   (e.g. app.proyecta.do)
-#   TLS_EXTRA_DOMAINS  comma-separated extra SANs   (e.g. play.proyecta.do,api.proyecta.do)
 #   TLS_EMAIL          ACME account / notices       (e.g. ops@proyecta.do)
+#   TLS_DOMAIN         primary domain to certify    (default: APP_HOST)
+#   TLS_EXTRA_DOMAINS  comma-separated extra SANs   (default: PLAY_HOST,API_HOST)
 #   TLS_DAYS           renewal window in days       (default 30)
+# The hosts already in .env for the proxy are the certificate's domains, so
+# TLS_DOMAIN / TLS_EXTRA_DOMAINS are only needed to certify something else.
 #
 # Requires: root (or passwordless sudo), certbot, docker compose. Linux/GNU date.
 set -euo pipefail
@@ -40,8 +42,8 @@ if [ -f .env ]; then
   set -a; . ./.env; set +a
 fi
 
-DOMAIN="${TLS_DOMAIN:-}"
-EXTRA_DOMAINS="${TLS_EXTRA_DOMAINS:-}"
+DOMAIN="${TLS_DOMAIN:-${APP_HOST:-}}"
+EXTRA_DOMAINS="${TLS_EXTRA_DOMAINS:-$(printf '%s\n' "${PLAY_HOST:-}" "${API_HOST:-}" | sed '/^$/d' | paste -sd, -)}"
 EMAIL="${TLS_EMAIL:-}"
 RENEW_DAYS="${TLS_DAYS:-30}"
 FORCE=0
@@ -59,7 +61,7 @@ while [ $# -gt 0 ]; do
   esac
 done
 
-[ -n "$DOMAIN" ] || { echo "tls.sh: TLS_DOMAIN not set (use --domain or .env)" >&2; exit 1; }
+[ -n "$DOMAIN" ] || { echo "tls.sh: no domain (set APP_HOST or TLS_DOMAIN in .env, or use --domain)" >&2; exit 1; }
 [ -n "$EMAIL" ]  || { echo "tls.sh: TLS_EMAIL not set (use --email or .env)" >&2; exit 1; }
 
 SUDO=""

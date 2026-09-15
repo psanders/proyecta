@@ -232,8 +232,6 @@ APP_HOST=app.proyecta.do
 PLAY_HOST=play.proyecta.do
 API_HOST=api.proyecta.do
 POSTGRES_PASSWORD=CHANGE_ME
-TLS_DOMAIN=app.proyecta.do
-TLS_EXTRA_DOMAINS=play.proyecta.do,api.proyecta.do
 TLS_EMAIL=team@proyecta.do
 ENV
 # Generate a real password and put it in .env (POSTGRES_PASSWORD),
