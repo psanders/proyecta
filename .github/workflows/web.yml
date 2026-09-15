@@ -5,7 +5,8 @@ name: Marketing Site
 # only dist/ ever leaves it. Runs when the site, the lockfile or this workflow change.
 #
 # SITE_DEPLOY_KEY is the private half of a write deploy key on psanders/proyectasite.
-# To move to proyecta.do: set SITE_BASE to "/", write "proyecta.do" to CNAME below, point DNS.
+# Served at SITE_DOMAIN from the domain root. Every deploy force-pushes the whole site repo, so
+# it must write the CNAME itself; otherwise GitHub Pages drops the custom domain.
 
 on:
   push:
@@ -25,7 +26,7 @@ permissions:
 
 env:
   SITE_REPO: psanders/proyectasite
-  SITE_BASE: /proyectasite/
+  SITE_DOMAIN: proyecta.do
 
 jobs:
   deploy:
@@ -47,7 +48,7 @@ jobs:
 
       - name: Build site
         env:
-          VITE_BASE: ${{ env.SITE_BASE }}
+          VITE_BASE: /
         run: npm run build -w @proyecta/web
 
       - name: Publish to the site repo
@@ -61,6 +62,7 @@ jobs:
 
           cp -r packages/web/dist /tmp/site
           touch /tmp/site/.nojekyll
+          printf '%s\n' "$SITE_DOMAIN" > /tmp/site/CNAME
           cd /tmp/site
           git init -q -b main
           git config user.name "github-actions[bot]"
