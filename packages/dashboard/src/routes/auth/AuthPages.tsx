@@ -100,7 +100,7 @@ export function SignUpPage() {
         workspace: result.workspace.accessKeyId
       });
       void utils.invalidate();
-      navigate("/onboarding", { replace: true });
+      navigate("/welcome", { replace: true });
     }
   });
   const errors = fieldErrors(signUp.error);
