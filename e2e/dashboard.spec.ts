@@ -206,11 +206,20 @@ test.describe("owner dashboard", () => {
     await expect(second.getByRole("heading", { name: "Welcome back" })).toBeVisible();
     await other.close();
 
-    // First visit from an English browser.
+    // First visit from an English browser: English before and after signing up (nothing saved yet).
     const english = await browser.newContext({ locale: "en-US" });
     const visitor = await english.newPage();
     await visitor.goto(`${APP}/ingresar`);
     await expect(visitor.getByRole("heading", { name: "Welcome back" })).toBeVisible();
+    await visitor.goto(`${APP}/crear-cuenta`);
+    await visitor.getByLabel("Your name").fill("Mark Stone");
+    await visitor.getByLabel("Business name").fill("Stone Media");
+    await visitor.getByLabel("Email").fill(`visitor-${stamp}@proyecta.local`);
+    await visitor.getByLabel("Password").fill("supersecreta1");
+    await visitor.getByRole("button", { name: "Create account" }).click();
+    await expect(visitor.getByRole("heading", { name: "Publish your first screen" })).toBeVisible();
+    await visitor.goto(APP);
+    await expect(visitor.getByRole("heading", { name: "My screens" })).toBeVisible();
     await english.close();
   });
 

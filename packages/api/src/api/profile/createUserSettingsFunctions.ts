@@ -11,12 +11,13 @@ import {
 } from "@proyecta/common";
 
 export interface UserSettingsView {
-  language: Language;
+  /** Null until the user chooses a language; the dashboard then keeps the browser's language. */
+  language: Language | null;
 }
 
 /**
- * Creates a function that reads a user's Proyecta settings. A user without a row gets the
- * defaults (Spanish); nothing is written.
+ * Creates a function that reads a user's Proyecta settings. Nothing is written for a user
+ * without a row.
  *
  * @param client - Injected user settings client
  */
@@ -25,7 +26,7 @@ export function createGetUserSettings(client: UserSettingsClient) {
 
   const fn = async (params: z.infer<typeof schema>): Promise<UserSettingsView> => {
     const row = await client.userSettings.findUnique({ where: { userRef: params.userRef } });
-    return { language: parseLanguage(row?.language) };
+    return { language: row ? parseLanguage(row.language) : null };
   };
 
   return withErrorHandlingAndValidation(fn, schema);

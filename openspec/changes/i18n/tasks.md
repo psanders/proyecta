@@ -18,9 +18,9 @@
 
 - [x] 4.1 `lib/i18n.ts` store + `lib/messages/{es,en}.ts` (en typed against es), `useI18n`, `t(id, vars)`, cache + navigator fallback, `<html lang>`); wire in `main.tsx`; tRPC link sends `x-language`; verify unit tests for initial-language resolution and interpolation
 - [x] 4.2 Migrate every component and page from `strings` to `t()`; language-aware `format.ts`; delete `strings.ts`; verify typecheck and existing Spanish e2e unchanged
-- [ ] 4.3 `usePreferenceSync` in signed-in shells; Mi perfil Preferencias card with `SettingRow`s for the language select (optimistic, persists) and Apariencia; verify Playwright: switch to English → UI in English → reload and new context sign-in still English → English field error
+- [x] 4.3 `usePreferenceSync` in signed-in shells; Mi perfil Preferencias card with `SettingRow`s for the language select (optimistic, persists) and Apariencia; verify Playwright: switch to English → UI in English → reload and new context sign-in still English → English field error
 
 ## 5. Project rules and verification
 
 - [x] 5.1 Update the language rule in `CLAUDE.md` and `openspec/config.yaml`
-- [ ] 5.2 English screenshot pass of the main screens for overflow; lint, typecheck, unit, integration and e2e green
+- [x] 5.2 English screenshot pass of the main screens for overflow; lint, typecheck, unit, integration and e2e green

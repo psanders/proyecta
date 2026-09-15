@@ -83,7 +83,7 @@ export const en: Record<MessageId, string> = {
 
   "onboarding.exit": "Exit",
   "onboarding.pill": "One step · 2 minutes",
-  "onboarding.title": "Let's publish your first screen",
+  "onboarding.title": "Publish your first screen",
   "onboarding.body":
     "Proyecta connects your digital screens with advertisers looking for spaces like yours. Tell us about your screen and make it part of the network.",
   "onboarding.cardTitle": "Connect your physical screen",
@@ -110,7 +110,7 @@ export const en: Record<MessageId, string> = {
   "form.city": "City",
   "form.cityPlaceholder": "e.g. Santo Domingo",
   "form.address": "Address or location",
-  "form.addressPlaceholder": "e.g. Av. Winston Churchill at Gustavo Mejía Ricart",
+  "form.addressPlaceholder": "e.g. Av. Winston Churchill & G. Mejía Ricart",
   "form.technical": "Technical information",
   "form.technicalHint": "Panel specifications",
   "form.width": "Width (cm)",

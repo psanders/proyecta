@@ -61,7 +61,7 @@ export function SettingsPage() {
           label={t("settings.name")}
           value={form.name}
           disabled={!canEdit}
-          onChange={(e) => setForm({ ...form, name: e.target.value })}
+          onChange={(e) => setForm((prev) => ({ ...prev, name: e.target.value }))}
           error={errors.name}
         />
         <div className="flex gap-4">
@@ -77,7 +77,7 @@ export function SettingsPage() {
             className="flex-1"
             disabled={!canEdit}
             value={form.timezone}
-            onChange={(e) => setForm({ ...form, timezone: e.target.value as TimeZone })}
+            onChange={(e) => setForm((prev) => ({ ...prev, timezone: e.target.value as TimeZone }))}
             options={TIMEZONE_OPTIONS}
             error={errors.timezone}
           />

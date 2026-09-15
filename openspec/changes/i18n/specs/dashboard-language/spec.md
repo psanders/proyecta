@@ -40,9 +40,10 @@ page reload, and SHALL save it to the user's account. Only `es` and `en` SHALL b
 
 ### Requirement: Language is saved per user
 
-The language SHALL be stored per user in Proyecta, independently of the business, and SHALL default to Spanish for a
-user who never chose one. After sign in, the dashboard SHALL use the saved language, replacing any language the browser
-had cached. Two members of the same business SHALL be able to use different languages.
+The language SHALL be stored per user in Proyecta, independently of the business, once the user chooses one. After sign
+in, the dashboard SHALL use the saved language, replacing any language the browser had cached. A user who never chose a
+language SHALL keep the browser's language (see Language before sign in). Two members of the same business SHALL be
+able to use different languages.
 
 #### Scenario: New device
 
@@ -52,7 +53,12 @@ had cached. Two members of the same business SHALL be able to use different lang
 #### Scenario: Never chosen
 
 - **WHEN** a user who never chose a language reads their profile
-- **THEN** the language is `es`
+- **THEN** the profile has no saved language
+
+#### Scenario: Sign up from an English browser
+
+- **WHEN** someone with browser language `en-US` signs up and reaches their first signed-in page
+- **THEN** the dashboard stays in English
 
 #### Scenario: Same business, different languages
 

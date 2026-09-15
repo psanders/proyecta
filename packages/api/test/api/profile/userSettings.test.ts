@@ -21,7 +21,7 @@ describe("user settings functions", () => {
   afterEach(() => sinon.restore());
 
   describe("createGetUserSettings", () => {
-    it("should default to Spanish when the user never chose a language", async () => {
+    it("should have no language when the user never chose one", async () => {
       // Arrange
       const db = client(null);
 
@@ -29,7 +29,7 @@ describe("user settings functions", () => {
       const result = await createGetUserSettings(db)({ userRef: "u1" });
 
       // Assert
-      expect(result).to.deep.equal({ language: "es" });
+      expect(result).to.deep.equal({ language: null });
       expect(db.userSettings.findUnique.firstCall.args[0]).to.deep.equal({
         where: { userRef: "u1" }
       });
