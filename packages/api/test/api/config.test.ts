@@ -43,7 +43,8 @@ describe("loadConfig", () => {
       port: 3000,
       databaseUrl: MINIMAL.database.url,
       dashboardUrl: "http://localhost:5175",
-      mediaDir: resolve(import.meta.dirname, "../../.data/media")
+      mediaDir: resolve(import.meta.dirname, "../../.data/media"),
+      contentDir: resolve(import.meta.dirname, "../../.data/content")
     });
     expect(config.identity).to.deep.equal({
       ...MINIMAL.identity,
@@ -52,12 +53,13 @@ describe("loadConfig", () => {
     });
   });
 
-  it("should read the path in PROYECTA_CONFIG and resolve media.dir", () => {
+  it("should read the path in PROYECTA_CONFIG and resolve media.dir and content.dir", () => {
     // Arrange
     process.env.PROYECTA_CONFIG = write({
       ...MINIMAL,
       server: { port: 4000 },
-      media: { dir: "/data/media" }
+      media: { dir: "/data/media" },
+      content: { dir: "/data/content" }
     });
 
     // Act
@@ -66,6 +68,7 @@ describe("loadConfig", () => {
     // Assert
     expect(config.port).to.equal(4000);
     expect(config.mediaDir).to.equal(resolve("/data/media"));
+    expect(config.contentDir).to.equal(resolve("/data/content"));
   });
 
   it("should name the missing file", () => {

@@ -18,8 +18,8 @@ this account. Nothing here creates or provisions a new Droplet.
 | Service       | Role                                                                           |
 | ------------- | ------------------------------------------------------------------------------ |
 | **proxy**     | nginx, TLS termination + Host-based routing (`:443`)                           |
-| **dashboard** | nginx serving the owner-dashboard SPA, proxies `/trpc`                         |
-| **player**    | nginx serving the player SPA, proxies `/device`+`/media`                       |
+| **dashboard** | nginx serving the owner-dashboard SPA, proxies `/trpc`, `/uploads`, `/content` |
+| **player**    | nginx serving the player SPA, proxies `/device`, `/media`, `/content`          |
 | **apiserver** | Express + tRPC + `/device/v1`; runs `prisma migrate deploy` on boot            |
 | **identity**  | Fonoster Identity — auth, authz, multi-tenancy                                 |
 | **postgres**  | Postgres 17, one instance holding both the `proyecta` and `identity` databases |
@@ -221,6 +221,8 @@ Edit `config/proyecta.json`:
   `proyecta`, Identity's own default)
 - optional `media.dir` — only if the demo media lives somewhere other than
   the image default (`/app/packages/api/.data/media`, where compose mounts it)
+- optional `content.dir` — only if advertiser uploads live somewhere other than
+  the image default (`/app/packages/api/.data/content`, where compose mounts it)
 
 ```bash
 # 3b. Pin the release, hosts and TLS settings for compose and the deploy scripts.
@@ -340,6 +342,15 @@ scripts/generate-demo-ads.sh
 # Copy the output into the Droplet's volume:
 docker compose cp packages/api/.data/media/. apiserver:/app/packages/api/.data/media/
 ```
+
+## Advertiser content
+
+Files advertisers upload (`POST /uploads/assets`, up to 200 MB) and the renditions the apiserver
+prepares from them with ffmpeg (bundled in the image) live in the `content-data` volume, mounted at
+`CONTENT_DIR` (`/app/packages/api/.data/content`) and served at `/content` through the dashboard
+and player nginx. Unlike demo media this is user data: include the volume in backups. The edge proxy
+and the dashboard nginx allow 210 MB request bodies for uploads and stream them to the apiserver,
+which enforces the per-type limits.
 
 ## Backups
 

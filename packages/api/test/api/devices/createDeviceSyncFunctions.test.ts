@@ -9,6 +9,7 @@ import { createRecordPlayLogs } from "../../../src/api/devices/createDeviceSyncF
 const DEVICE_ID = "7f3c2a8e-1b2d-4c5e-9f00-112233445566";
 const SCREEN_ID = "a1b2c3d4-1b2d-4c5e-9f00-112233445566";
 const LINKED_AT = new Date("2026-09-01T00:00:00Z");
+const PLACEMENT_ID = "c0ffee00-1b2d-4c5e-9f00-112233445566";
 
 const rotation: Manifest = {
   version: "v1",
@@ -158,6 +159,69 @@ describe("createRecordPlayLogs", () => {
     // Assert
     const row = client.playLog.createMany.firstCall.args[0].data[0];
     expect(row).to.include({ screenId: null, rateCentsAtPlay: null, billedUnits: 3 });
+  });
+
+  it("should store an own ad on an own screen as a house play that isn't billed", async () => {
+    // Arrange
+    const client = db();
+    client.screen.findMany.resolves([
+      { id: SCREEN_ID, ratePerFiveSecondsCents: 250, workspaceAccessKeyId: "WO1" }
+    ]);
+    const adPlacement = {
+      findMany: sinon
+        .stub()
+        .resolves([
+          { id: PLACEMENT_ID, asset: { durationMs: 15000 }, ad: { workspaceAccessKeyId: "WO1" } }
+        ])
+    };
+
+    // Act
+    await createRecordPlayLogs(deps({ ...client, adPlacement } as never))({
+      deviceId: DEVICE_ID,
+      plays: [play({ itemId: PLACEMENT_ID, durationMs: 15000 })]
+    });
+
+    // Assert
+    const row = client.playLog.createMany.firstCall.args[0].data[0];
+    expect(row).to.include({
+      placementId: PLACEMENT_ID,
+      advertiserWorkspaceAccessKeyId: "WO1",
+      house: true,
+      billedUnits: null,
+      rateCentsAtPlay: null
+    });
+  });
+
+  it("should bill another business's ad and fall back to the file duration", async () => {
+    // Arrange
+    const client = db();
+    client.screen.findMany.resolves([
+      { id: SCREEN_ID, ratePerFiveSecondsCents: 200, workspaceAccessKeyId: "WO1" }
+    ]);
+    const adPlacement = {
+      findMany: sinon
+        .stub()
+        .resolves([
+          { id: PLACEMENT_ID, asset: { durationMs: 10000 }, ad: { workspaceAccessKeyId: "WO2" } }
+        ])
+    };
+    const loadRotation = sinon.stub().resolves(rotation);
+
+    // Act
+    await createRecordPlayLogs(deps({ ...client, adPlacement } as never, loadRotation))({
+      deviceId: DEVICE_ID,
+      plays: [play({ itemId: PLACEMENT_ID })]
+    });
+
+    // Assert
+    const row = client.playLog.createMany.firstCall.args[0].data[0];
+    expect(row).to.include({
+      advertiserWorkspaceAccessKeyId: "WO2",
+      house: false,
+      billedUnits: 2,
+      rateCentsAtPlay: 200
+    });
+    expect(loadRotation.called).to.equal(false);
   });
 
   it("should reject an empty batch", async () => {

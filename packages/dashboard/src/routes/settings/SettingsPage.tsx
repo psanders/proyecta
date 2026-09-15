@@ -7,14 +7,18 @@ import {
   DEFAULT_TIMEZONE,
   DELETE_WORKSPACE_CONFIRMATIONS,
   TIMEZONES,
+  showsAds,
+  showsScreens,
   timeZoneLabel,
+  type DashboardView,
   type TimeZone
 } from "@proyecta/common";
 import { PageHeader } from "../../components/PageHeader.js";
+import { ViewChoice } from "../../components/ViewChoice.js";
 import { Alert } from "../../components/ui/Alert.js";
 import { Button } from "../../components/ui/Button.js";
 import { SectionCard } from "../../components/ui/Card.js";
-import { Dialog } from "../../components/ui/Dialog.js";
+import { ConfirmDialog, Dialog } from "../../components/ui/Dialog.js";
 import { SelectField, TextField } from "../../components/ui/Field.js";
 import { errorMessage, fieldErrors } from "../../lib/errors.js";
 import { session } from "../../lib/session.js";
@@ -91,8 +95,79 @@ export function SettingsPage() {
           </div>
         ) : null}
       </SectionCard>
+      {settings.data ? <ViewCard current={settings.data.dashboardView} canEdit={canEdit} /> : null}
       {settings.data?.isOwner ? <DangerCard name={settings.data.name} /> : null}
     </div>
+  );
+}
+
+/**
+ * Pencil workspace-settings-view: which sides the menu shows. Hiding a side that still has linked
+ * screens or active ads asks for confirmation first, since those keep running and billing.
+ */
+function ViewCard({ current, canEdit }: { current: DashboardView; canEdit: boolean }) {
+  const { t } = useI18n();
+  const utils = trpc.useUtils();
+  const [view, setView] = useState<DashboardView>(current);
+  const [confirming, setConfirming] = useState(false);
+  useEffect(() => setView(current), [current]);
+  const activity = trpc.workspaces.activity.useQuery(undefined, { enabled: canEdit });
+  const save = trpc.workspaces.setDashboardView.useMutation({
+    onSuccess: () => {
+      setConfirming(false);
+      void utils.workspaces.settings.invalidate();
+    }
+  });
+
+  const hidesScreens = showsScreens(current) && !showsScreens(view);
+  const hidesAds = showsAds(current) && !showsAds(view);
+  const linkedScreens = hidesScreens ? (activity.data?.linkedScreens ?? 0) : 0;
+  const activeAds = hidesAds ? (activity.data?.activeAds ?? 0) : 0;
+
+  const submit = () => {
+    if (linkedScreens > 0 || activeAds > 0) setConfirming(true);
+    else save.mutate({ dashboardView: view });
+  };
+
+  return (
+    <SectionCard title={t("settings.view")} hint={t("settings.viewHint")}>
+      {save.isSuccess && view === current ? (
+        <Alert tone="success">{t("settings.viewSaved")}</Alert>
+      ) : null}
+      {errorMessage(save.error, t) ? (
+        <Alert tone="error">{errorMessage(save.error, t)}</Alert>
+      ) : null}
+      <ViewChoice value={view} onChange={setView} layout="row" disabled={!canEdit} />
+      {canEdit ? (
+        <div className="flex justify-end">
+          <Button disabled={view === current} loading={save.isPending} onClick={submit}>
+            {t("settings.saveView")}
+          </Button>
+        </div>
+      ) : null}
+      <ConfirmDialog
+        open={confirming}
+        title={t("settings.viewConfirmTitle", { view: t(`view.${view}`) })}
+        body={
+          <>
+            {linkedScreens > 0 ? (
+              <>{t("settings.viewConfirmScreens", { n: linkedScreens })} </>
+            ) : null}
+            {activeAds > 0 ? <>{t("settings.viewConfirmAds", { n: activeAds })} </> : null}
+            {t("settings.viewConfirmBody")}
+          </>
+        }
+        confirmLabel={t("settings.viewConfirm")}
+        cancelLabel={t("dialogs.cancel")}
+        loading={save.isPending}
+        error={errorMessage(save.error, t)}
+        onConfirm={() => save.mutate({ dashboardView: view })}
+        onClose={() => {
+          setConfirming(false);
+          setView(current);
+        }}
+      />
+    </SectionCard>
   );
 }
 

@@ -44,6 +44,35 @@ export function formatCents(cents: number, language: Language): string {
   }).format(dollars)}`;
 }
 
+/** "1 jun 2026" for a "YYYY-MM-DD" calendar date (no time zone shift). */
+export function formatDate(date: string, language: Language): string {
+  return new Intl.DateTimeFormat(locales[language], {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+    timeZone: "UTC"
+  }).format(new Date(`${date}T00:00:00Z`));
+}
+
+/** "1 jun 2026 – 30 jun 2026", or a single date when both are the same day. */
+export function formatDateRange(start: string, end: string, language: Language): string {
+  return start === end
+    ? formatDate(start, language)
+    : `${formatDate(start, language)} – ${formatDate(end, language)}`;
+}
+
+/** "15 s" */
+export function formatSeconds(ms: number): string {
+  return `${Math.round(ms / 1000)} s`;
+}
+
+/** "1 de 2 pantallas" / "0 de 1 pantalla": how many of an ad's screens are approved. */
+export function formatReach(screens: { approved: number; total: number }, t: Translate): string {
+  return screens.total === 1
+    ? t("ads.reach.one", { approved: screens.approved })
+    : t("ads.reach", { approved: screens.approved, total: screens.total });
+}
+
 /** "1 reproducción" / "12 reproducciones" */
 export function formatPlays(n: number, t: Translate): string {
   return n === 1 ? t("format.plays.one") : t("format.plays.other", { n });

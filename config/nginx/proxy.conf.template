@@ -32,6 +32,11 @@ server {
     ssl_certificate     /etc/nginx/certs/fullchain.pem;
     ssl_certificate_key /etc/nginx/certs/privkey.pem;
 
+    # Advertiser uploads (POST /uploads/assets) are up to 200 MB of video; the API enforces the
+    # per-type limits itself. Stream the body through instead of spooling it here first.
+    client_max_body_size 210m;
+    proxy_request_buffering off;
+
     location / {
         set $upstream_dashboard http://dashboard:80;
         proxy_pass $upstream_dashboard;

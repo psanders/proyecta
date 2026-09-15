@@ -74,6 +74,8 @@ services:
       # app runs fine with this empty, it just has no default rotation to
       # serve until real advertisers exist. See docs/deploy/README.md.
       - media-data:/app/packages/api/.data/media
+      # Advertiser uploads and their renditions. Unlike demo media, this is user data: back it up.
+      - content-data:/app/packages/api/.data/content
     healthcheck:
       test:
         [
@@ -138,3 +140,4 @@ services:
 volumes:
   postgres-data:
   media-data:
+  content-data:

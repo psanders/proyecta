@@ -21,7 +21,8 @@ test-results/
 config/identity/identity.json
 config/proyecta.json
 config/identity/keys/
-ads/
+# Local ad creatives at the repo root only (not source folders named "ads").
+/ads/
 
 # Production TLS certs (copied onto the droplet by scripts/deploy/tls.sh) and
 # database backups (scripts/deploy/backup-db.sh) — never part of the repo.

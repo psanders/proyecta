@@ -46,6 +46,8 @@ export interface EarningsWindow {
   billableSeconds: number;
   /** Sum of earnings in the window, in US$ cents. */
   earningsCents: number;
+  /** Completed house plays (an ad of the screen's own business): counted apart, never billed. */
+  housePlays: number;
 }
 
 /**

@@ -8,6 +8,7 @@ import { z } from "zod/v4";
 /** `config/proyecta.json` at the repository root (the same from `src/` and `dist/`). */
 export const DEFAULT_CONFIG_PATH = resolve(import.meta.dirname, "../../../config/proyecta.json");
 const DEFAULT_MEDIA_DIR = resolve(import.meta.dirname, "../.data/media");
+const DEFAULT_CONTENT_DIR = resolve(import.meta.dirname, "../.data/content");
 
 const url = z.string().trim().min(1);
 
@@ -26,6 +27,9 @@ const configSchema = z.object({
   }),
   // Default rotation (generated demo ads) served at /media until advertisers exist.
   media: z.object({ dir: z.string().min(1).optional() }).default({}),
+  // Advertiser uploads and their renditions, served at /content. Separate from media.dir, which
+  // the demo generator wipes. Deployments mount a volume at the default.
+  content: z.object({ dir: z.string().min(1).optional() }).default({}),
   // Local integration tests only; never set in production.
   test: z.object({ databaseUrl: url.optional(), mailpitUrl: url.optional() }).default({})
 });
@@ -63,6 +67,7 @@ export function loadConfig(path = process.env.PROYECTA_CONFIG ?? DEFAULT_CONFIG_
     databaseUrl: file.database.url,
     dashboardUrl: file.dashboard.url,
     mediaDir: file.media.dir ? resolve(file.media.dir) : DEFAULT_MEDIA_DIR,
+    contentDir: file.content.dir ? resolve(file.content.dir) : DEFAULT_CONTENT_DIR,
     identity: file.identity,
     test: file.test
   };
