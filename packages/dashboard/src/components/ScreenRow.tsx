@@ -33,7 +33,7 @@ export function ScreenRow({ screen }: { screen: ScreenRowData }) {
   );
   return (
     <Link
-      to={`/pantallas/${screen.id}`}
+      to={`/screens/${screen.id}`}
       data-testid="screen-row"
       className="flex items-center justify-between gap-4 border border-border bg-card p-5 shadow-[0_1px_1.75px_#0000000d] hover:border-foreground/40"
     >

@@ -119,14 +119,14 @@ describe("auth functions", () => {
       // Act
       const result = await createRequestPasswordReset(
         id,
-        "http://app/restablecer"
+        "http://app/reset-password"
       )({ email: "nadie@example.com" });
 
       // Assert
       expect(result).to.deep.equal({ sent: true });
       expect(id.sendResetPasswordCode.firstCall.args).to.deep.equal([
         "nadie@example.com",
-        "http://app/restablecer"
+        "http://app/reset-password"
       ]);
     });
 

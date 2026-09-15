@@ -16,9 +16,9 @@ stay in lockstep; live status without polling loops in every page.
   Pencil component maps to one React component with the same name in `packages/dashboard/src/components/`.
 - **Tokens**: Lunaris variables from Pencil exported to Tailwind v4 `@theme` (colors, radii, fonts) in `index.css`;
   fonts self-hosted via `@fontsource` (JetBrains Mono, Geist Sans).
-- **Routing**: `react-router` data routes: `/ingresar`, `/crear-cuenta`, `/recuperar`, `/restablecer`,
-  `/invitacion`, `/` (screens), `/bienvenida` (onboarding), `/pantallas/nueva`, `/pantallas/:id`,
-  `/pantallas/:id/editar`, `/equipo`, `/perfil`. Guard route requires a session.
+- **Routing**: `react-router` data routes: `/sign-in`, `/sign-up`, `/forgot-password`, `/reset-password`,
+  `/invitation`, `/` (screens), `/onboarding`, `/screens/new`, `/screens/:id`,
+  `/screens/:id/edit`, `/team`, `/profile`, `/settings`, `/invitation-invalid`. Guard route requires a session.
 - **Session**: tokens + active workspace in `localStorage` via a small `session` module; tRPC `httpBatchLink` headers
   add `Authorization` and `x-workspace`; a custom link retries once after `auth.refresh` on `UNAUTHORIZED`.
 - **Live status**: one `screens.onStatus` subscription per session (`httpSubscriptionLink`) that patches the React Query

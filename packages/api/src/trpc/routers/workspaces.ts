@@ -31,7 +31,7 @@ import {
   workspaceProcedure
 } from "../trpc.js";
 
-export const INVITE_FAIL_PATH = "/invitacion-invalida";
+export const INVITE_FAIL_PATH = "/invitation-invalid";
 
 export interface MemberView {
   userRef: string;

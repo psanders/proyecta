@@ -34,7 +34,7 @@ export const authRouter = router({
   requestPasswordReset: publicProcedure
     .input(validate(requestPasswordResetSchema))
     .mutation(({ ctx, input }) =>
-      createRequestPasswordReset(ctx.identity, `${ctx.dashboardUrl}/restablecer`)(input)
+      createRequestPasswordReset(ctx.identity, `${ctx.dashboardUrl}/reset-password`)(input)
     ),
 
   resetPassword: publicProcedure

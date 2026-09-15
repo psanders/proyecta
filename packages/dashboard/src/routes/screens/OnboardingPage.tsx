@@ -29,10 +29,10 @@ export function OnboardingPage() {
   const next = () => {
     if (!availability?.available) return;
     const query = new URLSearchParams({
-      codigo: code,
-      ...(availability.resolution ? { resolucion: availability.resolution } : {})
+      code,
+      ...(availability.resolution ? { resolution: availability.resolution } : {})
     });
-    navigate(`/pantallas/nueva?${query}`);
+    navigate(`/screens/new?${query}`);
   };
 
   return (
@@ -63,7 +63,7 @@ export function OnboardingPage() {
             <li className="flex items-center justify-between gap-4">
               <Step n={1} title={t("onboarding.step1")} body={t("onboarding.step1Body")} />
               <a
-                href="/descargas/reproductor"
+                href="/downloads/player"
                 className="inline-flex h-10 items-center rounded-full border border-border bg-background px-4 font-mono text-sm font-medium hover:bg-secondary"
               >
                 {t("onboarding.download")}
@@ -101,10 +101,7 @@ export function OnboardingPage() {
             </div>
           ) : null}
           <div className="flex items-center justify-between gap-4 p-6">
-            <Link
-              to="/pantallas/nueva"
-              className="text-sm text-muted-foreground hover:text-foreground"
-            >
+            <Link to="/screens/new" className="text-sm text-muted-foreground hover:text-foreground">
               {t("onboarding.skip")}
             </Link>
             <Button onClick={next} disabled={!availability?.available}>

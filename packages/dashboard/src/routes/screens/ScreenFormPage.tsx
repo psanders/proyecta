@@ -81,13 +81,13 @@ export function ScreenFormPage() {
   const [params] = useSearchParams();
   const navigate = useNavigate();
   const utils = trpc.useUtils();
-  const code = params.get("codigo");
+  const code = params.get("code");
   const existing = trpc.screens.get.useQuery({ id: id ?? "" }, { enabled: !!id });
   const [form, setForm] = useState<FormState>({
     ...EMPTY,
     // New screens default to landscape, as in Pencil.
     orientation: "LANDSCAPE",
-    resolution: params.get("resolucion") ?? ""
+    resolution: params.get("resolution") ?? ""
   });
 
   useEffect(() => {
@@ -129,7 +129,7 @@ export function ScreenFormPage() {
         await link.mutateAsync({ screenId: saved.id, code }).catch(() => undefined);
       }
       await utils.screens.invalidate();
-      navigate(`/pantallas/${saved.id}`);
+      navigate(`/screens/${saved.id}`);
     } catch {
       // Errors render from the mutation state.
     }
@@ -144,7 +144,7 @@ export function ScreenFormPage() {
   return (
     <form className="mx-auto flex w-full max-w-[760px] flex-col gap-6" onSubmit={submit} noValidate>
       <BackLink
-        to={id ? `/pantallas/${id}` : "/"}
+        to={id ? `/screens/${id}` : "/"}
         label={id ? t("form.backTo", { name: existing.data?.name ?? "" }) : t("detail.back")}
       />
       <PageHeader

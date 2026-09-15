@@ -42,6 +42,7 @@ Proyecta is a digital-out-of-home marketplace for the Dominican Republic. Screen
   - Tokens live in `packages/player/src/theme.css` and come from Pencil. Never invent colors.
   - Fonts: JetBrains Mono + Geist, self-hosted so they render offline.
   - Designed at 1600×900; sizes use the `--px` unit so any resolution scales.
+- **Internals are English:** code, identifiers, enum values, database columns, JSON keys, catalog ids, URL paths and query params are always English. Only user-facing copy is localized.
 - **Language:** user-facing text is Spanish (es-DO) by default. The owner dashboard also supports English: copy lives in `packages/dashboard/src/lib/messages/{es,en}.ts` (flat ids, read with `useI18n().t`), and API messages it shows are ids from `apiMessages` in `@proyecta/common`, resolved by the `x-language` header. The player and web stay Spanish, in their strings modules. No i18n library.
 
 ## Coding conventions

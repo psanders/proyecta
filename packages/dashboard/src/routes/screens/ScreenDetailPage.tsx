@@ -86,7 +86,7 @@ export function ScreenDetailPage() {
         }
         actions={
           canManage && !s.archived ? (
-            <Button onClick={() => navigate(`/pantallas/${id}/editar`)}>{t("detail.edit")}</Button>
+            <Button onClick={() => navigate(`/screens/${id}/edit`)}>{t("detail.edit")}</Button>
           ) : null
         }
       />

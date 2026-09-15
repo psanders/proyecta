@@ -34,7 +34,7 @@ function RequireSession({ children }: { children: ReactNode }) {
   return current ? (
     <SignedInPage>{children}</SignedInPage>
   ) : (
-    <Navigate to={`/ingresar?volver=${encodeURIComponent(location.pathname)}`} replace />
+    <Navigate to={`/sign-in?returnTo=${encodeURIComponent(location.pathname)}`} replace />
   );
 }
 
@@ -44,14 +44,14 @@ function SignedInPage({ children }: { children: ReactNode }) {
 }
 
 const router = createBrowserRouter([
-  { path: "/ingresar", element: <SignInPage /> },
-  { path: "/crear-cuenta", element: <SignUpPage /> },
-  { path: "/recuperar", element: <ForgotPasswordPage /> },
-  { path: "/restablecer", element: <ResetPasswordPage /> },
-  { path: "/invitacion", element: <AcceptInvitationPage /> },
-  { path: "/invitacion-invalida", element: <InvitationInvalidPage /> },
+  { path: "/sign-in", element: <SignInPage /> },
+  { path: "/sign-up", element: <SignUpPage /> },
+  { path: "/forgot-password", element: <ForgotPasswordPage /> },
+  { path: "/reset-password", element: <ResetPasswordPage /> },
+  { path: "/invitation", element: <AcceptInvitationPage /> },
+  { path: "/invitation-invalid", element: <InvitationInvalidPage /> },
   {
-    path: "/bienvenida",
+    path: "/onboarding",
     element: (
       <RequireSession>
         <OnboardingPage />
@@ -63,12 +63,12 @@ const router = createBrowserRouter([
     element: <AppLayout />,
     children: [
       { index: true, element: <ScreensPage /> },
-      { path: "pantallas/nueva", element: <ScreenFormPage /> },
-      { path: "pantallas/:id", element: <ScreenDetailPage /> },
-      { path: "pantallas/:id/editar", element: <ScreenFormPage /> },
-      { path: "equipo", element: <TeamPage /> },
-      { path: "perfil", element: <ProfilePage /> },
-      { path: "configuracion", element: <SettingsPage /> }
+      { path: "screens/new", element: <ScreenFormPage /> },
+      { path: "screens/:id", element: <ScreenDetailPage /> },
+      { path: "screens/:id/edit", element: <ScreenFormPage /> },
+      { path: "team", element: <TeamPage /> },
+      { path: "profile", element: <ProfilePage /> },
+      { path: "settings", element: <SettingsPage /> }
     ]
   },
   { path: "*", element: <Navigate to="/" replace /> }
