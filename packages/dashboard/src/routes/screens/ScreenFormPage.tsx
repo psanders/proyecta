@@ -35,6 +35,11 @@ interface FormState {
   startTime: string;
   endTime: string;
   rate: string;
+  // Not editable yet (screen-details design pending); kept so saving doesn't clear them.
+  description?: string;
+  latitude?: number;
+  longitude?: number;
+  tags: CreateScreenInput["tags"];
 }
 
 const EMPTY: FormState = {
@@ -50,7 +55,8 @@ const EMPTY: FormState = {
   availableDays: [],
   startTime: "",
   endTime: "",
-  rate: ""
+  rate: "",
+  tags: []
 };
 
 const text = (v: string) => (v.trim() === "" ? undefined : v.trim());
@@ -70,7 +76,11 @@ function toInput(form: FormState): CreateScreenInput {
     availableDays: form.availableDays,
     startTime: text(form.startTime),
     endTime: text(form.endTime),
-    ratePerFiveSecondsDollars: num(form.rate)
+    ratePerFiveSecondsDollars: num(form.rate),
+    description: form.description,
+    latitude: form.latitude,
+    longitude: form.longitude,
+    tags: form.tags
   };
 }
 
@@ -106,7 +116,11 @@ export function ScreenFormPage() {
       availableDays: s.availableDays,
       startTime: s.startTime ?? "",
       endTime: s.endTime ?? "",
-      rate: s.ratePerFiveSecondsCents !== null ? (s.ratePerFiveSecondsCents / 100).toFixed(2) : ""
+      rate: s.ratePerFiveSecondsCents !== null ? (s.ratePerFiveSecondsCents / 100).toFixed(2) : "",
+      description: s.description ?? undefined,
+      latitude: s.latitude ?? undefined,
+      longitude: s.longitude ?? undefined,
+      tags: s.tags
     });
   }, [existing.data]);
 
@@ -135,7 +149,9 @@ export function ScreenFormPage() {
     }
   };
 
-  const bind = (key: keyof Omit<FormState, "availableDays">) => ({
+  const bind = (
+    key: keyof Omit<FormState, "availableDays" | "description" | "latitude" | "longitude" | "tags">
+  ) => ({
     value: form[key],
     onChange: (e: { target: { value: string } }) => setForm({ ...form, [key]: e.target.value }),
     error: errors[key]

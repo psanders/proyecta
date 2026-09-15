@@ -77,6 +77,9 @@ export function createUpdateScreen(deps: ScreenDeps) {
           "placeType",
           "environment",
           "address",
+          "description",
+          "latitude",
+          "longitude",
           "widthCm",
           "heightCm",
           "orientation",
@@ -96,7 +99,8 @@ export function createUpdateScreen(deps: ScreenDeps) {
             : rateDollarsToCents(fields.ratePerFiveSecondsDollars),
         name: fields.name,
         city: fields.city,
-        availableDays: fields.availableDays
+        availableDays: fields.availableDays,
+        tags: fields.tags
       },
       include: screenWithDevice
     });

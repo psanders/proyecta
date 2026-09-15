@@ -2,7 +2,10 @@
  * Copyright (C) 2026 by Proyecta. All rights reserved.
  */
 import { z } from "zod/v4";
+import { isInDominicanRepublic } from "../utils/coordinates.js";
+import { normalizeResolution, RESOLUTION_PATTERN } from "../utils/resolution.js";
 import { pairingCodeSchema } from "./device.schema.js";
+import { MAX_SCREEN_TAGS, SCREEN_TAGS } from "./screenTags.schema.js";
 
 export const PLACE_TYPES = [
   "BILLBOARD",
@@ -100,6 +103,22 @@ const screenFieldsSchema = z.object({
   placeType: z.enum(PLACE_TYPES, { error: "validation.placeType.invalid" }).optional(),
   environment: z.enum(ENVIRONMENTS, { error: "validation.environment.invalid" }).optional(),
   address: optionalText(120, "validation.address.max"),
+  description: optionalText(500, "validation.description.max"),
+  latitude: z
+    .number({ error: "validation.coordinates.format" })
+    .min(-90, "validation.coordinates.format")
+    .max(90, "validation.coordinates.format")
+    .optional(),
+  longitude: z
+    .number({ error: "validation.coordinates.format" })
+    .min(-180, "validation.coordinates.format")
+    .max(180, "validation.coordinates.format")
+    .optional(),
+  tags: z
+    .array(z.enum(SCREEN_TAGS, { error: "validation.tags.invalid" }))
+    .max(MAX_SCREEN_TAGS, "validation.tags.max")
+    .default([])
+    .transform((tags) => [...new Set(tags)]),
   widthCm: z
     .number()
     .int("validation.centimeters.integer")
@@ -113,10 +132,11 @@ const screenFieldsSchema = z.object({
     .max(100_000)
     .optional(),
   orientation: z.enum(ORIENTATIONS, { error: "validation.orientation.invalid" }).optional(),
+  // Normalizing is idempotent, so re-validating inside the validated function is harmless.
   resolution: z
     .string()
-    .trim()
-    .regex(/^\d{2,5}x\d{2,5}$/, "validation.resolution.format")
+    .transform(normalizeResolution)
+    .pipe(z.string().regex(RESOLUTION_PATTERN, "validation.resolution.format"))
     .optional(),
   availableDays: z
     .array(z.number().int().min(1).max(7))
@@ -147,10 +167,37 @@ function checkHours(
   }
 }
 
-export const createScreenSchema = screenFieldsSchema.superRefine(checkHours);
+function checkCoordinates(
+  value: { latitude?: number; longitude?: number },
+  ctx: z.core.$RefinementCtx<unknown>
+) {
+  const { latitude, longitude } = value;
+  if (latitude === undefined && longitude === undefined) return;
+  if (latitude === undefined || longitude === undefined) {
+    ctx.addIssue({
+      code: "custom",
+      path: [latitude === undefined ? "latitude" : "longitude"],
+      message: "validation.coordinates.both"
+    });
+  } else if (!isInDominicanRepublic(latitude, longitude)) {
+    ctx.addIssue({
+      code: "custom",
+      path: ["latitude"],
+      message: "validation.coordinates.outsideDr"
+    });
+  }
+}
+
+type RefinableFields = Parameters<typeof checkHours>[0] & Parameters<typeof checkCoordinates>[0];
+function checkScreen(value: RefinableFields, ctx: z.core.$RefinementCtx<unknown>) {
+  checkHours(value, ctx);
+  checkCoordinates(value, ctx);
+}
+
+export const createScreenSchema = screenFieldsSchema.superRefine(checkScreen);
 export const updateScreenSchema = screenFieldsSchema
   .extend({ id: z.uuid({ error: "validation.screen.invalid" }) })
-  .superRefine(checkHours);
+  .superRefine(checkScreen);
 export const screenIdSchema = z.object({ id: z.uuid({ error: "validation.screen.invalid" }) });
 export const listScreensSchema = z.object({ archived: z.boolean().default(false) });
 export const linkDeviceSchema = z.object({
@@ -168,14 +215,23 @@ export type CodeAvailability =
   | { available: true; resolution: string | null }
   | { available: false; reason: "NOT_FOUND" | "OFFLINE" | "LINKED" };
 
-/** A screen is incomplete until advertisers can see when it's available and what it costs. */
+/**
+ * A screen is incomplete until advertisers can see where it is, when it's available and what it
+ * costs.
+ */
 export function isScreenComplete(screen: {
   availableDays: number[];
   startTime?: string | null;
   endTime?: string | null;
   ratePerFiveSecondsCents?: number | null;
+  latitude?: number | null;
+  longitude?: number | null;
 }): boolean {
   return (
+    screen.latitude !== null &&
+    screen.latitude !== undefined &&
+    screen.longitude !== null &&
+    screen.longitude !== undefined &&
     screen.availableDays.length > 0 &&
     !!screen.startTime &&
     !!screen.endTime &&
