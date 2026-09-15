@@ -20,14 +20,14 @@ grep -v '^PROYECTA_VERSION=' .env > .env.next || true
 echo "PROYECTA_VERSION=${VERSION}" >> .env.next
 mv .env.next .env
 
-docker compose -f compose.prod.yaml pull apiserver dashboard player
-docker compose -f compose.prod.yaml up -d
+docker compose pull apiserver dashboard player
+docker compose up -d
 
 # Wait up to 60s for every service to be running/healthy.
 ok=""
 for _ in $(seq 1 30); do
-  stopped=$(docker compose -f compose.prod.yaml ps --status exited --quiet 2>/dev/null | wc -l)
-  starting=$(docker compose -f compose.prod.yaml ps --status starting --quiet 2>/dev/null | wc -l)
+  stopped=$(docker compose ps --status exited --quiet 2>/dev/null | wc -l)
+  starting=$(docker compose ps --status starting --quiet 2>/dev/null | wc -l)
   if [ "$stopped" = "0" ] && [ "$starting" = "0" ]; then
     ok=1
     break
@@ -37,15 +37,15 @@ done
 
 if [ -z "$ok" ]; then
   echo "Deploy of ${VERSION} failed — containers did not come up cleanly." >&2
-  docker compose -f compose.prod.yaml ps
-  docker compose -f compose.prod.yaml logs --tail 50
+  docker compose ps
+  docker compose logs --tail 50
   if [ -n "$prev" ]; then
     echo "Rolling back to ${prev}." >&2
     grep -v '^PROYECTA_VERSION=' .env > .env.next || true
     echo "PROYECTA_VERSION=${prev}" >> .env.next
     mv .env.next .env
-    docker compose -f compose.prod.yaml pull apiserver dashboard player
-    docker compose -f compose.prod.yaml up -d
+    docker compose pull apiserver dashboard player
+    docker compose up -d
   fi
   exit 1
 fi
@@ -62,4 +62,4 @@ docker image prune -af || true
 docker builder prune -af || true
 
 echo "Deployed ${VERSION} successfully."
-docker compose -f compose.prod.yaml ps
+docker compose ps
