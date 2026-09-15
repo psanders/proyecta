@@ -20,6 +20,7 @@ const configSchema = z.object({
   identity: z.object({
     endpoint: url,
     bridgeUrl: url,
+    // Identity's defaults. Set only if identity.json uses different values; they must match.
     issuer: z.string().min(1).default("proyecta"),
     audience: z.string().min(1).default("proyecta")
   }),
@@ -39,7 +40,7 @@ export type ProyectaConfigFile = z.infer<typeof configSchema>;
 export function loadConfig(path = process.env.PROYECTA_CONFIG ?? DEFAULT_CONFIG_PATH) {
   if (!existsSync(path)) {
     throw new Error(
-      `Config file not found: ${path} (copy config/proyecta.example.json, or set PROYECTA_CONFIG)`
+      `Config file not found: ${path} (npm run db:up writes a local one; production starts from config/proyecta.example.json)`
     );
   }
   let raw: unknown;

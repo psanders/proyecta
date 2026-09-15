@@ -1,15 +1,15 @@
 {
-  "server": { "port": 3000 },
-  "database": { "url": "postgresql://proyecta:proyecta@localhost:5433/proyecta" },
-  "dashboard": { "url": "http://localhost:5175" },
-  "identity": {
-    "endpoint": "localhost:50052",
-    "bridgeUrl": "http://localhost:9111",
-    "issuer": "proyecta",
-    "audience": "proyecta"
+  "server": {
+    "port": 3000
   },
-  "test": {
-    "databaseUrl": "postgresql://proyecta:proyecta@localhost:5433/proyecta_test",
-    "mailpitUrl": "http://localhost:8026"
+  "database": {
+    "url": "postgresql://proyecta:CHANGE_ME@postgres:5432/proyecta?schema=public"
+  },
+  "dashboard": {
+    "url": "https://app.proyecta.do"
+  },
+  "identity": {
+    "endpoint": "identity:50051",
+    "bridgeUrl": "http://identity:9110"
   }
 }

@@ -11,7 +11,7 @@ it from this file in the release PR.
 
 - [ ] **proyecta-config** The apiserver reads `config/proyecta.json` instead of environment
       variables and won't start without it. Create `/opt/proyecta/config/proyecta.json` from
-      `config/proyecta.production.example.json` with the real Postgres password in `database.url`,
+      `config/proyecta.example.json` with the real Postgres password in `database.url`,
       then `chmod 644 config/proyecta.json`. Afterwards `IDENTITY_ISSUER` and `IDENTITY_AUDIENCE`
       can be removed from `.env`.
 

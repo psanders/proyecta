@@ -184,7 +184,7 @@ rsync -avz --relative \
   config/identity/templates/verifyEmail.hbs \
   config/identity/templates/verifyPhone.hbs \
   config/identity/identity.production.example.json \
-  config/proyecta.production.example.json \
+  config/proyecta.example.json \
   "$DEPLOY_USER@$DEPLOY_HOST:/opt/proyecta/"
 ```
 
@@ -207,7 +207,7 @@ Edit `config/identity/identity.json` and fill in:
 Then the apiserver's own settings:
 
 ```bash
-cp config/proyecta.production.example.json config/proyecta.json
+cp config/proyecta.example.json config/proyecta.json
 chmod 644 config/proyecta.json   # the container runs as a non-root user
 ```
 
@@ -216,7 +216,9 @@ Edit `config/proyecta.json`:
 - `database.url` — replace `CHANGE_ME` with the same `POSTGRES_PASSWORD`
   (URL-encode it if it has `/`, `+` or `=`)
 - `dashboard.url` — the public dashboard URL, used in password-reset links
-- `identity.issuer` / `identity.audience` — must match `identity.json`
+- only if you changed `issuer` / `audience` in `identity.json`: add the same
+  values as `identity.issuer` / `identity.audience` (both default to
+  `proyecta`, Identity's own default)
 - optional `media.dir` — only if the demo media lives somewhere other than
   the image default (`/app/packages/api/.data/media`, where compose mounts it)
 

@@ -8,7 +8,7 @@ export function testConfig() {
   const { test } = loadConfig();
   if (!test.databaseUrl) {
     throw new Error(
-      "test.databaseUrl is not set in config/proyecta.json (see proyecta.example.json)"
+      "test.databaseUrl is not set in config/proyecta.json (npm run db:up writes it)"
     );
   }
   return { databaseUrl: test.databaseUrl, mailpitUrl: test.mailpitUrl ?? "http://localhost:8026" };

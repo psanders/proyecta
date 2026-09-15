@@ -17,7 +17,7 @@ function databaseUrl(): string {
     process.env.PROYECTA_CONFIG ??
     fileURLToPath(new URL("../../config/proyecta.json", import.meta.url));
   if (!existsSync(path)) {
-    throw new Error(`Config file not found: ${path} (copy config/proyecta.example.json)`);
+    throw new Error(`Config file not found: ${path} (npm run db:up writes a local one)`);
   }
   const url = (JSON.parse(readFileSync(path, "utf8")) as { database?: { url?: string } }).database
     ?.url;

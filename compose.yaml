@@ -67,7 +67,7 @@ services:
       NODE_ENV: production
     volumes:
       # Database, Identity and dashboard settings (hand-written on the Droplet
-      # from config/proyecta.production.example.json; must be readable by the
+      # from config/proyecta.example.json; must be readable by the
       # container's non-root user, e.g. chmod 644).
       - ./config/proyecta.json:/app/config/proyecta.json:ro
       # Demo rotation media (see scripts/generate-demo-ads.sh). Optional: the

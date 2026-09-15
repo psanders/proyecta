@@ -25,9 +25,20 @@ if [[ ! -f "$dir/identity.json" || "$force" == "--force" ]]; then
   sed "s|__ENCRYPTION_KEY__|$key|" "$dir/identity.example.json" > "$dir/identity.json"
   echo "wrote config/identity/identity.json"
 fi
-# The API's own settings (database, Identity endpoints, dashboard URL, test databases).
+# The API's own settings for the local stack (config/proyecta.example.json is the production
+# template). Gitignored; kept if it already exists.
 if [[ ! -f "$root/config/proyecta.json" ]]; then
-  cp "$root/config/proyecta.example.json" "$root/config/proyecta.json"
+  cat > "$root/config/proyecta.json" << 'JSON'
+{
+  "database": { "url": "postgresql://proyecta:proyecta@localhost:5433/proyecta" },
+  "dashboard": { "url": "http://localhost:5175" },
+  "identity": { "endpoint": "localhost:50052", "bridgeUrl": "http://localhost:9111" },
+  "test": {
+    "databaseUrl": "postgresql://proyecta:proyecta@localhost:5433/proyecta_test",
+    "mailpitUrl": "http://localhost:8026"
+  }
+}
+JSON
   echo "wrote config/proyecta.json"
 fi
 echo "Identity config ready"
