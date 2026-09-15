@@ -37,7 +37,7 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: "Version tag to deploy (e.g. v1.2.0; empty = current package.json version)"
+        description: "Version tag to deploy (e.g. v1.2.0; empty = current lerna.json version)"
         required: false
 
 concurrency:
@@ -59,7 +59,8 @@ jobs:
         run: |
           if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
             v="${{ inputs.version }}"
-            [ -n "$v" ] || v="v$(node -p "require('./package.json').version")"
+            # The root package.json has no version; Lerna keeps the release version.
+            [ -n "$v" ] || v="v$(node -p "require('./lerna.json').version")"
           else
             # docker-publish runs on vX.Y.Z tags; head_branch carries the tag name.
             v="${{ github.event.workflow_run.head_branch }}"
