@@ -1,5 +1,5 @@
 {
   "watch": ["src", "../common/src"],
   "ext": "ts",
-  "exec": "tsx --conditions=source --env-file-if-exists=.env src/index.ts"
+  "exec": "tsx --conditions=source src/index.ts"
 }

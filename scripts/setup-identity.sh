@@ -25,4 +25,9 @@ if [[ ! -f "$dir/identity.json" || "$force" == "--force" ]]; then
   sed "s|__ENCRYPTION_KEY__|$key|" "$dir/identity.example.json" > "$dir/identity.json"
   echo "wrote config/identity/identity.json"
 fi
+# The API's own settings (database, Identity endpoints, dashboard URL, test databases).
+if [[ ! -f "$root/config/proyecta.json" ]]; then
+  cp "$root/config/proyecta.example.json" "$root/config/proyecta.json"
+  echo "wrote config/proyecta.json"
+fi
 echo "Identity config ready"

@@ -1,0 +1,15 @@
+{
+  "server": { "port": 3000 },
+  "database": { "url": "postgresql://proyecta:proyecta@localhost:5433/proyecta" },
+  "dashboard": { "url": "http://localhost:5175" },
+  "identity": {
+    "endpoint": "localhost:50052",
+    "bridgeUrl": "http://localhost:9111",
+    "issuer": "proyecta",
+    "audience": "proyecta"
+  },
+  "test": {
+    "databaseUrl": "postgresql://proyecta:proyecta@localhost:5433/proyecta_test",
+    "mailpitUrl": "http://localhost:8026"
+  }
+}

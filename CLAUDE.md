@@ -73,7 +73,7 @@ Full guide, rationale, and scaffolding: `/ps:create-validated-function` (source:
 
 ### Commands
 
-- `npm run db:up`: generates Identity secrets (`scripts/setup-identity.sh`) and starts Postgres 17 on **5433** (`proyecta`, `proyecta_test`, `identity` databases), Fonoster Identity (gRPC **50052**, invite bridge **9111**) and Mailpit (SMTP 1026, UI **8026**).
+- `npm run db:up`: writes `config/proyecta.json` from `config/proyecta.example.json` if missing (the API's settings, no `.env`), generates Identity secrets (`scripts/setup-identity.sh`) and starts Postgres 17 on **5433** (`proyecta`, `proyecta_test`, `identity` databases), Fonoster Identity (gRPC **50052**, invite bridge **9111**) and Mailpit (SMTP 1026, UI **8026**).
 - `npm run db:migrate` / `db:generate` / `db:studio`
 - `npm run lint && npm run typecheck && npm test`: the green gate before any spec sync.
 - `npm run test:integration`: needs `db:up`.

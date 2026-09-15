@@ -20,8 +20,9 @@ import { EventHub } from "../../src/events/hub.js";
 import { resolveContext, type Services } from "../../src/trpc/context.js";
 import { appRouter } from "../../src/trpc/router.js";
 import { createCallerFactory } from "../../src/trpc/trpc.js";
+import { testConfig } from "./testConfig.js";
 
-const db = createDbClient(process.env.TEST_DATABASE_URL!);
+const db = createDbClient(testConfig().databaseUrl);
 const rotation: Manifest = {
   version: "test-1",
   name: "Rotación General",
