@@ -32,7 +32,11 @@ COPY packages/dashboard/package.json packages/dashboard/
 COPY packages/player/package.json    packages/player/
 COPY packages/web/package.json       packages/web/
 
-RUN npm ci --ignore-scripts
+# fetch-retries: this monorepo's install is large enough that a flaky network
+# (observed on the machine this was built on) can hit an ECONNRESET partway
+# through; npm's own retry/backoff absorbs that instead of failing the layer.
+RUN npm config set fetch-retries 5 fetch-retry-mintimeout 20000 fetch-retry-maxtimeout 120000 \
+  && npm ci --ignore-scripts
 
 # ── build-common ─────────────────────────────────────────────────────────────
 FROM deps AS build-common
