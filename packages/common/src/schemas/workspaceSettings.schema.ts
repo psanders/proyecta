@@ -5,7 +5,6 @@ import { z } from "zod/v4";
 import { TIMEZONES } from "../utils/timeZone.js";
 import { businessNameSchema } from "./auth.schema.js";
 
-export const DELETE_WORKSPACE_CONFIRMATION = "ELIMINAR";
 /** The word to type to delete a business, per language. Either is accepted. */
 export const DELETE_WORKSPACE_CONFIRMATIONS = { es: "ELIMINAR", en: "DELETE" } as const;
 

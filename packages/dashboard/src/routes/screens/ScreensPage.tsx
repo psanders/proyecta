@@ -11,9 +11,10 @@ import { Icon } from "../../components/ui/Icon.js";
 import { cn } from "../../lib/cn.js";
 import { trpc } from "../../lib/trpc.js";
 import { useWorkspace } from "../../lib/useWorkspace.js";
-import { strings } from "../../strings.js";
+import { useI18n } from "../../lib/useI18n.js";
 
 export function ScreensPage() {
+  const { t } = useI18n();
   const [archived, setArchived] = useState(false);
   const navigate = useNavigate();
   const { canManage } = useWorkspace();
@@ -21,24 +22,20 @@ export function ScreensPage() {
   const totals = list.data?.totals;
   const add = canManage ? (
     <Button icon="add" onClick={() => navigate("/pantallas/nueva")}>
-      {strings.screens.add}
+      {t("screens.add")}
     </Button>
   ) : null;
 
   if (list.isSuccess && !archived && totals?.all === 0) {
     return (
       <div className="mx-auto flex w-full max-w-[1080px] flex-col gap-8">
-        <PageHeader
-          title={strings.screens.title}
-          subtitle={strings.screens.subtitle}
-          actions={add}
-        />
+        <PageHeader title={t("screens.title")} subtitle={t("screens.subtitle")} actions={add} />
         <EmptyState
-          title={strings.screens.emptyTitle}
-          body={strings.screens.emptyBody}
+          title={t("screens.emptyTitle")}
+          body={t("screens.emptyBody")}
           action={
             canManage ? (
-              <Button onClick={() => navigate("/bienvenida")}>{strings.screens.add}</Button>
+              <Button onClick={() => navigate("/bienvenida")}>{t("screens.add")}</Button>
             ) : null
           }
         />
@@ -48,19 +45,19 @@ export function ScreensPage() {
 
   return (
     <div className="mx-auto flex w-full max-w-[1080px] flex-col gap-8">
-      <PageHeader title={strings.screens.title} subtitle={strings.screens.subtitle} actions={add} />
+      <PageHeader title={t("screens.title")} subtitle={t("screens.subtitle")} actions={add} />
       <div className="flex gap-4">
-        <StatCard label={strings.screens.total} value={totals?.all ?? "–"} />
-        <StatCard label={strings.screens.online} value={totals?.online ?? "–"} />
-        <StatCard label={strings.screens.incomplete} value={totals?.incomplete ?? "–"} />
+        <StatCard label={t("screens.total")} value={totals?.all ?? "–"} />
+        <StatCard label={t("screens.online")} value={totals?.online ?? "–"} />
+        <StatCard label={t("screens.incomplete")} value={totals?.incomplete ?? "–"} />
       </div>
       <section className="flex flex-col gap-4">
         <div className="flex items-center justify-between">
-          <h2 className="font-mono text-base font-medium">{strings.screens.yours}</h2>
+          <h2 className="font-mono text-base font-medium">{t("screens.yours")}</h2>
           <div className="flex gap-0.5 rounded-full bg-secondary p-1 text-[13px]" role="tablist">
             {[
-              { value: false, label: strings.screens.active },
-              { value: true, label: strings.screens.archived }
+              { value: false, label: t("screens.active") },
+              { value: true, label: t("screens.archived") }
             ].map((tab) => (
               <button
                 key={tab.label}
@@ -79,11 +76,11 @@ export function ScreensPage() {
             ))}
           </div>
         </div>
-        {list.isError ? <Alert tone="error">{strings.screens.loadError}</Alert> : null}
+        {list.isError ? <Alert tone="error">{t("screens.loadError")}</Alert> : null}
         {list.isLoading ? (
           <Icon name="spinner" className="size-6 animate-spin text-muted-foreground" />
         ) : list.data?.screens.length === 0 ? (
-          <p className="text-sm text-muted-foreground">{strings.screens.noArchived}</p>
+          <p className="text-sm text-muted-foreground">{t("screens.noArchived")}</p>
         ) : (
           <div className="flex flex-col gap-2">
             {list.data?.screens.map((screen) => (

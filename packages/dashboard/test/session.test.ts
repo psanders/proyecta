@@ -8,6 +8,7 @@ import { observable } from "@trpc/server/observable";
 import { createRefreshLink } from "../src/lib/refreshLink.js";
 import { createSessionStore } from "../src/lib/session.js";
 import { availabilitySummary, formatCents, formatPlays } from "../src/lib/format.js";
+import { translate, type Translate } from "../src/lib/i18n.js";
 
 function memoryStorage() {
   const data = new Map<string, string>();
@@ -118,15 +119,18 @@ describe("dashboard session", () => {
   });
 
   it("should summarize availability and format pay-per-display cents like the design", () => {
-    expect(availabilitySummary([1, 2, 3, 4, 5], "08:00", "20:00")).to.equal("Lun–Vie · 8:00–20:00");
-    expect(availabilitySummary([1, 2, 3, 4, 5, 6, 7], "09:00", "22:00")).to.equal(
+    const t: Translate = (id, vars) => translate("es", id, vars);
+    expect(availabilitySummary([1, 2, 3, 4, 5], "08:00", "20:00", t)).to.equal(
+      "Lun–Vie · 8:00–20:00"
+    );
+    expect(availabilitySummary([1, 2, 3, 4, 5, 6, 7], "09:00", "22:00", t)).to.equal(
       "Todos los días · 9:00–22:00"
     );
-    expect(availabilitySummary([6, 7], "10:00", "18:00")).to.equal("Sáb, Dom · 10:00–18:00");
-    expect(availabilitySummary([], "08:00", "20:00")).to.equal(null);
-    expect(formatCents(250)).to.equal("US$ 2.50");
-    expect(formatCents(45000)).to.equal("US$ 450.00");
-    expect(formatPlays(1)).to.equal("1 reproducción");
-    expect(formatPlays(12)).to.equal("12 reproducciones");
+    expect(availabilitySummary([6, 7], "10:00", "18:00", t)).to.equal("Sáb, Dom · 10:00–18:00");
+    expect(availabilitySummary([], "08:00", "20:00", t)).to.equal(null);
+    expect(formatCents(250, "es")).to.equal("US$ 2.50");
+    expect(formatCents(45000, "es")).to.equal("US$ 450.00");
+    expect(formatPlays(1, t)).to.equal("1 reproducción");
+    expect(formatPlays(12, t)).to.equal("12 reproducciones");
   });
 });

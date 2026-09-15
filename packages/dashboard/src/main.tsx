@@ -7,6 +7,7 @@ import { Navigate, RouterProvider, createBrowserRouter, useLocation } from "reac
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { theme } from "./lib/theme.js";
 import { createClient, trpc } from "./lib/trpc.js";
+import { usePreferenceSync } from "./lib/usePreferenceSync.js";
 import { useSession } from "./lib/useSession.js";
 import { AppLayout } from "./routes/AppLayout.js";
 import {
@@ -31,10 +32,15 @@ function RequireSession({ children }: { children: ReactNode }) {
   const current = useSession();
   const location = useLocation();
   return current ? (
-    children
+    <SignedInPage>{children}</SignedInPage>
   ) : (
     <Navigate to={`/ingresar?volver=${encodeURIComponent(location.pathname)}`} replace />
   );
+}
+
+function SignedInPage({ children }: { children: ReactNode }) {
+  usePreferenceSync();
+  return children;
 }
 
 const router = createBrowserRouter([

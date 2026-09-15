@@ -1,8 +1,9 @@
 /**
  * Copyright (C) 2026 by Proyecta. All rights reserved.
  */
-import { SCREEN_STATUS_LABELS, type ScreenStatusView } from "@proyecta/common";
+import type { ScreenStatusView } from "@proyecta/common";
 import { cn } from "../lib/cn.js";
+import { useI18n } from "../lib/useI18n.js";
 
 const TONES: Record<ScreenStatusView, string> = {
   ONLINE: "bg-success text-success-foreground",
@@ -19,6 +20,7 @@ export function StatusBadge({
   status: ScreenStatusView;
   className?: string;
 }) {
+  const { t } = useI18n();
   return (
     <span
       data-testid="status-badge"
@@ -29,7 +31,7 @@ export function StatusBadge({
       )}
     >
       <span className="size-1.5 rounded-full bg-current" />
-      {SCREEN_STATUS_LABELS[status]}
+      {t(`screenStatus.${status}`)}
     </span>
   );
 }

@@ -3,12 +3,7 @@
  */
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import {
-  ENVIRONMENT_LABELS,
-  ORIENTATION_LABELS,
-  PLACE_TYPE_LABELS,
-  type PlaceType
-} from "@proyecta/common";
+import type { Environment, Orientation, PlaceType } from "@proyecta/common";
 import { DayPicker } from "../../components/DayPicker.js";
 import { DevicePanel } from "../../components/DevicePanel.js";
 import { BackLink, KeyValueRow, PageHeader } from "../../components/PageHeader.js";
@@ -22,12 +17,13 @@ import { errorMessage } from "../../lib/errors.js";
 import { formatCents, formatPlays, formatTime12 } from "../../lib/format.js";
 import { trpc } from "../../lib/trpc.js";
 import { useWorkspace } from "../../lib/useWorkspace.js";
-import { strings } from "../../strings.js";
+import { useI18n } from "../../lib/useI18n.js";
 
 type Pending = "unlink" | "archive" | "delete" | null;
 
 /** Pencil frame screen-detail with the lifecycle dialogs. */
 export function ScreenDetailPage() {
+  const { t, language } = useI18n();
   const { id = "" } = useParams();
   const navigate = useNavigate();
   const utils = trpc.useUtils();
@@ -46,30 +42,30 @@ export function ScreenDetailPage() {
   if (screen.isLoading)
     return <Icon name="spinner" className="size-6 animate-spin text-muted-foreground" />;
   if (!screen.data)
-    return <Alert tone="error">{errorMessage(screen.error) ?? strings.errors.notFound}</Alert>;
+    return <Alert tone="error">{errorMessage(screen.error, t) ?? t("errors.notFound")}</Alert>;
   const s = screen.data;
-  const na = strings.detail.notSet;
-  const place = s.placeType ? PLACE_TYPE_LABELS[s.placeType as PlaceType] : null;
+  const na = t("detail.notSet");
+  const place = s.placeType ? t(`placeType.${s.placeType as PlaceType}`) : null;
 
   const dialogs = {
     unlink: {
-      title: strings.dialogs.unlinkTitle,
-      body: strings.dialogs.unlinkBody,
-      confirm: strings.dialogs.unlinkConfirm,
+      title: t("dialogs.unlinkTitle"),
+      body: t("dialogs.unlinkBody"),
+      confirm: t("dialogs.unlinkConfirm"),
       run: () => unlink.mutate({ id }),
       m: unlink
     },
     archive: {
-      title: strings.dialogs.archiveTitle,
-      body: strings.dialogs.archiveBody,
-      confirm: strings.dialogs.archiveConfirm,
+      title: t("dialogs.archiveTitle"),
+      body: t("dialogs.archiveBody"),
+      confirm: t("dialogs.archiveConfirm"),
       run: () => archive.mutate({ id }),
       m: archive
     },
     delete: {
-      title: strings.dialogs.deleteTitle,
-      body: strings.dialogs.deleteBody,
-      confirm: strings.dialogs.deleteConfirm,
+      title: t("dialogs.deleteTitle"),
+      body: t("dialogs.deleteBody"),
+      confirm: t("dialogs.deleteConfirm"),
       run: () => remove.mutate({ id }),
       m: remove
     }
@@ -78,7 +74,7 @@ export function ScreenDetailPage() {
 
   return (
     <div className="mx-auto flex w-full max-w-[760px] flex-col gap-6">
-      <BackLink to="/" label={strings.detail.back} />
+      <BackLink to="/" label={t("detail.back")} />
       <PageHeader
         title={s.name}
         badge={<StatusBadge status={s.status} />}
@@ -90,13 +86,11 @@ export function ScreenDetailPage() {
         }
         actions={
           canManage && !s.archived ? (
-            <Button onClick={() => navigate(`/pantallas/${id}/editar`)}>
-              {strings.detail.edit}
-            </Button>
+            <Button onClick={() => navigate(`/pantallas/${id}/editar`)}>{t("detail.edit")}</Button>
           ) : null
         }
       />
-      {s.archived ? <Alert tone="info">{strings.detail.archivedNotice}</Alert> : null}
+      {s.archived ? <Alert tone="info">{t("detail.archivedNotice")}</Alert> : null}
 
       <DevicePanel
         screenId={s.id}
@@ -109,34 +103,30 @@ export function ScreenDetailPage() {
         onDelete={() => setPending("delete")}
       />
 
-      <SectionCard title={strings.detail.info}>
-        <KeyValueRow label={strings.form.placeType} value={place ?? na} />
+      <SectionCard title={t("detail.info")}>
+        <KeyValueRow label={t("form.placeType")} value={place ?? na} />
         <KeyValueRow
-          label={strings.form.environment}
-          value={
-            s.environment
-              ? ENVIRONMENT_LABELS[s.environment as keyof typeof ENVIRONMENT_LABELS]
-              : na
-          }
+          label={t("form.environment")}
+          value={s.environment ? t(`environment.${s.environment as Environment}`) : na}
         />
         <KeyValueRow
-          label="Tamaño"
+          label={t("detail.size")}
           value={
             s.widthCm && s.heightCm
-              ? `${s.widthCm} x ${s.heightCm} cm${s.orientation ? ` · ${ORIENTATION_LABELS[s.orientation as keyof typeof ORIENTATION_LABELS]}` : ""}`
+              ? `${s.widthCm} x ${s.heightCm} cm${s.orientation ? ` · ${t(`orientation.${s.orientation as Orientation}`)}` : ""}`
               : na
           }
         />
         <KeyValueRow
-          label={strings.form.resolution}
+          label={t("form.resolution")}
           value={s.resolution ? s.resolution.replace("x", " x ") : na}
         />
       </SectionCard>
 
-      <SectionCard title={strings.detail.availability}>
+      <SectionCard title={t("detail.availability")}>
         <DayPicker value={s.availableDays} />
         <KeyValueRow
-          label={strings.detail.schedule}
+          label={t("detail.schedule")}
           value={
             s.startTime && s.endTime
               ? `${formatTime12(s.startTime)} – ${formatTime12(s.endTime)}`
@@ -145,27 +135,31 @@ export function ScreenDetailPage() {
         />
       </SectionCard>
 
-      <SectionCard title={strings.detail.price}>
+      <SectionCard title={t("detail.price")}>
         <KeyValueRow
-          label={strings.detail.rate}
-          value={s.ratePerFiveSecondsCents !== null ? formatCents(s.ratePerFiveSecondsCents) : na}
+          label={t("detail.rate")}
+          value={
+            s.ratePerFiveSecondsCents !== null
+              ? formatCents(s.ratePerFiveSecondsCents, language)
+              : na
+          }
         />
       </SectionCard>
 
-      <SectionCard title={strings.detail.activity} icon="barChart">
+      <SectionCard title={t("detail.activity")} icon="barChart">
         {earnings.data?.available ? (
           <>
             <p className="text-sm text-foreground">
-              {strings.detail.today} · {formatPlays(earnings.data.today.plays)} ·{" "}
-              {formatCents(earnings.data.today.earningsCents)}
+              {t("detail.today")} · {formatPlays(earnings.data.today.plays, t)} ·{" "}
+              {formatCents(earnings.data.today.earningsCents, language)}
             </p>
             <p className="text-sm text-foreground">
-              {strings.detail.last7Days} · {formatPlays(earnings.data.last7Days.plays)} ·{" "}
-              {formatCents(earnings.data.last7Days.earningsCents)}
+              {t("detail.last7Days")} · {formatPlays(earnings.data.last7Days.plays, t)} ·{" "}
+              {formatCents(earnings.data.last7Days.earningsCents, language)}
             </p>
           </>
         ) : (
-          <p className="text-sm text-muted-foreground">{strings.detail.noRate}</p>
+          <p className="text-sm text-muted-foreground">{t("detail.noRate")}</p>
         )}
       </SectionCard>
 
@@ -175,10 +169,10 @@ export function ScreenDetailPage() {
           title={active.title}
           body={active.body}
           confirmLabel={active.confirm}
-          cancelLabel={strings.dialogs.cancel}
+          cancelLabel={t("dialogs.cancel")}
           destructive={pending !== "unlink"}
           loading={active.m.isPending}
-          error={errorMessage(active.m.error)}
+          error={errorMessage(active.m.error, t)}
           onConfirm={active.run}
           onClose={() => setPending(null)}
         />

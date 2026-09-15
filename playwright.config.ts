@@ -7,7 +7,8 @@ export default defineConfig({
   testDir: "e2e",
   fullyParallel: true,
   reporter: "list",
-  use: { trace: "on-first-retry" },
+  // The dashboard picks English for English browsers on a first visit; the suites expect Spanish.
+  use: { trace: "on-first-retry", locale: "es-DO" },
   projects: [{ name: "chromium", use: { ...devices["Desktop Chrome"], channel: "chromium" } }],
   webServer: [
     {

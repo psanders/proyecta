@@ -11,12 +11,6 @@ export const invitableRoleSchema = z.enum(["WORKSPACE_ADMIN", "WORKSPACE_MEMBER"
   error: "validation.role.invitable"
 });
 
-export const ROLE_LABELS: Record<WorkspaceRole, string> = {
-  WORKSPACE_OWNER: "Propietario",
-  WORKSPACE_ADMIN: "Administrador",
-  WORKSPACE_MEMBER: "Miembro"
-};
-
 export const renameWorkspaceSchema = z.object({ name: businessNameSchema });
 
 export const inviteMemberSchema = z.object({

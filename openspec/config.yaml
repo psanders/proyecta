@@ -4,7 +4,8 @@ context: |
   Proyecta is a DOOH marketplace for the Dominican Republic: screen owners ("valleros") publish
   screens, advertisers buy spots. v0 focuses on the PLAYER: a Chromium web core wrapped in thin
   shells (Kotlin Android WebView app; Chromium kiosk on Linux; Edge kiosk on Windows).
-  All user-facing text is Spanish (es-DO).
+  User-facing text is Spanish (es-DO) by default; the owner dashboard (and the API messages it shows) also
+  supports English. The player and marketing site are Spanish-only.
 
   Stack: TypeScript monorepo (npm workspaces + Lerna). packages/common (Zod schemas, validated-
   function spine), packages/api (Express + Prisma/Postgres; tRPC for the dashboard, frozen

@@ -1,8 +1,9 @@
 /**
  * Copyright (C) 2026 by Proyecta. All rights reserved.
  */
-import { WEEKDAY_LABELS } from "@proyecta/common";
 import { cn } from "../lib/cn.js";
+import type { MessageId } from "../lib/i18n.js";
+import { useI18n } from "../lib/useI18n.js";
 
 /** Pencil Dashboard/Day Picker: seven round chips, selected ones filled dark. */
 export function DayPicker({
@@ -14,6 +15,7 @@ export function DayPicker({
   onChange?: (days: number[]) => void;
   disabled?: boolean;
 }) {
+  const { t } = useI18n();
   const toggle = (day: number) =>
     onChange?.(
       value.includes(day) ? value.filter((d) => d !== day) : [...value, day].sort((a, b) => a - b)
@@ -36,7 +38,7 @@ export function DayPicker({
                 : "bg-secondary text-muted-foreground hover:bg-sidebar-accent"
             )}
           >
-            {WEEKDAY_LABELS[day]}
+            {t(`weekday.${day}` as MessageId)}
           </button>
         );
       })}

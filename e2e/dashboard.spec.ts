@@ -156,6 +156,64 @@ test.describe("owner dashboard", () => {
     await expect(html).toHaveAttribute("data-theme", "light");
   });
 
+  test("switches to English in Mi perfil, keeps it on other browsers and localizes API errors", async ({
+    page,
+    browser
+  }) => {
+    const stamp = Date.now();
+    const email = `english-${stamp}@proyecta.local`;
+    const html = page.locator("html");
+    await signUp(page, stamp, email);
+    await page.goto(APP);
+    await expect(html).toHaveAttribute("lang", "es-DO");
+
+    await page.getByRole("button", { name: "Negocio y cuenta" }).click();
+    await page.getByRole("menuitem", { name: "Mi perfil" }).click();
+    await expect(page.getByLabel("Idioma")).toHaveValue("es");
+    await page.getByLabel("Idioma").selectOption("en");
+
+    await expect(page.getByRole("heading", { name: "My profile" })).toBeVisible();
+    await expect(page.getByRole("link", { name: "Settings" })).toBeVisible();
+    await expect(page.getByRole("radiogroup", { name: "Appearance" })).toBeVisible();
+    await expect(html).toHaveAttribute("lang", "en-US");
+    await shot(page, "17-profile-english");
+
+    // API messages follow the language: a field error and a domain error.
+    await page.getByLabel("Current password").fill("wrong-password");
+    await page.getByLabel("New password").fill("short");
+    await page.getByRole("button", { name: "Change password" }).click();
+    await expect(page.getByText("Password must be at least 8 characters")).toBeVisible();
+    await page.getByLabel("New password").fill("otra-supersecreta");
+    await page.getByRole("button", { name: "Change password" }).click();
+    await expect(page.getByText("Your current password is incorrect")).toBeVisible();
+
+    await page.reload();
+    await expect(page.getByRole("heading", { name: "My profile" })).toBeVisible();
+
+    // Another browser that never opened Proyecta: Spanish until the saved language loads.
+    const other = await browser.newContext({ locale: "es-DO" });
+    const second = await other.newPage();
+    await second.goto(`${APP}/ingresar`);
+    await expect(second.getByRole("heading", { name: "Bienvenido de nuevo" })).toBeVisible();
+    await second.getByLabel("Correo electrónico").fill(email);
+    await second.getByLabel("Contraseña").fill("supersecreta1");
+    await second.getByRole("button", { name: "Iniciar sesión" }).click();
+    await expect(second.getByRole("heading", { name: "My screens" })).toBeVisible();
+
+    // Signing out keeps the browser's last language.
+    await second.getByRole("button", { name: "Business and account" }).click();
+    await second.getByRole("menuitem", { name: "Sign out" }).click();
+    await expect(second.getByRole("heading", { name: "Welcome back" })).toBeVisible();
+    await other.close();
+
+    // First visit from an English browser.
+    const english = await browser.newContext({ locale: "en-US" });
+    const visitor = await english.newPage();
+    await visitor.goto(`${APP}/ingresar`);
+    await expect(visitor.getByRole("heading", { name: "Welcome back" })).toBeVisible();
+    await english.close();
+  });
+
   test("invite a teammate who accepts from the email and appears as active", async ({
     page,
     request

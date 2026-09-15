@@ -2,7 +2,6 @@
  * Copyright (C) 2026 by Proyecta. All rights reserved.
  */
 import { useState } from "react";
-import { ROLE_LABELS } from "@proyecta/common";
 import { PageHeader } from "../../components/PageHeader.js";
 import { Alert } from "../../components/ui/Alert.js";
 import { Button } from "../../components/ui/Button.js";
@@ -14,12 +13,13 @@ import { cn } from "../../lib/cn.js";
 import { errorMessage, fieldErrors } from "../../lib/errors.js";
 import { trpc, type RouterOutputs } from "../../lib/trpc.js";
 import { useWorkspace } from "../../lib/useWorkspace.js";
-import { strings } from "../../strings.js";
+import { useI18n } from "../../lib/useI18n.js";
 
 type Member = RouterOutputs["workspaces"]["members"][number];
 
 /** Team page: members with role and status; admins invite, resend and remove. */
 export function TeamPage() {
+  const { t } = useI18n();
   const { canManage } = useWorkspace();
   const utils = trpc.useUtils();
   const profile = trpc.profile.get.useQuery();
@@ -28,7 +28,7 @@ export function TeamPage() {
   const [removing, setRemoving] = useState<Member | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
   const resend = trpc.workspaces.resendInvitation.useMutation({
-    onSuccess: () => setNotice(strings.team.resent)
+    onSuccess: () => setNotice(t("team.resent"))
   });
   const remove = trpc.workspaces.removeMember.useMutation({
     onSuccess: () => {
@@ -40,18 +40,20 @@ export function TeamPage() {
   return (
     <div className="mx-auto flex w-full max-w-[1080px] flex-col gap-8">
       <PageHeader
-        title={strings.team.title}
-        subtitle={strings.team.subtitle}
+        title={t("team.title")}
+        subtitle={t("team.subtitle")}
         actions={
           canManage ? (
             <Button icon="add" onClick={() => setInviteOpen(true)}>
-              {strings.team.invite}
+              {t("team.invite")}
             </Button>
           ) : null
         }
       />
       {notice ? <Alert tone="success">{notice}</Alert> : null}
-      {errorMessage(resend.error) ? <Alert tone="error">{errorMessage(resend.error)}</Alert> : null}
+      {errorMessage(resend.error, t) ? (
+        <Alert tone="error">{errorMessage(resend.error, t)}</Alert>
+      ) : null}
       <Card>
         {members.isLoading ? (
           <div className="p-6">
@@ -77,13 +79,13 @@ export function TeamPage() {
       {removing ? (
         <ConfirmDialog
           open
-          title={strings.team.removeTitle}
-          body={`${removing.name} (${removing.email}). ${strings.team.removeBody}`}
-          confirmLabel={strings.team.remove}
-          cancelLabel={strings.dialogs.cancel}
+          title={t("team.removeTitle")}
+          body={`${removing.name} (${removing.email}). ${t("team.removeBody")}`}
+          confirmLabel={t("team.remove")}
+          cancelLabel={t("dialogs.cancel")}
           destructive
           loading={remove.isPending}
-          error={errorMessage(remove.error)}
+          error={errorMessage(remove.error, t)}
           onConfirm={() => remove.mutate({ userRef: removing.userRef })}
           onClose={() => setRemoving(null)}
         />
@@ -108,6 +110,7 @@ function MemberRow({
   onResend: () => void;
   onRemove: () => void;
 }) {
+  const { t } = useI18n();
   const initials = member.name
     .split(/\s+/)
     .map((part) => part[0])
@@ -124,35 +127,35 @@ function MemberRow({
         <span className="flex min-w-0 flex-col">
           <span className="truncate text-sm font-medium">
             {member.name}{" "}
-            {isYou ? <span className="text-muted-foreground">({strings.team.you})</span> : null}
+            {isYou ? <span className="text-muted-foreground">({t("team.you")})</span> : null}
           </span>
           <span className="truncate text-[13px] text-muted-foreground">{member.email}</span>
         </span>
       </div>
       <div className="flex shrink-0 items-center gap-4">
-        <span className="text-sm text-muted-foreground">{ROLE_LABELS[member.role]}</span>
+        <span className="text-sm text-muted-foreground">{t(`role.${member.role}`)}</span>
         <span
           className={cn(
             "rounded-full px-2.5 py-1 font-mono text-xs",
             pending ? "bg-warning text-warning-foreground" : "bg-success text-success-foreground"
           )}
         >
-          {pending ? strings.team.pending : strings.team.active}
+          {pending ? t("team.pending") : t("team.active")}
         </span>
         {canManage && member.role !== "WORKSPACE_OWNER" ? (
           <div className="flex gap-1">
             {pending ? (
               <Button variant="ghost" icon="refresh" loading={resending} onClick={onResend}>
-                {strings.team.resend}
+                {t("team.resend")}
               </Button>
             ) : null}
             <Button
               variant="ghost"
               icon="delete"
               onClick={onRemove}
-              aria-label={`${strings.team.remove} ${member.name}`}
+              aria-label={`${t("team.remove")} ${member.name}`}
             >
-              {strings.team.remove}
+              {t("team.remove")}
             </Button>
           </div>
         ) : null}
@@ -162,6 +165,7 @@ function MemberRow({
 }
 
 function InviteDialog({ open, onClose }: { open: boolean; onClose: () => void }) {
+  const { t } = useI18n();
   const utils = trpc.useUtils();
   const [form, setForm] = useState({
     email: "",
@@ -180,12 +184,12 @@ function InviteDialog({ open, onClose }: { open: boolean; onClose: () => void })
   return (
     <Dialog
       open={open}
-      title={strings.team.inviteTitle}
+      title={t("team.inviteTitle")}
       onClose={onClose}
       footer={
         <>
           <Button variant="outline" onClick={onClose}>
-            {strings.dialogs.cancel}
+            {t("dialogs.cancel")}
           </Button>
           <Button
             icon="mail"
@@ -198,41 +202,41 @@ function InviteDialog({ open, onClose }: { open: boolean; onClose: () => void })
               })
             }
           >
-            {strings.team.sendInvite}
+            {t("team.sendInvite")}
           </Button>
         </>
       }
     >
       <div className="flex flex-col gap-4 pt-2 text-left">
-        <p>{strings.team.inviteBody}</p>
-        {errorMessage(invite.error) ? (
-          <Alert tone="error">{errorMessage(invite.error)}</Alert>
+        <p>{t("team.inviteBody")}</p>
+        {errorMessage(invite.error, t) ? (
+          <Alert tone="error">{errorMessage(invite.error, t)}</Alert>
         ) : null}
         <TextField
-          label={strings.team.email}
+          label={t("team.email")}
           type="email"
           value={form.email}
           onChange={(e) => setForm({ ...form, email: e.target.value })}
           error={errors.email}
         />
         <TextField
-          label={strings.team.name}
+          label={t("team.name")}
           value={form.name}
           onChange={(e) => setForm({ ...form, name: e.target.value })}
           error={errors.name}
         />
         <SelectField
-          label={strings.team.role}
+          label={t("team.role")}
           value={form.role}
           onChange={(e) => setForm({ ...form, role: e.target.value as typeof form.role })}
           options={[
             {
               value: "WORKSPACE_MEMBER",
-              label: `${ROLE_LABELS.WORKSPACE_MEMBER} · ${strings.team.memberHint}`
+              label: `${t("role.WORKSPACE_MEMBER")} · ${t("team.memberHint")}`
             },
             {
               value: "WORKSPACE_ADMIN",
-              label: `${ROLE_LABELS.WORKSPACE_ADMIN} · ${strings.team.adminHint}`
+              label: `${t("role.WORKSPACE_ADMIN")} · ${t("team.adminHint")}`
             }
           ]}
         />

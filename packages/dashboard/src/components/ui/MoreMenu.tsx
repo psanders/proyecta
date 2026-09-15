@@ -4,7 +4,7 @@
 import { useEffect, useRef, useState } from "react";
 import { cn } from "../../lib/cn.js";
 import { Icon, type IconName } from "./Icon.js";
-import { strings } from "../../strings.js";
+import { useI18n } from "../../lib/useI18n.js";
 
 export interface MoreMenuItem {
   label: string;
@@ -19,6 +19,7 @@ export type MoreMenuEntry = MoreMenuItem | "divider";
 
 /** Pencil Dashboard/More Menu: ghost icon trigger + right-aligned dropdown, as in AppSidebar's account menu. */
 export function MoreMenu({ items }: { items: MoreMenuEntry[] }) {
+  const { t } = useI18n();
   const [open, setOpen] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
@@ -62,7 +63,7 @@ export function MoreMenu({ items }: { items: MoreMenuEntry[] }) {
       <button
         ref={triggerRef}
         type="button"
-        aria-label={strings.detail.moreActions}
+        aria-label={t("detail.moreActions")}
         aria-haspopup="menu"
         aria-expanded={open}
         onClick={() => setOpen((value) => !value)}

@@ -18,33 +18,11 @@ export const PLACE_TYPES = [
   "OTHER"
 ] as const;
 
-export const PLACE_TYPE_LABELS: Record<PlaceType, string> = {
-  BILLBOARD: "Valla o pantalla exterior",
-  MALL: "Centro comercial",
-  RESTAURANT: "Restaurante o café",
-  SUPERMARKET: "Supermercado o colmado",
-  HEALTH: "Hospital o clínica",
-  TRANSIT: "Terminal o transporte",
-  GYM: "Gimnasio",
-  OFFICE: "Oficina",
-  EDUCATION: "Universidad o colegio",
-  HOTEL: "Hotel",
-  OTHER: "Otro"
-};
-
-export const ENVIRONMENT_LABELS = { INDOOR: "Interior", OUTDOOR: "Exterior" } as const;
-export const ORIENTATION_LABELS = { LANDSCAPE: "Horizontal", PORTRAIT: "Vertical" } as const;
-
-/** ISO weekday (1 = lunes … 7 = domingo) → short Spanish label. */
-export const WEEKDAY_LABELS: Record<number, string> = {
-  1: "Lun",
-  2: "Mar",
-  3: "Mié",
-  4: "Jue",
-  5: "Vie",
-  6: "Sáb",
-  7: "Dom"
-};
+// Labels for these values live in the dashboard's message catalog (Spanish and English).
+export const ENVIRONMENTS = ["INDOOR", "OUTDOOR"] as const;
+export type Environment = (typeof ENVIRONMENTS)[number];
+export const ORIENTATIONS = ["LANDSCAPE", "PORTRAIT"] as const;
+export type Orientation = (typeof ORIENTATIONS)[number];
 
 /** Suggestions for the city field (free text is still allowed). */
 export const DR_CITIES = [
@@ -68,12 +46,6 @@ export const DR_CITIES = [
 
 export const SCREEN_STATUS_VIEWS = ["ONLINE", "STALE", "OFFLINE", "UNLINKED"] as const;
 export type ScreenStatusView = (typeof SCREEN_STATUS_VIEWS)[number];
-export const SCREEN_STATUS_LABELS: Record<ScreenStatusView, string> = {
-  ONLINE: "En línea",
-  STALE: "Inestable",
-  OFFLINE: "Sin conexión",
-  UNLINKED: "Sin reproductor"
-};
 
 const time = z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/, "validation.time.format");
 const optionalText = (max: number, message: string) =>
@@ -126,9 +98,7 @@ const screenFieldsSchema = z.object({
     .min(1, "validation.city.required")
     .max(60, "validation.city.max"),
   placeType: z.enum(PLACE_TYPES, { error: "validation.placeType.invalid" }).optional(),
-  environment: z
-    .enum(["INDOOR", "OUTDOOR"], { error: "validation.environment.invalid" })
-    .optional(),
+  environment: z.enum(ENVIRONMENTS, { error: "validation.environment.invalid" }).optional(),
   address: optionalText(120, "validation.address.max"),
   widthCm: z
     .number()
@@ -142,9 +112,7 @@ const screenFieldsSchema = z.object({
     .min(1, "validation.centimeters.min")
     .max(100_000)
     .optional(),
-  orientation: z
-    .enum(["LANDSCAPE", "PORTRAIT"], { error: "validation.orientation.invalid" })
-    .optional(),
+  orientation: z.enum(ORIENTATIONS, { error: "validation.orientation.invalid" }).optional(),
   resolution: z
     .string()
     .trim()
@@ -199,12 +167,6 @@ export type LinkDeviceInput = z.infer<typeof linkDeviceSchema>;
 export type CodeAvailability =
   | { available: true; resolution: string | null }
   | { available: false; reason: "NOT_FOUND" | "OFFLINE" | "LINKED" };
-
-export const CODE_UNAVAILABLE_MESSAGES = {
-  NOT_FOUND: "No encontramos un reproductor con ese código",
-  OFFLINE: "El reproductor no está conectado. Asegúrate de que esté encendido y con internet",
-  LINKED: "Ese reproductor ya está vinculado a otra pantalla"
-} as const;
 
 /** A screen is incomplete until advertisers can see when it's available and what it costs. */
 export function isScreenComplete(screen: {

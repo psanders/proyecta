@@ -2,9 +2,9 @@
  * Copyright (C) 2026 by Proyecta. All rights reserved.
  */
 import { Link } from "react-router-dom";
-import { PLACE_TYPE_LABELS, type PlaceType, type ScreenStatusView } from "@proyecta/common";
+import type { PlaceType, ScreenStatusView } from "@proyecta/common";
 import { availabilitySummary } from "../lib/format.js";
-import { strings } from "../strings.js";
+import { useI18n } from "../lib/useI18n.js";
 import { StatusBadge } from "./StatusBadge.js";
 import { Icon } from "./ui/Icon.js";
 
@@ -23,10 +23,14 @@ export interface ScreenRowData {
 
 /** Pencil Dashboard/Screen Row: thumb, name, place · city, availability, status, chevron. */
 export function ScreenRow({ screen }: { screen: ScreenRowData }) {
-  const place = screen.placeType
-    ? PLACE_TYPE_LABELS[screen.placeType as PlaceType]
-    : screen.address;
-  const availability = availabilitySummary(screen.availableDays, screen.startTime, screen.endTime);
+  const { t } = useI18n();
+  const place = screen.placeType ? t(`placeType.${screen.placeType as PlaceType}`) : screen.address;
+  const availability = availabilitySummary(
+    screen.availableDays,
+    screen.startTime,
+    screen.endTime,
+    t
+  );
   return (
     <Link
       to={`/pantallas/${screen.id}`}
@@ -53,7 +57,7 @@ export function ScreenRow({ screen }: { screen: ScreenRowData }) {
       </div>
       <div className="flex shrink-0 items-center gap-6">
         <span className="text-[13px] text-muted-foreground">
-          {availability ?? strings.screens.availabilityUnset}
+          {availability ?? t("screens.availabilityUnset")}
         </span>
         <StatusBadge status={screen.status} />
         <Icon name="chevronRight" className="size-5 text-muted-foreground" />

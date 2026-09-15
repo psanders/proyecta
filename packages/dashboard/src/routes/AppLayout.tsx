@@ -5,6 +5,7 @@ import { Navigate, Outlet, useLocation } from "react-router-dom";
 import { AppSidebar } from "../components/AppSidebar.js";
 import { Icon } from "../components/ui/Icon.js";
 import { useLiveStatus } from "../lib/useLiveStatus.js";
+import { usePreferenceSync } from "../lib/usePreferenceSync.js";
 import { useSession } from "../lib/useSession.js";
 import { useWorkspace } from "../lib/useWorkspace.js";
 import { CreateBusinessPage } from "./settings/CreateBusinessPage.js";
@@ -27,6 +28,7 @@ export function AppLayout() {
 function SignedIn() {
   const { isLoading, hasNone } = useWorkspace();
   useLiveStatus();
+  usePreferenceSync();
   return (
     <div className="flex min-h-full">
       <AppSidebar />

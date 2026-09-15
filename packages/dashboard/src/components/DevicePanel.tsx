@@ -2,15 +2,12 @@
  * Copyright (C) 2026 by Proyecta. All rights reserved.
  */
 import { useState } from "react";
-import {
-  CODE_UNAVAILABLE_MESSAGES,
-  formatPairingCode,
-  type ScreenStatusView
-} from "@proyecta/common";
+import { formatPairingCode, type ScreenStatusView } from "@proyecta/common";
 import { relativeTime } from "../lib/format.js";
 import { errorMessage } from "../lib/errors.js";
 import { trpc } from "../lib/trpc.js";
-import { strings } from "../strings.js";
+import type { Translate } from "../lib/i18n.js";
+import { useI18n } from "../lib/useI18n.js";
 import { CodeInput } from "./CodeInput.js";
 import { StatusBadge } from "./StatusBadge.js";
 import { Alert } from "./ui/Alert.js";
@@ -56,9 +53,13 @@ function Meter({
 }
 
 /** Used/total meter; "—" and an empty bar when the player didn't report it. */
-function capacity(used: unknown, total: unknown): { value: string; percent: number | null } {
+function capacity(
+  used: unknown,
+  total: unknown,
+  t: Translate
+): { value: string; percent: number | null } {
   if (typeof used !== "number" || typeof total !== "number" || total <= 0) {
-    return { value: strings.detail.notReported, percent: null };
+    return { value: t("detail.notReported"), percent: null };
   }
   return {
     value: `${formatMb(used)} / ${formatMb(total)}`,
@@ -68,6 +69,7 @@ function capacity(used: unknown, total: unknown): { value: string; percent: numb
 
 /** Pairing code chip with a copy-to-clipboard button (Pencil "Code Row"). */
 function CodeChip({ code }: { code: string }) {
+  const { t } = useI18n();
   const [copied, setCopied] = useState(false);
   const formatted = formatPairingCode(code);
   const copy = async () => {
@@ -90,14 +92,14 @@ function CodeChip({ code }: { code: string }) {
       <button
         type="button"
         onClick={() => void copy()}
-        aria-label={copied ? strings.detail.copied : strings.detail.copyCode}
-        title={copied ? strings.detail.copied : strings.detail.copyCode}
+        aria-label={copied ? t("detail.copied") : t("detail.copyCode")}
+        title={copied ? t("detail.copied") : t("detail.copyCode")}
         className="flex size-7 items-center justify-center rounded-full text-muted-foreground hover:bg-secondary hover:text-foreground"
       >
         <Icon name={copied ? "check" : "copy"} className="size-4" />
       </button>
       <span aria-live="polite" className="sr-only">
-        {copied ? strings.detail.copied : ""}
+        {copied ? t("detail.copied") : ""}
       </span>
     </div>
   );
@@ -123,6 +125,7 @@ export function DevicePanel({
   onArchive: () => void;
   onDelete: () => void;
 }) {
+  const { t } = useI18n();
   const utils = trpc.useUtils();
   const [code, setCode] = useState("");
   const check = trpc.screens.checkCode.useQuery(
@@ -137,7 +140,7 @@ export function DevicePanel({
   });
   const unavailable =
     code.length === 8 && check.data && !check.data.available
-      ? CODE_UNAVAILABLE_MESSAGES[check.data.reason]
+      ? t(`codeUnavailable.${check.data.reason}`)
       : null;
   const health = (device?.health ?? {}) as Record<string, number | string | undefined>;
   const linked = !!device;
@@ -147,63 +150,63 @@ export function DevicePanel({
       <MoreMenu
         items={[
           {
-            label: strings.detail.pause,
+            label: t("detail.pause"),
             icon: "pause" as const,
             onSelect: () => {},
             disabled: true,
-            hint: strings.detail.comingSoon
+            hint: t("detail.comingSoon")
           },
           "divider" as const,
           ...(linked
-            ? [{ label: strings.detail.unlink, icon: "linkOff" as const, onSelect: onUnlink }]
+            ? [{ label: t("detail.unlink"), icon: "linkOff" as const, onSelect: onUnlink }]
             : []),
           {
-            label: strings.detail.archive,
+            label: t("detail.archive"),
             icon: "archive" as const,
             onSelect: onArchive,
             disabled: linked,
-            hint: linked ? strings.dialogs.unlinkFirst : undefined
+            hint: linked ? t("dialogs.unlinkFirst") : undefined
           },
           {
-            label: strings.detail.remove,
+            label: t("detail.remove"),
             icon: "delete" as const,
             onSelect: onDelete,
             destructive: true,
             disabled: linked,
-            hint: linked ? strings.dialogs.unlinkFirst : undefined
+            hint: linked ? t("dialogs.unlinkFirst") : undefined
           }
         ]}
       />
     ) : null;
 
   return (
-    <SectionCard title={strings.detail.device} hint={strings.detail.deviceHint} actions={moreMenu}>
+    <SectionCard title={t("detail.device")} hint={t("detail.deviceHint")} actions={moreMenu}>
       {device ? (
         <>
           <div className="flex items-center gap-3">
             <StatusBadge status={status} />
             <span className="text-[13px] text-muted-foreground">
-              {strings.detail.lastActivity}: {relativeTime(device.lastSeenAt)}
+              {t("detail.lastActivity")}: {relativeTime(device.lastSeenAt, t)}
             </span>
           </div>
           <div className="flex items-center justify-between gap-4">
-            <span className="text-sm text-muted-foreground">{strings.detail.code}</span>
+            <span className="text-sm text-muted-foreground">{t("detail.code")}</span>
             <CodeChip code={device.code} />
           </div>
           <div className="flex gap-6">
             <Meter
-              label={strings.detail.cpu}
+              label={t("detail.cpu")}
               {...(typeof health.cpuPercent === "number"
                 ? { value: `${Math.round(health.cpuPercent)}%`, percent: health.cpuPercent }
-                : { value: strings.detail.notReported, percent: null })}
+                : { value: t("detail.notReported"), percent: null })}
             />
             <Meter
-              label={strings.detail.storage}
-              {...capacity(health.storageUsedMb, health.storageQuotaMb)}
+              label={t("detail.storage")}
+              {...capacity(health.storageUsedMb, health.storageQuotaMb, t)}
             />
             <Meter
-              label={strings.detail.memory}
-              {...capacity(health.memoryUsedMb, health.memoryTotalMb)}
+              label={t("detail.memory")}
+              {...capacity(health.memoryUsedMb, health.memoryTotalMb, t)}
             />
           </div>
         </>
@@ -211,17 +214,17 @@ export function DevicePanel({
         <>
           <div className="flex items-center gap-3">
             <StatusBadge status="UNLINKED" />
-            <span className="text-[13px] text-muted-foreground">{strings.detail.noDevice}</span>
+            <span className="text-[13px] text-muted-foreground">{t("detail.noDevice")}</span>
           </div>
           {canManage && !archived ? (
             <div className="flex flex-col gap-3 border-t border-border pt-4">
               <div className="flex flex-col">
-                <span className="text-sm font-medium">{strings.detail.linkTitle}</span>
-                <span className="text-[13px] text-muted-foreground">{strings.detail.linkBody}</span>
+                <span className="text-sm font-medium">{t("detail.linkTitle")}</span>
+                <span className="text-[13px] text-muted-foreground">{t("detail.linkBody")}</span>
               </div>
               <div className="flex items-center gap-3">
                 <CodeInput
-                  label={strings.detail.linkTitle}
+                  label={t("detail.linkTitle")}
                   value={code}
                   onChange={setCode}
                   error={unavailable ?? undefined}
@@ -232,11 +235,11 @@ export function DevicePanel({
                   loading={link.isPending}
                   onClick={() => link.mutate({ screenId, code })}
                 >
-                  {strings.detail.link}
+                  {t("detail.link")}
                 </Button>
               </div>
               {unavailable ? <Alert tone="warning">{unavailable}</Alert> : null}
-              {link.error ? <Alert tone="error">{errorMessage(link.error)}</Alert> : null}
+              {link.error ? <Alert tone="error">{errorMessage(link.error, t)}</Alert> : null}
             </div>
           ) : null}
         </>

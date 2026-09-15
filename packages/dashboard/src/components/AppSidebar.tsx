@@ -4,17 +4,18 @@
 import { useEffect, useRef, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
-import { ROLE_LABELS, type WorkspaceRole } from "@proyecta/common";
+import type { WorkspaceRole } from "@proyecta/common";
 import { cn } from "../lib/cn.js";
 import { session } from "../lib/session.js";
 import { trpc } from "../lib/trpc.js";
 import { useWorkspace } from "../lib/useWorkspace.js";
-import { strings } from "../strings.js";
+import type { MessageId } from "../lib/i18n.js";
+import { useI18n } from "../lib/useI18n.js";
 import { Icon, type IconName } from "./ui/Icon.js";
 
-const NAV: { to: string; label: string; icon: IconName }[] = [
-  { to: "/", label: strings.nav.screens, icon: "tv" },
-  { to: "/configuracion", label: strings.nav.settings, icon: "settings" }
+const NAV: { to: string; label: MessageId; icon: IconName }[] = [
+  { to: "/", label: "nav.screens", icon: "tv" },
+  { to: "/configuracion", label: "nav.settings", icon: "settings" }
 ];
 
 const COLLAPSED_KEY = "proyecta.dashboard.navCollapsed";
@@ -44,6 +45,7 @@ export function initials(name: string | undefined): string {
  * The choice is remembered per browser. The footer opens Dashboard/Account Menu.
  */
 export function AppSidebar() {
+  const { t } = useI18n();
   const { workspaces, active } = useWorkspace();
   const profile = trpc.profile.get.useQuery(undefined, { staleTime: 60_000 });
   const utils = trpc.useUtils();
@@ -106,7 +108,7 @@ export function AppSidebar() {
     >
       {collapsed ? (
         <div className="flex flex-col items-center gap-3 border-b border-sidebar-border pt-4 pb-5">
-          <PanelButton icon="leftPanelOpen" label={strings.nav.expand} onClick={toggle} />
+          <PanelButton icon="leftPanelOpen" label={t("nav.expand")} onClick={toggle} />
           <Icon name="tv" className="size-7 text-primary" />
         </div>
       ) : (
@@ -114,10 +116,10 @@ export function AppSidebar() {
           <div className="flex items-center gap-2">
             <Icon name="tv" className="size-7 text-primary" />
             <span className="font-mono text-lg leading-none font-bold text-primary">
-              {strings.brand}
+              {t("brand")}
             </span>
           </div>
-          <PanelButton icon="leftPanelClose" label={strings.nav.collapse} onClick={toggle} />
+          <PanelButton icon="leftPanelClose" label={t("nav.collapse")} onClick={toggle} />
         </div>
       )}
 
@@ -127,8 +129,8 @@ export function AppSidebar() {
             key={item.to}
             to={item.to}
             end={item.to === "/"}
-            title={collapsed ? item.label : undefined}
-            aria-label={collapsed ? item.label : undefined}
+            title={collapsed ? t(item.label) : undefined}
+            aria-label={collapsed ? t(item.label) : undefined}
             className={({ isActive }) =>
               cn(
                 "flex items-center rounded-full text-base",
@@ -140,7 +142,7 @@ export function AppSidebar() {
             }
           >
             <Icon name={item.icon} className="size-6" />
-            {collapsed ? null : item.label}
+            {collapsed ? null : t(item.label)}
           </NavLink>
         ))}
       </nav>
@@ -165,7 +167,7 @@ export function AppSidebar() {
             onClick={() => setMenuOpen((open) => !open)}
             aria-expanded={menuOpen}
             aria-haspopup="menu"
-            aria-label={strings.nav.account}
+            aria-label={t("nav.account")}
             title={active?.name}
             className="flex size-9 items-center justify-center rounded-full bg-sidebar-accent font-mono text-[13px] font-medium text-foreground"
           >
@@ -176,7 +178,7 @@ export function AppSidebar() {
             onClick={() => setMenuOpen((open) => !open)}
             aria-expanded={menuOpen}
             aria-haspopup="menu"
-            aria-label={strings.nav.account}
+            aria-label={t("nav.account")}
             className="flex w-full items-center gap-2 rounded-2xl px-4 py-3 text-left hover:bg-sidebar-accent/60"
           >
             <span className="flex min-w-0 flex-1 flex-col">
@@ -238,6 +240,7 @@ function AccountMenu({
   onSwitch: (accessKeyId: string) => void;
   onSignOut: () => void;
 }) {
+  const { t } = useI18n();
   return (
     <div
       role="menu"
@@ -265,7 +268,7 @@ function AccountMenu({
         className="flex items-center gap-2.5 px-4 py-2.5 text-left text-sm text-foreground hover:bg-secondary"
       >
         <Icon name="person" className="size-4 text-muted-foreground" />
-        {strings.nav.profile}
+        {t("nav.profile")}
       </button>
       <button
         type="button"
@@ -274,10 +277,10 @@ function AccountMenu({
         className="flex items-center gap-2.5 px-4 py-2.5 text-left text-sm text-foreground hover:bg-secondary"
       >
         <Icon name="group" className="size-4 text-muted-foreground" />
-        {strings.nav.team}
+        {t("nav.team")}
       </button>
       <div className="my-2 border-t border-border" />
-      <p className="px-4 pt-2 pb-1 text-xs text-muted-foreground">{strings.nav.businesses}</p>
+      <p className="px-4 pt-2 pb-1 text-xs text-muted-foreground">{t("nav.businesses")}</p>
       {workspaces.map((w) => (
         <button
           key={w.accessKeyId}
@@ -289,7 +292,7 @@ function AccountMenu({
           <span className="flex min-w-0 flex-col">
             <span className="truncate text-foreground">{w.name}</span>
             <span className="text-xs text-muted-foreground">
-              {ROLE_LABELS[w.role as WorkspaceRole]}
+              {t(`role.${w.role as WorkspaceRole}`)}
             </span>
           </span>
           {w.accessKeyId === active?.accessKeyId ? (
@@ -305,7 +308,7 @@ function AccountMenu({
         className="flex items-center gap-2.5 px-4 py-2.5 text-left text-sm text-destructive hover:bg-secondary"
       >
         <Icon name="logout" className="size-4" />
-        {strings.nav.signOut}
+        {t("nav.signOut")}
       </button>
     </div>
   );

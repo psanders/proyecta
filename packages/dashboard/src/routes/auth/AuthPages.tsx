@@ -11,7 +11,7 @@ import { Icon } from "../../components/ui/Icon.js";
 import { errorMessage, fieldErrors } from "../../lib/errors.js";
 import { session } from "../../lib/session.js";
 import { trpc } from "../../lib/trpc.js";
-import { strings } from "../../strings.js";
+import { useI18n } from "../../lib/useI18n.js";
 
 /** Only same-app paths are allowed as return targets. */
 function safeReturn(value: string | null): string {
@@ -19,6 +19,7 @@ function safeReturn(value: string | null): string {
 }
 
 export function SignInPage() {
+  const { t } = useI18n();
   const [params] = useSearchParams();
   const navigate = useNavigate();
   const utils = trpc.useUtils();
@@ -39,23 +40,23 @@ export function SignInPage() {
   };
 
   return (
-    <AuthLayout title={strings.signIn.title} subtitle={strings.signIn.subtitle}>
+    <AuthLayout title={t("signIn.title")} subtitle={t("signIn.subtitle")}>
       <form className="flex flex-col gap-6" onSubmit={submit} noValidate>
-        {errorMessage(signIn.error) ? (
-          <Alert tone="error">{errorMessage(signIn.error)}</Alert>
+        {errorMessage(signIn.error, t) ? (
+          <Alert tone="error">{errorMessage(signIn.error, t)}</Alert>
         ) : null}
         <div className="flex flex-col gap-4">
           <TextField
-            label={strings.signIn.email}
+            label={t("signIn.email")}
             type="email"
             autoComplete="email"
-            placeholder={strings.signIn.emailPlaceholder}
+            placeholder={t("signIn.emailPlaceholder")}
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             error={errors.email}
           />
           <TextField
-            label={strings.signIn.password}
+            label={t("signIn.password")}
             type="password"
             autoComplete="current-password"
             placeholder="••••••••"
@@ -66,16 +67,16 @@ export function SignInPage() {
         </div>
         <div className="flex justify-end">
           <Link to="/recuperar" className="text-[13px] text-muted-foreground hover:text-foreground">
-            {strings.signIn.forgot}
+            {t("signIn.forgot")}
           </Link>
         </div>
         <Button type="submit" loading={signIn.isPending} className="w-full">
-          {strings.signIn.submit}
+          {t("signIn.submit")}
         </Button>
         <p className="text-center text-sm text-muted-foreground">
-          {strings.signIn.noAccount}{" "}
+          {t("signIn.noAccount")}{" "}
           <Link to="/crear-cuenta" className="font-medium text-primary">
-            {strings.signIn.createAccount}
+            {t("signIn.createAccount")}
           </Link>
         </p>
       </form>
@@ -84,6 +85,7 @@ export function SignInPage() {
 }
 
 export function SignUpPage() {
+  const { t } = useI18n();
   const navigate = useNavigate();
   const utils = trpc.useUtils();
   const [form, setForm] = useState({ name: "", businessName: "", email: "", password: "" });
@@ -106,7 +108,7 @@ export function SignUpPage() {
   });
 
   return (
-    <AuthLayout title={strings.signUp.title} subtitle={strings.signUp.subtitle}>
+    <AuthLayout title={t("signUp.title")} subtitle={t("signUp.subtitle")}>
       <form
         className="flex flex-col gap-6"
         noValidate
@@ -115,44 +117,44 @@ export function SignUpPage() {
           signUp.mutate(form);
         }}
       >
-        {errorMessage(signUp.error) ? (
-          <Alert tone="error">{errorMessage(signUp.error)}</Alert>
+        {errorMessage(signUp.error, t) ? (
+          <Alert tone="error">{errorMessage(signUp.error, t)}</Alert>
         ) : null}
         <div className="flex flex-col gap-4">
           <TextField
-            label={strings.signUp.name}
+            label={t("signUp.name")}
             autoComplete="name"
-            placeholder={strings.signUp.namePlaceholder}
+            placeholder={t("signUp.namePlaceholder")}
             {...bind("name")}
           />
           <TextField
-            label={strings.signUp.business}
+            label={t("signUp.business")}
             autoComplete="organization"
-            placeholder={strings.signUp.businessPlaceholder}
+            placeholder={t("signUp.businessPlaceholder")}
             {...bind("businessName")}
           />
           <TextField
-            label={strings.signIn.email}
+            label={t("signIn.email")}
             type="email"
             autoComplete="email"
-            placeholder={strings.signIn.emailPlaceholder}
+            placeholder={t("signIn.emailPlaceholder")}
             {...bind("email")}
           />
           <TextField
-            label={strings.signIn.password}
+            label={t("signIn.password")}
             type="password"
             autoComplete="new-password"
-            hint={strings.signUp.passwordHint}
+            hint={t("signUp.passwordHint")}
             {...bind("password")}
           />
         </div>
         <Button type="submit" loading={signUp.isPending} className="w-full">
-          {strings.signUp.submit}
+          {t("signUp.submit")}
         </Button>
         <p className="text-center text-sm text-muted-foreground">
-          {strings.signUp.haveAccount}{" "}
+          {t("signUp.haveAccount")}{" "}
           <Link to="/ingresar" className="font-medium text-primary">
-            {strings.signUp.signIn}
+            {t("signUp.signIn")}
           </Link>
         </p>
       </form>
@@ -161,13 +163,14 @@ export function SignUpPage() {
 }
 
 export function ForgotPasswordPage() {
+  const { t } = useI18n();
   const [email, setEmail] = useState("");
   const request = trpc.auth.requestPasswordReset.useMutation();
   const errors = fieldErrors(request.error);
   return (
-    <AuthLayout title={strings.forgot.title} subtitle={strings.forgot.subtitle}>
+    <AuthLayout title={t("forgot.title")} subtitle={t("forgot.subtitle")}>
       {request.isSuccess ? (
-        <Alert tone="success">{strings.forgot.sent}</Alert>
+        <Alert tone="success">{t("forgot.sent")}</Alert>
       ) : (
         <form
           className="flex flex-col gap-6"
@@ -178,27 +181,28 @@ export function ForgotPasswordPage() {
           }}
         >
           <TextField
-            label={strings.signIn.email}
+            label={t("signIn.email")}
             type="email"
             autoComplete="email"
-            placeholder={strings.signIn.emailPlaceholder}
+            placeholder={t("signIn.emailPlaceholder")}
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             error={errors.email}
           />
           <Button type="submit" loading={request.isPending} className="w-full">
-            {strings.forgot.submit}
+            {t("forgot.submit")}
           </Button>
         </form>
       )}
       <Link to="/ingresar" className="text-center text-sm font-medium text-primary">
-        {strings.forgot.back}
+        {t("forgot.back")}
       </Link>
     </AuthLayout>
   );
 }
 
 export function ResetPasswordPage() {
+  const { t } = useI18n();
   const [params] = useSearchParams();
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
@@ -206,12 +210,12 @@ export function ResetPasswordPage() {
   const reset = trpc.auth.resetPassword.useMutation();
   const errors = fieldErrors(reset.error);
   return (
-    <AuthLayout title={strings.reset.title} subtitle={strings.reset.subtitle}>
+    <AuthLayout title={t("reset.title")} subtitle={t("reset.subtitle")}>
       {reset.isSuccess ? (
         <>
-          <Alert tone="success">{strings.reset.done}</Alert>
+          <Alert tone="success">{t("reset.done")}</Alert>
           <Link to="/ingresar" className="text-center text-sm font-medium text-primary">
-            {strings.invitation.goSignIn}
+            {t("invitation.goSignIn")}
           </Link>
         </>
       ) : (
@@ -224,28 +228,28 @@ export function ResetPasswordPage() {
             if (password === confirm) reset.mutate({ token: params.get("token") ?? "", password });
           }}
         >
-          {errorMessage(reset.error) ? (
-            <Alert tone="error">{errorMessage(reset.error)}</Alert>
+          {errorMessage(reset.error, t) ? (
+            <Alert tone="error">{errorMessage(reset.error, t)}</Alert>
           ) : null}
           <TextField
-            label={strings.reset.password}
+            label={t("reset.password")}
             type="password"
             autoComplete="new-password"
-            hint={strings.signUp.passwordHint}
+            hint={t("signUp.passwordHint")}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             error={errors.password}
           />
           <TextField
-            label={strings.reset.confirm}
+            label={t("reset.confirm")}
             type="password"
             autoComplete="new-password"
             value={confirm}
             onChange={(e) => setConfirm(e.target.value)}
-            error={mismatch ? strings.reset.mismatch : undefined}
+            error={mismatch ? t("reset.mismatch") : undefined}
           />
           <Button type="submit" loading={reset.isPending} className="w-full">
-            {strings.reset.submit}
+            {t("reset.submit")}
           </Button>
         </form>
       )}
@@ -254,6 +258,7 @@ export function ResetPasswordPage() {
 }
 
 export function AcceptInvitationPage() {
+  const { t } = useI18n();
   const [params] = useSearchParams();
   const accept = trpc.workspaces.acceptInvitation.useMutation();
   const started = useRef(false);
@@ -266,15 +271,15 @@ export function AcceptInvitationPage() {
   if (accept.isError) return <InvitationInvalidPage />;
   return (
     <AuthLayout
-      title={accept.isSuccess ? strings.invitation.acceptedTitle : strings.invitation.accepting}
-      subtitle={accept.isSuccess ? strings.invitation.acceptedBody : ""}
+      title={accept.isSuccess ? t("invitation.acceptedTitle") : t("invitation.accepting")}
+      subtitle={accept.isSuccess ? t("invitation.acceptedBody") : ""}
     >
       {accept.isSuccess ? (
         <Link
           to="/ingresar"
           className="inline-flex h-10 items-center justify-center rounded-full bg-primary font-mono text-sm font-medium text-primary-foreground"
         >
-          {strings.invitation.goSignIn}
+          {t("invitation.goSignIn")}
         </Link>
       ) : (
         <Icon name="spinner" className="size-6 animate-spin text-muted-foreground" />
@@ -284,13 +289,14 @@ export function AcceptInvitationPage() {
 }
 
 export function InvitationInvalidPage() {
+  const { t } = useI18n();
   return (
-    <AuthLayout title={strings.invitation.invalidTitle} subtitle={strings.invitation.invalidBody}>
+    <AuthLayout title={t("invitation.invalidTitle")} subtitle={t("invitation.invalidBody")}>
       <Link
         to="/ingresar"
         className="inline-flex h-10 items-center justify-center rounded-full border border-border bg-card font-mono text-sm font-medium"
       >
-        {strings.invitation.goSignIn}
+        {t("invitation.goSignIn")}
       </Link>
     </AuthLayout>
   );
