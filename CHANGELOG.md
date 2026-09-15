@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.0](https://github.com/psanders/proyecta/compare/v0.4.0...v0.5.0) (2026-09-15)
+
+
+### Features
+
+* screen description, coordinates, tags and resolution ([#30](https://github.com/psanders/proyecta/issues/30)) ([8385f50](https://github.com/psanders/proyecta/commit/8385f500d16ffe8754da63e5b8a7ce057117c258))
+
 ## [0.4.0](https://github.com/psanders/proyecta/compare/v0.3.0...v0.4.0) (2026-09-15)
 
 
