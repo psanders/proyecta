@@ -159,3 +159,14 @@ model PlayLog {
   @@index([screenId, result, startedAt])
   @@map("play_logs")
 }
+
+/// Proyecta-owned preferences of an Identity workspace (the name lives in Identity).
+model WorkspaceSettings {
+  workspaceAccessKeyId String   @id @map("workspace_access_key_id")
+  /// IANA time zone for calendar-day windows (earnings "today" / "last 7 days").
+  timezone             String   @default("America/Santo_Domingo")
+  createdAt            DateTime @default(now()) @map("created_at")
+  updatedAt            DateTime @updatedAt @map("updated_at")
+
+  @@map("workspace_settings")
+}

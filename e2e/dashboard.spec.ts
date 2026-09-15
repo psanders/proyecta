@@ -109,7 +109,7 @@ test.describe("owner dashboard", () => {
 
     await page.getByRole("button", { name: "Contraer menú" }).click();
     await expect(nav).toHaveAttribute("data-collapsed", "true");
-    await expect(page.getByRole("link", { name: "Equipo" })).toBeVisible();
+    await expect(page.getByRole("link", { name: "Configuración" })).toBeVisible();
     await expect(page.getByRole("button", { name: "Expandir menú" })).toBeVisible();
     await expect.poll(async () => (await nav.boundingBox())?.width).toBe(72);
     await expect(page.getByRole("button", { name: "Negocio y cuenta" })).toHaveText("VC");
@@ -128,7 +128,11 @@ test.describe("owner dashboard", () => {
     const stamp = Date.now();
     const teammate = `staff-${stamp}@proyecta.local`;
     await signUp(page, stamp);
-    await page.goto(`${APP}/equipo`);
+    await page.goto(APP);
+    await page.getByRole("button", { name: "Negocio y cuenta" }).click();
+    await shot(page, "16-account-menu");
+    await page.getByRole("menuitem", { name: "Equipo" }).click();
+    await expect(page.getByRole("heading", { name: "Equipo" })).toBeVisible();
     await page.getByRole("button", { name: "Invitar persona" }).click();
     const dialog = page.getByRole("dialog");
     await dialog.getByLabel("Correo electrónico").fill(teammate);
@@ -167,5 +171,45 @@ test.describe("owner dashboard", () => {
     await expect(page.getByTestId("member-row").filter({ hasText: teammate })).toContainText(
       "Activo"
     );
+  });
+
+  test("changes the time zone, deletes the business and creates a new one", async ({ page }) => {
+    const stamp = Date.now();
+    await signUp(page, stamp);
+    await page.goto(APP);
+
+    await page.getByRole("link", { name: "Configuración" }).click();
+    await expect(page.getByRole("heading", { name: "Configuración" })).toBeVisible();
+    await shot(page, "13-settings");
+
+    await page.getByLabel("Zona horaria").selectOption("America/New_York");
+    await page.getByRole("button", { name: "Guardar cambios" }).click();
+    await expect(page.getByText("Cambios guardados")).toBeVisible();
+
+    await page.reload();
+    await expect(page.getByLabel("Zona horaria")).toHaveValue("America/New_York");
+
+    await page.getByRole("button", { name: "Eliminar negocio" }).first().click();
+    const dialog = page.getByRole("dialog");
+    await expect(
+      dialog.getByRole("heading", { name: "¿Eliminar Vallas del Cibao?" })
+    ).toBeVisible();
+    await shot(page, "14-delete-dialog");
+    const confirmButton = dialog.getByRole("button", { name: "Eliminar negocio" });
+    await expect(confirmButton).toBeDisabled();
+    await dialog.getByLabel("Escribe ELIMINAR para confirmar").fill("ELIMINAR");
+    await expect(confirmButton).toBeEnabled();
+    await confirmButton.click();
+
+    await expect(page.getByRole("heading", { name: "Crea tu negocio" })).toBeVisible();
+    await shot(page, "15-create-business");
+    await page.getByLabel("Nombre del negocio").fill("Pantallas Punta Cana");
+    await page.getByRole("button", { name: "Crear negocio" }).click();
+
+    await expect(page.getByRole("heading", { name: "Mis pantallas" })).toBeVisible();
+    await page.getByRole("button", { name: "Negocio y cuenta" }).click();
+    const businessRow = page.getByRole("menuitem", { name: /Pantallas Punta Cana/ });
+    await expect(businessRow).toBeVisible();
+    await expect(businessRow.locator(".icon")).toHaveCount(1);
   });
 });

@@ -7,6 +7,7 @@ import { Icon } from "../components/ui/Icon.js";
 import { useLiveStatus } from "../lib/useLiveStatus.js";
 import { useSession } from "../lib/useSession.js";
 import { useWorkspace } from "../lib/useWorkspace.js";
+import { CreateBusinessPage } from "./settings/CreateBusinessPage.js";
 
 /** Signed-in shell: redirects to sign in (remembering the page) and waits for the active business. */
 export function AppLayout() {
@@ -24,7 +25,7 @@ export function AppLayout() {
 }
 
 function SignedIn() {
-  const { isLoading } = useWorkspace();
+  const { isLoading, hasNone } = useWorkspace();
   useLiveStatus();
   return (
     <div className="flex min-h-full">
@@ -34,6 +35,8 @@ function SignedIn() {
           <div className="flex h-64 items-center justify-center text-muted-foreground">
             <Icon name="spinner" className="size-6 animate-spin" />
           </div>
+        ) : hasNone ? (
+          <CreateBusinessPage />
         ) : (
           <Outlet />
         )}

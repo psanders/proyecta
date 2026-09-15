@@ -65,7 +65,9 @@ export const strings = {
     switchBusiness: "Cambiar de negocio",
     collapse: "Contraer menú",
     expand: "Expandir menú",
-    account: "Negocio y cuenta"
+    account: "Negocio y cuenta",
+    settings: "Configuración",
+    businesses: "Negocios"
   },
   screens: {
     title: "Mis pantallas",
@@ -221,6 +223,32 @@ export const strings = {
     memberHint: "Puede ver pantallas y su estado",
     you: "Tú"
   },
+  settings: {
+    title: "Configuración",
+    subtitle: "Administra el nombre, la moneda y la zona horaria de tu negocio.",
+    preferences: "Preferencias",
+    preferencesHint: "Así se muestra tu negocio y así contamos tus reproducciones del día.",
+    name: "Nombre del negocio",
+    currency: "Moneda",
+    currencyValue: "Dólar estadounidense (US$)",
+    currencyHint: "Las tarifas por 5 segundos se cobran en dólares estadounidenses.",
+    timezone: "Zona horaria",
+    save: "Guardar cambios",
+    saved: "Cambios guardados",
+    readOnly: "Solo los administradores pueden cambiar la configuración.",
+    deleteTitle: "Eliminar negocio",
+    deleteBody:
+      "Elimina el negocio para todo tu equipo y oculta sus pantallas. El historial de reproducciones se conserva. Primero desvincula todos los reproductores.",
+    deleteDialogTitle: (name: string) => `¿Eliminar ${name}?`,
+    deleteDialogBody:
+      "Tu equipo perderá el acceso y las pantallas dejarán de aparecer. El historial de reproducciones se conserva. Esta acción no se puede deshacer.",
+    deleteConfirmLabel: "Escribe ELIMINAR para confirmar"
+  },
+  createBusiness: {
+    title: "Crea tu negocio",
+    subtitle: "Necesitas un negocio para publicar pantallas y trabajar con tu equipo.",
+    submit: "Crear negocio"
+  },
   profile: {
     title: "Mi perfil",
     subtitle: "Tus datos y tu contraseña",
@@ -232,10 +260,7 @@ export const strings = {
     current: "Contraseña actual",
     newPassword: "Nueva contraseña",
     changePassword: "Cambiar contraseña",
-    saved: "Cambios guardados",
-    business: "Negocio",
-    businessName: "Nombre del negocio",
-    rename: "Guardar nombre del negocio"
+    saved: "Cambios guardados"
   },
   errors: {
     generic: "Algo salió mal. Intenta de nuevo.",

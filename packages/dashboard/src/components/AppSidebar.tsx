@@ -1,7 +1,7 @@
 /**
  * Copyright (C) 2026 by Proyecta. All rights reserved.
  */
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
 import { ROLE_LABELS, type WorkspaceRole } from "@proyecta/common";
@@ -14,8 +14,7 @@ import { Icon, type IconName } from "./ui/Icon.js";
 
 const NAV: { to: string; label: string; icon: IconName }[] = [
   { to: "/", label: strings.nav.screens, icon: "tv" },
-  { to: "/equipo", label: strings.nav.team, icon: "group" },
-  { to: "/perfil", label: strings.nav.profile, icon: "person" }
+  { to: "/configuracion", label: strings.nav.settings, icon: "settings" }
 ];
 
 const COLLAPSED_KEY = "proyecta.dashboard.navCollapsed";
@@ -42,7 +41,7 @@ export function initials(name: string | undefined): string {
 /**
  * Pencil Dashboard/Nav/Expanded and Dashboard/Nav/Collapsed. Expanded: logo with the collapse
  * button to its right. Collapsed: a 72 px icon rail with the expand button above the logo icon.
- * The choice is remembered per browser.
+ * The choice is remembered per browser. The footer opens Dashboard/Account Menu.
  */
 export function AppSidebar() {
   const { workspaces, active } = useWorkspace();
@@ -52,6 +51,23 @@ export function AppSidebar() {
   const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
   const [collapsed, setCollapsed] = useState(readCollapsed);
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!menuOpen) return;
+    const onPointerDown = (event: PointerEvent) => {
+      if (!menuRef.current?.contains(event.target as Node)) setMenuOpen(false);
+    };
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setMenuOpen(false);
+    };
+    document.addEventListener("pointerdown", onPointerDown);
+    document.addEventListener("keydown", onKeyDown);
+    return () => {
+      document.removeEventListener("pointerdown", onPointerDown);
+      document.removeEventListener("keydown", onKeyDown);
+    };
+  }, [menuOpen]);
 
   const toggle = () => {
     setCollapsed((value) => {
@@ -63,6 +79,10 @@ export function AppSidebar() {
       return !value;
     });
     setMenuOpen(false);
+  };
+  const goTo = (path: string) => {
+    setMenuOpen(false);
+    navigate(path);
   };
   const switchTo = (accessKeyId: string) => {
     session.update({ workspace: accessKeyId });
@@ -125,48 +145,20 @@ export function AppSidebar() {
         ))}
       </nav>
 
-      <div className={cn("relative pb-6", collapsed ? "flex justify-center" : "px-4")}>
+      <div
+        ref={menuRef}
+        className={cn("relative pb-6", collapsed ? "flex justify-center" : "px-4")}
+      >
         {menuOpen ? (
-          <div
-            role="menu"
-            className={cn(
-              "absolute z-20 flex w-60 flex-col border border-border bg-card py-2 shadow-lg",
-              collapsed ? "bottom-6 left-full ml-2" : "right-4 bottom-full left-4 mb-2 w-auto"
-            )}
-          >
-            {workspaces.length > 1 ? (
-              <p className="px-4 pt-1 pb-2 text-xs text-muted-foreground">
-                {strings.nav.switchBusiness}
-              </p>
-            ) : null}
-            {workspaces.map((w) => (
-              <button
-                key={w.accessKeyId}
-                role="menuitem"
-                onClick={() => switchTo(w.accessKeyId)}
-                className="flex items-center justify-between gap-2 px-4 py-2 text-left text-sm hover:bg-secondary"
-              >
-                <span className="flex flex-col">
-                  <span className="text-foreground">{w.name}</span>
-                  <span className="text-xs text-muted-foreground">
-                    {ROLE_LABELS[w.role as WorkspaceRole]}
-                  </span>
-                </span>
-                {w.accessKeyId === active?.accessKeyId ? (
-                  <Icon name="check" className="size-4" />
-                ) : null}
-              </button>
-            ))}
-            <div className="my-2 border-t border-border" />
-            <button
-              role="menuitem"
-              onClick={signOut}
-              className="flex items-center gap-2 px-4 py-2 text-left text-sm text-destructive hover:bg-secondary"
-            >
-              <Icon name="logout" className="size-4" />
-              {strings.nav.signOut}
-            </button>
-          </div>
+          <AccountMenu
+            collapsed={collapsed}
+            profile={profile.data}
+            workspaces={workspaces}
+            active={active}
+            onNavigate={goTo}
+            onSwitch={switchTo}
+            onSignOut={signOut}
+          />
         ) : null}
         {collapsed ? (
           <button
@@ -184,6 +176,7 @@ export function AppSidebar() {
             onClick={() => setMenuOpen((open) => !open)}
             aria-expanded={menuOpen}
             aria-haspopup="menu"
+            aria-label={strings.nav.account}
             className="flex w-full items-center gap-2 rounded-2xl px-4 py-3 text-left hover:bg-sidebar-accent/60"
           >
             <span className="flex min-w-0 flex-1 flex-col">
@@ -218,5 +211,102 @@ function PanelButton({
     >
       <Icon name={icon} className="size-5" />
     </button>
+  );
+}
+
+interface AccountMenuWorkspace {
+  accessKeyId: string;
+  name: string;
+  role: string;
+}
+
+/** Pencil Dashboard/Account Menu: 260 px popover with profile header, personal items and businesses. */
+function AccountMenu({
+  collapsed,
+  profile,
+  workspaces,
+  active,
+  onNavigate,
+  onSwitch,
+  onSignOut
+}: {
+  collapsed: boolean;
+  profile: { name: string; email: string } | undefined;
+  workspaces: AccountMenuWorkspace[];
+  active: AccountMenuWorkspace | null;
+  onNavigate: (path: string) => void;
+  onSwitch: (accessKeyId: string) => void;
+  onSignOut: () => void;
+}) {
+  return (
+    <div
+      role="menu"
+      className={cn(
+        "absolute z-20 flex w-[260px] flex-col border border-border bg-card py-2 shadow-lg",
+        collapsed ? "bottom-0 left-full ml-2" : "right-4 bottom-full left-4 mb-2"
+      )}
+    >
+      <div className="flex items-center gap-2.5 px-4 py-2">
+        <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-secondary font-mono text-xs font-medium text-foreground">
+          {initials(profile?.name)}
+        </span>
+        <span className="flex min-w-0 flex-col">
+          <span className="truncate text-[13px] font-semibold text-foreground">
+            {profile?.name ?? "…"}
+          </span>
+          <span className="truncate text-xs text-muted-foreground">{profile?.email ?? ""}</span>
+        </span>
+      </div>
+      <div className="my-2 border-t border-border" />
+      <button
+        type="button"
+        role="menuitem"
+        onClick={() => onNavigate("/perfil")}
+        className="flex items-center gap-2.5 px-4 py-2.5 text-left text-sm text-foreground hover:bg-secondary"
+      >
+        <Icon name="person" className="size-4 text-muted-foreground" />
+        {strings.nav.profile}
+      </button>
+      <button
+        type="button"
+        role="menuitem"
+        onClick={() => onNavigate("/equipo")}
+        className="flex items-center gap-2.5 px-4 py-2.5 text-left text-sm text-foreground hover:bg-secondary"
+      >
+        <Icon name="group" className="size-4 text-muted-foreground" />
+        {strings.nav.team}
+      </button>
+      <div className="my-2 border-t border-border" />
+      <p className="px-4 pt-2 pb-1 text-xs text-muted-foreground">{strings.nav.businesses}</p>
+      {workspaces.map((w) => (
+        <button
+          key={w.accessKeyId}
+          type="button"
+          role="menuitem"
+          onClick={() => onSwitch(w.accessKeyId)}
+          className="flex items-center justify-between gap-2 px-4 py-2 text-left text-sm hover:bg-secondary"
+        >
+          <span className="flex min-w-0 flex-col">
+            <span className="truncate text-foreground">{w.name}</span>
+            <span className="text-xs text-muted-foreground">
+              {ROLE_LABELS[w.role as WorkspaceRole]}
+            </span>
+          </span>
+          {w.accessKeyId === active?.accessKeyId ? (
+            <Icon name="check" className="size-4 shrink-0 text-foreground" />
+          ) : null}
+        </button>
+      ))}
+      <div className="my-2 border-t border-border" />
+      <button
+        type="button"
+        role="menuitem"
+        onClick={onSignOut}
+        className="flex items-center gap-2.5 px-4 py-2.5 text-left text-sm text-destructive hover:bg-secondary"
+      >
+        <Icon name="logout" className="size-4" />
+        {strings.nav.signOut}
+      </button>
+    </div>
   );
 }

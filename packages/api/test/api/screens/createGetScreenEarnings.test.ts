@@ -13,7 +13,8 @@ const NOW = new Date("2026-09-14T18:00:00Z"); // 2026-09-14 14:00 America/Santo_
 function db() {
   return {
     screen: { findFirst: sinon.stub() },
-    playLog: { findMany: sinon.stub() }
+    playLog: { findMany: sinon.stub() },
+    workspaceSettings: { findUnique: sinon.stub().resolves(null) }
   };
 }
 
@@ -82,6 +83,30 @@ describe("createGetScreenEarnings", () => {
     const todayWhere = client.playLog.findMany.firstCall.args[0].where;
     expect(todayWhere.startedAt.gte.toISOString()).to.equal("2026-09-14T04:00:00.000Z");
     expect(todayWhere.startedAt.lt.toISOString()).to.equal("2026-09-15T04:00:00.000Z");
+  });
+
+  it("should use the business time zone for the windows, including DST zones", async () => {
+    // Arrange: New York is UTC-4 in September (EDT).
+    const client = db();
+    client.screen.findFirst.resolves({ ratePerFiveSecondsCents: 250 });
+    client.playLog.findMany.resolves([]);
+    client.workspaceSettings.findUnique.resolves({ timezone: "America/New_York" });
+    const lateNight = new Date("2026-09-15T03:30:00Z"); // Sep 14, 23:30 in New York
+
+    // Act
+    await createGetScreenEarnings({ db: client as never, now: () => lateNight })({
+      id: ID,
+      workspaceAccessKeyId: "WO1"
+    });
+
+    // Assert
+    const [today, week] = client.playLog.findMany.getCalls().map((c) => c.args[0].where.startedAt);
+    expect(client.workspaceSettings.findUnique.firstCall.args[0]).to.deep.equal({
+      where: { workspaceAccessKeyId: "WO1" }
+    });
+    expect(today.gte.toISOString()).to.equal("2026-09-14T04:00:00.000Z");
+    expect(today.lt.toISOString()).to.equal("2026-09-15T04:00:00.000Z");
+    expect(week.gte.toISOString()).to.equal("2026-09-08T04:00:00.000Z");
   });
 
   it("should reject a screen that doesn't belong to the workspace", async () => {

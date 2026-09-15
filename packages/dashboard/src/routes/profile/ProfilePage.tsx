@@ -9,24 +9,17 @@ import { SectionCard } from "../../components/ui/Card.js";
 import { TextField } from "../../components/ui/Field.js";
 import { errorMessage, fieldErrors } from "../../lib/errors.js";
 import { trpc } from "../../lib/trpc.js";
-import { useWorkspace } from "../../lib/useWorkspace.js";
 import { strings } from "../../strings.js";
 
 export function ProfilePage() {
   const utils = trpc.useUtils();
-  const { active, canManage } = useWorkspace();
   const profile = trpc.profile.get.useQuery();
   const [name, setName] = useState("");
-  const [business, setBusiness] = useState("");
   const [passwords, setPasswords] = useState({ currentPassword: "", newPassword: "" });
   useEffect(() => setName(profile.data?.name ?? ""), [profile.data?.name]);
-  useEffect(() => setBusiness(active?.name ?? ""), [active?.name]);
 
   const updateName = trpc.profile.updateName.useMutation({
     onSuccess: () => void utils.profile.get.invalidate()
-  });
-  const rename = trpc.workspaces.rename.useMutation({
-    onSuccess: () => void utils.workspaces.list.invalidate()
   });
   const changePassword = trpc.profile.changePassword.useMutation({
     onSuccess: () => setPasswords({ currentPassword: "", newPassword: "" })
@@ -55,22 +48,6 @@ export function ProfilePage() {
           </Button>
         </div>
       </SectionCard>
-      {canManage ? (
-        <SectionCard title={strings.profile.business}>
-          {rename.isSuccess ? <Alert tone="success">{strings.profile.saved}</Alert> : null}
-          <TextField
-            label={strings.profile.businessName}
-            value={business}
-            onChange={(e) => setBusiness(e.target.value)}
-            error={fieldErrors(rename.error).name}
-          />
-          <div className="flex justify-end">
-            <Button loading={rename.isPending} onClick={() => rename.mutate({ name: business })}>
-              {strings.profile.rename}
-            </Button>
-          </div>
-        </SectionCard>
-      ) : null}
       <SectionCard title={strings.profile.password}>
         {changePassword.isSuccess ? <Alert tone="success">{strings.profile.saved}</Alert> : null}
         {errorMessage(changePassword.error) ? (
