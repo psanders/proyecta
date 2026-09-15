@@ -44,7 +44,7 @@ function MapLayer({ scale, pad }: { scale: number; pad: number }) {
           <path
             key={`${shape.x}-${shape.y}`}
             d={shape.d}
-            transform={`translate(${shape.x} ${shape.y})`}
+            transform={`translate(${shape.x} ${shape.y}) scale(${shape.sx} ${shape.sy})`}
             fill="#2C2D2C"
           />
         ))}

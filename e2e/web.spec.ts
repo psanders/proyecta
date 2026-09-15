@@ -62,6 +62,53 @@ test.describe("desktop", () => {
     }
     await expect(page.getByTestId("network-map-mobile")).toBeHidden();
   });
+
+  test("map markers sit on their cities without overlapping", async ({ page }) => {
+    await page.goto(WEB);
+    const map = page.getByTestId("network-map-desktop");
+    await map.scrollIntoViewIfNeeded();
+    const boxes = await Promise.all(CITIES.map((city) => box(map.locator(`[data-pin="${city}"]`))));
+    for (let i = 0; i < boxes.length; i++) {
+      for (let j = i + 1; j < boxes.length; j++) {
+        const [a, b] = [boxes[i]!, boxes[j]!];
+        const overlap =
+          a.x < b.x + b.width &&
+          b.x < a.x + a.width &&
+          a.y < b.y + b.height &&
+          b.y < a.y + a.height;
+        expect(overlap, `${CITIES[i]} and ${CITIES[j]} labels overlap`).toBe(false);
+      }
+    }
+    // Geography: north coast above Santiago above the south coast, Punta Cana farthest east.
+    const [puertoPlata, santiago, santoDomingo, puntaCana] = boxes.map((b) => b!);
+    expect(puertoPlata.y).toBeLessThan(santiago.y);
+    expect(santiago.y).toBeLessThan(santoDomingo.y);
+    expect(puntaCana.x + puntaCana.width).toBeGreaterThan(santoDomingo.x + santoDomingo.width);
+  });
+
+  test("the hero card plays its slot and the cycle ring counts up", async ({ page }) => {
+    await page.goto(WEB);
+    const clock = page.getByText(/^0:\d\d \/ 0:10$/);
+    const first = await clock.textContent();
+    await expect.poll(() => clock.textContent(), { timeout: 4000 }).not.toBe(first);
+
+    const plays = page.getByText("reproducciones al día").locator("xpath=preceding-sibling::span");
+    await plays.scrollIntoViewIfNeeded();
+    await expect(plays).toHaveText("540", { timeout: 4000 });
+  });
+});
+
+test.describe("reduced motion", () => {
+  test.use({ viewport: { width: 1440, height: 900 }, reducedMotion: "reduce" });
+
+  test("shows the static design with nothing animating", async ({ page }) => {
+    await page.goto(WEB);
+    await expect(page.getByText("0:06 / 0:10")).toBeVisible();
+    await expect(page.getByRole("heading", { name: HEADINGS[0] })).toBeVisible();
+    expect(await page.evaluate(() => document.getAnimations().length)).toBe(0);
+    const plays = page.getByText("reproducciones al día").locator("xpath=preceding-sibling::span");
+    await expect(plays).toHaveText("540");
+  });
 });
 
 test.describe("mobile", () => {

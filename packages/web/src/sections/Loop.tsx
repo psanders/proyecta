@@ -1,7 +1,9 @@
 /**
  * Copyright (C) 2026 by Proyecta. All rights reserved.
  */
+import { useEffect, useRef, useState } from "react";
 import { Eyebrow, H2, Section, Tag } from "../components/ui.js";
+import { useCountUp, useInView, usePrefersReducedMotion } from "../lib/motion.js";
 import { strings } from "../strings.js";
 
 /** The 12 slots of the ring in Pencil's "Loop Viz" (520×520), clockwise from 12 o'clock. */
@@ -25,13 +27,63 @@ const OTHERS = "#111111";
 const OWNER = "#CBCCC9";
 const slotColor = (index: number) => (index === 2 ? YOURS : index >= 10 ? OWNER : OTHERS);
 
-function Ring() {
+const SLOT_STAGGER_MS = 70;
+/** When the clockwise build-in has finished and the playhead can start. */
+const BUILD_MS = 12 * SLOT_STAGGER_MS + 500;
+/** One slot per beat: the playhead walks the cycle like a screen plays its 12 spaces. */
+const STEP_MS = 900;
+
+/**
+ * Builds in clockwise the first time it scrolls into view, then a playhead nudges each slot
+ * outward in turn. Pauses offscreen; static with reduced motion.
+ */
+function Ring({ seen, inView }: { seen: boolean; inView: boolean }) {
   const t = strings.loop;
+  const reduced = usePrefersReducedMotion();
+  const [active, setActive] = useState<number | null>(null);
+  const started = useRef(false);
+
+  useEffect(() => {
+    if (reduced || !seen || !inView) return;
+    let interval = 0;
+    const advance = () => setActive((index) => ((index ?? -1) + 1) % SLOTS.length);
+    const timeout = window.setTimeout(
+      () => {
+        started.current = true;
+        advance();
+        interval = window.setInterval(advance, STEP_MS);
+      },
+      started.current ? STEP_MS : BUILD_MS
+    );
+    return () => {
+      window.clearTimeout(timeout);
+      window.clearInterval(interval);
+    };
+  }, [reduced, seen, inView]);
+
   return (
     <div className="relative size-[260px] lg:size-[400px] xl:size-[520px]">
-      <svg viewBox="0 0 520 520" className="size-full" role="img" aria-label={t.ringAria}>
+      <svg
+        viewBox="0 0 520 520"
+        overflow="visible"
+        className="size-full"
+        role="img"
+        aria-label={t.ringAria}
+      >
         {SLOTS.map((d, index) => (
-          <path key={d} d={d} fill={slotColor(index)} />
+          <path
+            key={d}
+            d={d}
+            fill={slotColor(index)}
+            className={seen ? "motion-safe:animate-slot-in" : "motion-safe:opacity-0"}
+            style={{
+              animationDelay: `${index * SLOT_STAGGER_MS}ms`,
+              transformBox: "view-box",
+              transformOrigin: "260px 260px",
+              transform: active === index ? "scale(1.045)" : undefined,
+              transition: "transform 350ms cubic-bezier(0.2, 0.7, 0.2, 1)"
+            }}
+          />
         ))}
       </svg>
       <div aria-hidden className="absolute inset-0 flex flex-col items-center justify-center gap-1">
@@ -48,6 +100,9 @@ function Ring() {
 
 export function Loop() {
   const t = strings.loop;
+  const sectionRef = useRef<HTMLDivElement>(null);
+  const { inView, seen } = useInView(sectionRef, 0.35);
+  const plays = useCountUp(Number(t.resultNum), seen);
   const legend = [
     { color: YOURS, label: t.legend.yours },
     { color: OTHERS, label: t.legend.others },
@@ -55,7 +110,10 @@ export function Loop() {
   ];
   return (
     <Section tone="paper">
-      <div className="flex flex-col items-center gap-10 lg:flex-row lg:gap-16 xl:gap-24">
+      <div
+        ref={sectionRef}
+        className="flex flex-col items-center gap-10 lg:flex-row lg:gap-16 xl:gap-24"
+      >
         <div className="flex w-full flex-1 flex-col gap-5 lg:gap-7">
           <Eyebrow tone="paper">{t.eyebrow}</Eyebrow>
           <H2 tone="paper">
@@ -89,8 +147,8 @@ export function Loop() {
                 <Tag>{t.resultTag}</Tag>
               </dt>
               <dd className="flex flex-col items-end">
-                <span className="font-mono text-4xl font-semibold tracking-[-1px] text-signal lg:text-[44px]">
-                  {t.resultNum}
+                <span className="font-mono text-4xl font-semibold tracking-[-1px] text-signal tabular-nums lg:text-[44px]">
+                  {plays}
                 </span>
                 <span className="font-mono text-[11px] text-stage-muted lg:text-xs">
                   {t.resultUnit}
@@ -103,7 +161,7 @@ export function Loop() {
           </p>
         </div>
         <div className="flex w-full flex-col items-center gap-7 lg:w-auto lg:shrink-0 lg:gap-10">
-          <Ring />
+          <Ring seen={seen} inView={inView} />
           <ul className="flex flex-col gap-3 lg:flex-row lg:items-center lg:gap-7">
             {legend.map((item) => (
               <li key={item.label} className="flex items-center gap-2 text-sm text-ink-muted">
