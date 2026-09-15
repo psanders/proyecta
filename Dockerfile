@@ -75,7 +75,8 @@ RUN npm run build --workspace=@proyecta/player
 # apiserver — production runtime
 # ═══════════════════════════════════════════════════════════════════════════════
 FROM node:${NODE_VERSION}-alpine AS apiserver
-RUN apk add --no-cache openssl
+# ffmpeg/ffprobe check advertiser uploads and produce their player renditions.
+RUN apk add --no-cache openssl ffmpeg
 WORKDIR /app
 ENV NODE_ENV=production
 
@@ -103,6 +104,9 @@ COPY packages/api/prisma.config.ts  ./packages/api/prisma.config.ts
 # compose.prod.yaml) and populate it with scripts/generate-demo-ads.sh output
 # to serve a default rotation before real advertisers exist — see docs/deploy.
 RUN mkdir -p ./packages/api/.data/media
+
+# Advertiser uploads and renditions (CONTENT_DIR). Mount a volume here so they survive deploys.
+RUN mkdir -p ./packages/api/.data/content
 
 COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh

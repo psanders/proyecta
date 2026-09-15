@@ -68,12 +68,17 @@ export function createRecordHeartbeat(deps: DeviceSyncDeps) {
   return withErrorHandlingAndValidation(fn, schema);
 }
 
+const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
 /**
  * Creates a function that stores a batch of plays idempotently, attributing each play to the
  * screen the device was linked to when it started (by link history), and pricing every completed
- * play under pay-per-display: the play's duration — as reported by the device, falling back to a
- * rotation lookup only when the device didn't report one (older players) — converted to billed
- * 5-second units, priced at the screen's rate snapshotted at this moment.
+ * play under pay-per-display: the play's duration — as reported by the device, falling back to the
+ * ad's file duration or a rotation lookup only when the device didn't report one (older players) —
+ * converted to billed 5-second units, priced at the screen's rate snapshotted at this moment.
+ * Plays of an advertiser's ad (item id = placement id) are attributed to the placement and the
+ * advertiser business; when that business owns the screen the play is a house play: stored and
+ * counted, never billed.
  *
  * @param deps - Injected database client and default-rotation loader
  */
@@ -89,12 +94,29 @@ export function createRecordPlayLogs(deps: Pick<DeviceSyncDeps, "db" | "loadRota
       bindings.find((b) => b.linkedAt <= startedAt && (!b.unlinkedAt || startedAt < b.unlinkedAt))
         ?.screenId ?? null;
 
-    // Only load the default rotation when some completed play needs it as a fallback.
+    const placementIds = [
+      ...new Set(params.plays.map((play) => play.itemId).filter((id) => UUID.test(id)))
+    ];
+    const placements = placementIds.length
+      ? await deps.db.adPlacement.findMany({
+          where: { id: { in: placementIds } },
+          select: {
+            id: true,
+            asset: { select: { durationMs: true } },
+            ad: { select: { workspaceAccessKeyId: true } }
+          }
+        })
+      : [];
+    const placementFor = (itemId: string) => placements.find((p) => p.id === itemId);
+
+    // Only load the default rotation when some completed non-ad play needs it as a fallback.
     const needsRotation = params.plays.some(
-      (play) => play.result === "completed" && play.durationMs === undefined
+      (play) =>
+        play.result === "completed" && play.durationMs === undefined && !placementFor(play.itemId)
     );
     const rotation = needsRotation ? await deps.loadRotation() : null;
-    const rotationDurationFor = (itemId: string): number | undefined =>
+    const configuredDurationFor = (itemId: string): number | undefined =>
+      placementFor(itemId)?.asset.durationMs ??
       rotation?.items.find((item) => item.id === itemId)?.durationMs;
 
     const resolved = params.plays.map((play) => ({
@@ -107,21 +129,23 @@ export function createRecordPlayLogs(deps: Pick<DeviceSyncDeps, "db" | "loadRota
     const screens = screenIds.length
       ? await deps.db.screen.findMany({
           where: { id: { in: screenIds } },
-          select: { id: true, ratePerFiveSecondsCents: true }
+          select: { id: true, ratePerFiveSecondsCents: true, workspaceAccessKeyId: true }
         })
       : [];
-    const rateFor = (screenId: string | null): number | null => {
-      if (!screenId) return null;
-      return screens.find((s) => s.id === screenId)?.ratePerFiveSecondsCents ?? null;
-    };
+    const screenFor = (screenId: string | null) =>
+      screenId ? screens.find((s) => s.id === screenId) : undefined;
 
     const { count } = await deps.db.playLog.createMany({
       data: resolved.map(({ play, startedAt, screenId }) => {
-        // A duration the device reported is used as-is (even if invalid — no rotation fallback);
-        // it's only looked up when absent entirely.
-        const durationMs = play.durationMs ?? rotationDurationFor(play.itemId);
+        const placement = placementFor(play.itemId);
+        const advertiser = placement?.ad.workspaceAccessKeyId ?? null;
+        const screen = screenFor(screenId);
+        const house = !!advertiser && advertiser === screen?.workspaceAccessKeyId;
+        // A duration the device reported is used as-is (even if invalid — no fallback); it's only
+        // looked up when absent entirely.
+        const durationMs = play.durationMs ?? configuredDurationFor(play.itemId);
         const billedUnits =
-          play.result === "completed" ? unitsForDurationMs(durationMs ?? null) : null;
+          play.result === "completed" && !house ? unitsForDurationMs(durationMs ?? null) : null;
         return {
           deviceId: params.deviceId,
           screenId,
@@ -131,7 +155,10 @@ export function createRecordPlayLogs(deps: Pick<DeviceSyncDeps, "db" | "loadRota
           startedAt,
           endedAt: new Date(play.endedAt),
           billedUnits,
-          rateCentsAtPlay: rateFor(screenId)
+          rateCentsAtPlay: house ? null : (screen?.ratePerFiveSecondsCents ?? null),
+          placementId: placement?.id ?? null,
+          advertiserWorkspaceAccessKeyId: advertiser,
+          house
         };
       }),
       skipDuplicates: true

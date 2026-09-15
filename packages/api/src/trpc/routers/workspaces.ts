@@ -10,14 +10,17 @@ import {
   inviteMemberSchema,
   memberRefSchema,
   renameWorkspaceSchema,
+  setDashboardViewSchema,
   type WorkspaceRole
 } from "@proyecta/common";
 import {
   createAcceptInvitation,
   createCreateWorkspace,
   createDeleteWorkspace,
+  createGetWorkspaceActivity,
   createGetWorkspaceSettings,
   createRemoveMember,
+  createSetDashboardView,
   createUpdateWorkspaceSettings
 } from "../../api/workspaces/index.js";
 import { grpcStatus, hasGrpcStatus } from "../../identity/grpc.js";
@@ -169,9 +172,26 @@ export const workspacesRouter = router({
     })
   ),
 
-  create: protectedProcedure
-    .input(validate(createWorkspaceSchema))
+  create: protectedProcedure.input(validate(createWorkspaceSchema)).mutation(({ ctx, input }) =>
+    createCreateWorkspace({ identity: ctx.identity, db: ctx.sync.db })({
+      ...input,
+      token: ctx.token
+    })
+  ),
+
+  setDashboardView: adminProcedure
+    .input(validate(setDashboardViewSchema))
     .mutation(({ ctx, input }) =>
-      createCreateWorkspace(ctx.identity)({ ...input, token: ctx.token })
-    )
+      createSetDashboardView({ db: ctx.sync.db })({
+        ...input,
+        workspaceAccessKeyId: ctx.workspace.accessKeyId
+      })
+    ),
+
+  /** What keeps running on each side, for the view-switch confirmation. */
+  activity: workspaceProcedure.query(({ ctx }) =>
+    createGetWorkspaceActivity({ db: ctx.sync.db, now: ctx.sync.now })({
+      workspaceAccessKeyId: ctx.workspace.accessKeyId
+    })
+  )
 });

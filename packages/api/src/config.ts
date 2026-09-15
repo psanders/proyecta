@@ -22,6 +22,11 @@ export function loadConfig() {
     mediaDir: process.env.MEDIA_DIR
       ? resolve(process.env.MEDIA_DIR)
       : resolve(import.meta.dirname, "../.data/media"),
+    // Advertiser uploads and their renditions, served at /content. Separate from MEDIA_DIR, which
+    // the demo generator wipes. Deployments mount a volume here.
+    contentDir: process.env.CONTENT_DIR
+      ? resolve(process.env.CONTENT_DIR)
+      : resolve(import.meta.dirname, "../.data/content"),
     identity: {
       endpoint: required("IDENTITY_ENDPOINT"),
       bridgeUrl: required("IDENTITY_BRIDGE_URL"),

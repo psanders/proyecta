@@ -115,6 +115,7 @@ model Screen {
   updatedAt               DateTime        @updatedAt @map("updated_at")
   bindings                DeviceBinding[]
   playLogs                PlayLog[]
+  placements              AdPlacement[]
 
   @@index([workspaceAccessKeyId, status])
   @@map("screens")
@@ -138,37 +139,162 @@ model DeviceBinding {
 
 /// One ad play reported by a device. Idempotent per device, item and start time.
 model PlayLog {
-  id              String     @id @default(uuid()) @db.Uuid
-  deviceId        String     @map("device_id") @db.Uuid
-  screenId        String?    @map("screen_id") @db.Uuid
-  itemId          String     @map("item_id")
-  codec           String
-  result          PlayResult
-  startedAt       DateTime   @map("started_at")
-  endedAt         DateTime   @map("ended_at")
+  id                             String       @id @default(uuid()) @db.Uuid
+  deviceId                       String       @map("device_id") @db.Uuid
+  screenId                       String?      @map("screen_id") @db.Uuid
+  itemId                         String       @map("item_id")
+  codec                          String
+  result                         PlayResult
+  startedAt                      DateTime     @map("started_at")
+  endedAt                        DateTime     @map("ended_at")
   /// Pay-per-display billed units (planned duration ÷ 5000ms), set only for billable plays.
-  billedUnits     Int?       @map("billed_units")
+  billedUnits                    Int?         @map("billed_units")
   /// The screen's rate (RD$ centavos per 5s) snapshotted at record time; null if unset then.
-  rateCentsAtPlay Int?       @map("rate_cents_at_play")
-  createdAt       DateTime   @default(now()) @map("created_at")
-  device          Device     @relation(fields: [deviceId], references: [id])
-  screen          Screen?    @relation(fields: [screenId], references: [id])
+  rateCentsAtPlay                Int?         @map("rate_cents_at_play")
+  /// The ad placement played (manifest item id), when the item was an advertiser's ad.
+  placementId                    String?      @map("placement_id") @db.Uuid
+  /// The advertiser business snapshotted at record time.
+  advertiserWorkspaceAccessKeyId String?      @map("advertiser_workspace_access_key_id")
+  /// An ad of the screen's own business: counted, never billed.
+  house                          Boolean      @default(false)
+  createdAt                      DateTime     @default(now()) @map("created_at")
+  device                         Device       @relation(fields: [deviceId], references: [id])
+  screen                         Screen?      @relation(fields: [screenId], references: [id])
+  placement                      AdPlacement? @relation(fields: [placementId], references: [id])
 
   @@unique([deviceId, itemId, startedAt])
   @@index([screenId, startedAt])
   @@index([screenId, result, startedAt])
+  @@index([placementId, result])
   @@map("play_logs")
 }
 
 /// Proyecta-owned preferences of an Identity workspace (the name lives in Identity).
 model WorkspaceSettings {
-  workspaceAccessKeyId String   @id @map("workspace_access_key_id")
+  workspaceAccessKeyId String        @id @map("workspace_access_key_id")
   /// IANA time zone for calendar-day windows (earnings "today" / "last 7 days").
-  timezone             String   @default("America/Santo_Domingo")
-  createdAt            DateTime @default(now()) @map("created_at")
-  updatedAt            DateTime @updatedAt @map("updated_at")
+  timezone             String        @default("America/Santo_Domingo")
+  /// Which sides of the dashboard the business sees (presentation only).
+  dashboardView        DashboardView @default(SCREEN_OWNER) @map("dashboard_view")
+  createdAt            DateTime      @default(now()) @map("created_at")
+  updatedAt            DateTime      @updatedAt @map("updated_at")
 
   @@map("workspace_settings")
+}
+
+enum DashboardView {
+  SCREEN_OWNER
+  ADVERTISER
+  BOTH
+
+  @@map("dashboard_view")
+}
+
+enum AssetKind {
+  IMAGE
+  VIDEO
+
+  @@map("asset_kind")
+}
+
+enum AssetStatus {
+  PROCESSING
+  READY
+  FAILED
+
+  @@map("asset_status")
+}
+
+/// An advertiser's uploaded file. Immutable once prepared; replacing a file uploads a new asset.
+model Asset {
+  id                   String        @id @default(uuid()) @db.Uuid
+  workspaceAccessKeyId String        @map("workspace_access_key_id")
+  name                 String
+  kind                 AssetKind
+  status               AssetStatus   @default(PROCESSING)
+  /// Display duration: the video's length rounded to 5 s, or the chosen image duration.
+  durationMs           Int           @map("duration_ms")
+  width                Int
+  height               Int
+  orientation          Orientation
+  /// Source file name inside the asset's content directory.
+  sourceFile           String        @map("source_file")
+  sizeBytes            Int           @map("size_bytes")
+  sha256               String
+  /// Rendition URL paths: { webp } or { webm, mp4 }, plus { poster }.
+  renditions           Json          @default("{}")
+  failureReason        String?       @map("failure_reason")
+  createdAt            DateTime      @default(now()) @map("created_at")
+  updatedAt            DateTime      @updatedAt @map("updated_at")
+  ads                  Ad[]
+  placements           AdPlacement[]
+
+  @@index([workspaceAccessKeyId, createdAt])
+  @@map("assets")
+}
+
+enum AdState {
+  SUBMITTED
+  CANCELED
+
+  @@map("ad_state")
+}
+
+/// An advertiser's ad: one current file shown on a set of screens between two dates.
+model Ad {
+  id                   String        @id @default(uuid()) @db.Uuid
+  workspaceAccessKeyId String        @map("workspace_access_key_id")
+  name                 String
+  /// The business name when the ad was created (shown on players).
+  advertiserName       String        @map("advertiser_name")
+  assetId              String        @map("asset_id") @db.Uuid
+  /// Calendar dates as entered ("YYYY-MM-DD"), in the business's time zone.
+  startDate            String        @map("start_date")
+  endDate              String        @map("end_date")
+  /// Start of the start date and start of the day after the end date (exclusive).
+  startsAt             DateTime      @map("starts_at")
+  endsAt               DateTime      @map("ends_at")
+  state                AdState       @default(SUBMITTED)
+  canceledAt           DateTime?     @map("canceled_at")
+  createdAt            DateTime      @default(now()) @map("created_at")
+  updatedAt            DateTime      @updatedAt @map("updated_at")
+  asset                Asset         @relation(fields: [assetId], references: [id])
+  placements           AdPlacement[]
+
+  @@index([workspaceAccessKeyId, createdAt])
+  @@index([state, startsAt, endsAt])
+  @@map("ads")
+}
+
+enum PlacementStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  REVOKED
+  WITHDRAWN
+
+  @@map("placement_status")
+}
+
+/// One file of an ad on one screen. Rows are history: a new file adds rows, removing a screen withdraws them.
+model AdPlacement {
+  id          String          @id @default(uuid()) @db.Uuid
+  adId        String          @map("ad_id") @db.Uuid
+  screenId    String          @map("screen_id") @db.Uuid
+  assetId     String          @map("asset_id") @db.Uuid
+  status      PlacementStatus
+  decidedAt   DateTime?       @map("decided_at")
+  withdrawnAt DateTime?       @map("withdrawn_at")
+  createdAt   DateTime        @default(now()) @map("created_at")
+  updatedAt   DateTime        @updatedAt @map("updated_at")
+  ad          Ad              @relation(fields: [adId], references: [id])
+  screen      Screen          @relation(fields: [screenId], references: [id])
+  asset       Asset           @relation(fields: [assetId], references: [id])
+  playLogs    PlayLog[]
+
+  @@index([adId, screenId])
+  @@index([screenId, status])
+  @@map("ad_placements")
 }
 
 /// Proyecta-owned preferences of an Identity user (Identity itself is never modified).

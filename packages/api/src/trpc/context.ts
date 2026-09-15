@@ -5,6 +5,18 @@ import type { IncomingHttpHeaders } from "node:http";
 import { parseLanguage, type Language } from "@proyecta/common";
 import type { DeviceSyncDeps } from "../api/screens/deps.js";
 import type { IdentityApi, Principal, WorkspaceAccess } from "../identity/types.js";
+import type { ContentStore } from "../media/contentStore.js";
+import type { RenditionQueue } from "../media/createRenditionQueue.js";
+import type { MediaProbe } from "../media/ffmpeg.js";
+
+/** Uploaded content: where files live, how they're inspected and prepared. */
+export interface MediaServices {
+  store: ContentStore;
+  probe: MediaProbe;
+  queue: RenditionQueue;
+  /** Directory uploads stream into before they're checked. */
+  tempDir: string;
+}
 
 export const WORKSPACE_HEADER = "x-workspace";
 export const LANGUAGE_HEADER = "x-language";
@@ -18,6 +30,9 @@ export interface Services {
   fetch: typeof fetch;
   sync: DeviceSyncDeps;
   pairingLimiter: { take: (key: string) => boolean };
+  media: MediaServices;
+  /** Pushes updated rotations to the players of these screens. */
+  notifyScreens: (screenIds: string[]) => Promise<void>;
 }
 
 export interface Context extends Services {

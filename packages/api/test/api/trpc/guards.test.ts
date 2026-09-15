@@ -21,7 +21,9 @@ function services(principal: Awaited<ReturnType<Services["verifyAccessToken"]>>)
     identityBridgeUrl: "http://bridge",
     fetch: sinon.stub() as unknown as typeof fetch,
     sync: {} as Services["sync"],
-    pairingLimiter: { take: () => true }
+    pairingLimiter: { take: () => true },
+    media: {} as Services["media"],
+    notifyScreens: sinon.stub().resolves()
   };
 }
 
@@ -79,6 +81,22 @@ describe("tRPC guards", () => {
 
     // Act + Assert
     await expectCode(createCaller(ctx).workspaces.invite(invite), "FORBIDDEN");
+  });
+
+  it("should forbid members from changing ads, files or the dashboard view", async () => {
+    // Arrange
+    const ctx = await resolveContext(services(member), {
+      authorization: "Bearer ok",
+      "x-workspace": "WO1"
+    });
+    const caller = createCaller(ctx);
+    const id = "7f3c2a8e-1b2d-4c5e-9f00-112233445566";
+
+    // Act + Assert
+    await expectCode(caller.ads.cancel({ id }), "FORBIDDEN");
+    await expectCode(caller.ads.removeScreen({ id, screenId: id }), "FORBIDDEN");
+    await expectCode(caller.assets.delete({ id }), "FORBIDDEN");
+    await expectCode(caller.workspaces.setDashboardView({ dashboardView: "BOTH" }), "FORBIDDEN");
   });
 
   it("should let admins invite", async () => {
