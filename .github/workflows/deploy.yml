@@ -82,6 +82,26 @@ jobs:
         with:
           ref: ${{ needs.resolve.outputs.version }}
 
+      # A missing variable once made rsync target "${COMPOSE_DIR}/" = "/" and
+      # litter the droplet's root. Refuse to run unless everything is set.
+      - name: Check deploy configuration
+        env:
+          COMPOSE_DIR: ${{ vars.DEPLOY_COMPOSE_DIR }}
+          HAS_HOST: ${{ secrets.DEPLOY_SSH_HOST != '' }}
+          HAS_USER: ${{ secrets.DEPLOY_SSH_USER != '' }}
+          HAS_KEY: ${{ secrets.DEPLOY_SSH_KEY != '' }}
+          HAS_TOKEN: ${{ secrets.RELEASE_TOKEN != '' }}
+        run: |
+          fail=""
+          case "$COMPOSE_DIR" in
+            /?*) [ "$COMPOSE_DIR" != "/" ] || fail=1 ;;
+            *) echo "vars.DEPLOY_COMPOSE_DIR must be an absolute path other than / (e.g. /opt/proyecta)" >&2; fail=1 ;;
+          esac
+          for v in HAS_HOST HAS_USER HAS_KEY HAS_TOKEN; do
+            [ "${!v}" = "true" ] || { echo "Missing secret for $v" >&2; fail=1; }
+          done
+          [ -z "$fail" ]
+
       - name: Configure SSH
         run: |
           install -m 700 -d ~/.ssh
@@ -97,6 +117,9 @@ jobs:
         env:
           COMPOSE_DIR: ${{ vars.DEPLOY_COMPOSE_DIR }}
         run: |
+          ssh -i ~/.ssh/deploy_key -o IdentitiesOnly=yes \
+            "${{ secrets.DEPLOY_SSH_USER }}@${{ secrets.DEPLOY_SSH_HOST }}" \
+            "mkdir -p '${COMPOSE_DIR}'"
           rsync -avz --relative -e "ssh -i ~/.ssh/deploy_key -o IdentitiesOnly=yes" \
             compose.prod.yaml \
             config/nginx/proxy.conf.template \
@@ -110,70 +133,17 @@ jobs:
             "chmod +x ${COMPOSE_DIR}/scripts/deploy/*.sh"
 
       - name: Deploy over SSH
-        uses: appleboy/ssh-action@v1.2.2
+        # Plain OpenSSH with the same key file as the sync step (appleboy/ssh-action
+        # parsed the key differently and failed with "password is empty").
         env:
           VERSION: ${{ needs.resolve.outputs.version }}
           COMPOSE_DIR: ${{ vars.DEPLOY_COMPOSE_DIR }}
           GHCR_TOKEN: ${{ secrets.RELEASE_TOKEN }}
           GHCR_OWNER: ${{ github.repository_owner }}
-        with:
-          host: ${{ secrets.DEPLOY_SSH_HOST }}
-          username: ${{ secrets.DEPLOY_SSH_USER }}
-          key: ${{ secrets.DEPLOY_SSH_KEY }}
-          envs: VERSION,COMPOSE_DIR,GHCR_TOKEN,GHCR_OWNER
-          script: |
-            set -e
-            cd "$COMPOSE_DIR"
-
-            echo "$GHCR_TOKEN" | docker login ghcr.io -u "$GHCR_OWNER" --password-stdin
-
-            # Pin PROYECTA_VERSION in .env, remembering the previous value for rollback.
-            touch .env
-            prev=$(grep '^PROYECTA_VERSION=' .env | cut -d= -f2- || true)
-            grep -v '^PROYECTA_VERSION=' .env > .env.next || true
-            echo "PROYECTA_VERSION=${VERSION}" >> .env.next
-            mv .env.next .env
-
-            docker compose -f compose.prod.yaml pull apiserver dashboard player
-            docker compose -f compose.prod.yaml up -d
-
-            # Wait up to 60s for every service to be running/healthy.
-            ok=""
-            for i in $(seq 1 30); do
-              stopped=$(docker compose -f compose.prod.yaml ps --status exited --quiet 2>/dev/null | wc -l)
-              starting=$(docker compose -f compose.prod.yaml ps --status starting --quiet 2>/dev/null | wc -l)
-              if [ "$stopped" = "0" ] && [ "$starting" = "0" ]; then
-                ok=1
-                break
-              fi
-              sleep 2
-            done
-
-            if [ -z "$ok" ]; then
-              echo "Deploy of ${VERSION} failed — containers did not come up cleanly." >&2
-              docker compose -f compose.prod.yaml ps
-              docker compose -f compose.prod.yaml logs --tail 50
-              if [ -n "$prev" ]; then
-                echo "Rolling back to ${prev}." >&2
-                grep -v '^PROYECTA_VERSION=' .env > .env.next || true
-                echo "PROYECTA_VERSION=${prev}" >> .env.next
-                mv .env.next .env
-                docker compose -f compose.prod.yaml pull apiserver dashboard player
-                docker compose -f compose.prod.yaml up -d
-              fi
-              exit 1
-            fi
-
-            # Issue the TLS cert on first deploy and renew it when inside the
-            # expiry window. Non-fatal — a cert hiccup must not fail an
-            # otherwise-good app deploy.
-            if [ -x scripts/deploy/tls.sh ]; then
-              scripts/deploy/tls.sh || echo "WARNING: TLS sync failed — check certs/proxy."
-            fi
-
-            # Reclaim disk: drop images from superseded releases.
-            docker image prune -af || true
-            docker builder prune -af || true
-
-            echo "Deployed ${VERSION} successfully."
-            docker compose -f compose.prod.yaml ps
+        run: |
+          {
+            printf 'export VERSION=%q COMPOSE_DIR=%q GHCR_TOKEN=%q GHCR_OWNER=%q\n' \
+              "$VERSION" "$COMPOSE_DIR" "$GHCR_TOKEN" "$GHCR_OWNER"
+            cat scripts/deploy/remote-deploy.sh
+          } | ssh -i ~/.ssh/deploy_key -o IdentitiesOnly=yes \
+            "${{ secrets.DEPLOY_SSH_USER }}@${{ secrets.DEPLOY_SSH_HOST }}" 'bash -s'
