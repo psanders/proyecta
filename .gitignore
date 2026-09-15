@@ -21,3 +21,8 @@ test-results/
 config/identity/identity.json
 config/identity/keys/
 ads/
+
+# Production TLS certs (copied onto the droplet by scripts/deploy/tls.sh) and
+# database backups (scripts/deploy/backup-db.sh) — never part of the repo.
+config/certs/
+backups/

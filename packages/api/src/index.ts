@@ -1,7 +1,6 @@
 /**
  * Copyright (C) 2026 by Proyecta. All rights reserved.
  */
-import { resolve } from "node:path";
 import { createIdentityClient } from "@fonoster/identity-client";
 import { createApp } from "./app.js";
 import { loadConfig } from "./config.js";
@@ -16,8 +15,7 @@ import { logger } from "./logger.js";
 const config = loadConfig();
 const db = createDbClient(config.databaseUrl);
 const identity = createIdentityClient(config.identity.endpoint);
-// Default rotation (generated demo ads) until advertisers exist.
-const mediaDir = resolve(import.meta.dirname, "../.data/media");
+const mediaDir = config.mediaDir;
 const sync = { db, hub: new EventHub(), loadRotation: createRotationLoader(mediaDir) };
 
 createStatusSweeper(sync);
