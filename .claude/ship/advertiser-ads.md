@@ -1,7 +1,7 @@
 # Ship checkpoint — advertiser-ads
 
 Started: 2026-09-15
-Current stage: 5 — Sync (waiting for PR review and merge)
+Current stage: done
 
 **Scope:** The advertiser side: asset library with automated checks and renditions, ads on catalog screens with
 placements (own screens approved, others pending and never playing), per-screen rotations, house plays and separate
@@ -16,8 +16,8 @@ earnings/spend, plus the per-business dashboard view (owner / advertiser / both)
 | 2 | Spec reconcile | done | cancel no longer withdraws placements (spec + design updated); welcome step documented in design |
 | 3 | Build | done | common schemas, migration, API (uploads, assets, ads, rotation, attribution), dashboard pages, infra |
 | 4 | Test | done | lint + typecheck + prettier; unit 202; integration 18/18; e2e 17/17 (new e2e/advertiser.spec.ts) |
-| 5 | Sync | pending | gate: after PR merge |
-| 6 | Archive | pending | gate: after PR merge |
+| 5 | Sync | done | PR #24 merged; new main specs ads, advertiser-assets, workspace-view; device-sync and accounting merged; validate --specs 11/11 |
+| 6 | Archive | done | openspec/changes/archive/2026-09-15-advertiser-ads |
 
 Status values: `pending` · `in-progress` · `done` · `skipped` (with reason).
 
@@ -25,6 +25,7 @@ Status values: `pending` · `in-progress` · `done` · `skipped` (with reason).
 
 Newest first. One line per meaningful decision or stage transition.
 
+- 2026-09-15 — PR #24 squash-merged (c59a18a); specs synced and change archived on chore/sync-archive-advertiser-ads.
 - 2026-09-15 — `.gitignore` had `ads/` (any folder named ads) which hid `routes/ads` and `api/ads` from git and Tailwind; anchored to `/ads/`.
 - 2026-09-15 — Rebased onto origin/main (english routes #16); new dashboard routes are English.
 - 2026-09-15 — Upload over plain Express route with streamed body (tRPC FormData buffers in memory).
