@@ -2,7 +2,9 @@ name: Publish Docker Images
 
 # Builds and pushes the apiserver/dashboard/player images to GHCR on every
 # vX.Y.Z tag (or manually). Modeled on QCobro's docker-publish.yml, extended
-# to three targets.
+# to three targets. The three targets build and push in parallel via a
+# matrix, each on its own runner with its own GHA cache scope so the legs
+# don't clobber each other's layer cache.
 
 on:
   push:
@@ -21,6 +23,10 @@ env:
 
 jobs:
   build-and-push:
+    strategy:
+      fail-fast: false
+      matrix:
+        target: [apiserver, dashboard, player]
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -43,7 +49,7 @@ jobs:
       - name: Compute image tags
         id: meta
         run: |
-          P="${{ env.PREFIX }}"
+          IMAGE="${{ env.PREFIX }}/proyecta-${{ matrix.target }}"
           ADD_LATEST=true
           if [[ "$GITHUB_REF" == refs/tags/* ]]; then
             T="${GITHUB_REF#refs/tags/}"
@@ -51,53 +57,26 @@ jobs:
             T="${{ inputs.tag }}"
             ADD_LATEST=false
           fi
-          emit() {
-            {
-              echo "$1<<__TAGS_EOF__"
-              echo "$2:${T}"
-              [ "$ADD_LATEST" = true ] && echo "$2:latest"
-              echo "__TAGS_EOF__"
-            } >> "$GITHUB_OUTPUT"
-          }
-          emit apiserver_tags "${P}/proyecta-apiserver"
-          emit dashboard_tags "${P}/proyecta-dashboard"
-          emit player_tags    "${P}/proyecta-player"
+          {
+            echo "tags<<__TAGS_EOF__"
+            echo "${IMAGE}:${T}"
+            [ "$ADD_LATEST" = true ] && echo "${IMAGE}:latest"
+            echo "__TAGS_EOF__"
+          } >> "$GITHUB_OUTPUT"
 
-      - name: Build and push apiserver
+      - name: Build and push ${{ matrix.target }}
         uses: docker/build-push-action@v5
         with:
           context: .
-          target: apiserver
+          target: ${{ matrix.target }}
           push: true
-          tags: ${{ steps.meta.outputs.apiserver_tags }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
-
-      - name: Build and push dashboard
-        uses: docker/build-push-action@v5
-        with:
-          context: .
-          target: dashboard
-          push: true
-          tags: ${{ steps.meta.outputs.dashboard_tags }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
-
-      - name: Build and push player
-        uses: docker/build-push-action@v5
-        with:
-          context: .
-          target: player
-          push: true
-          tags: ${{ steps.meta.outputs.player_tags }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          tags: ${{ steps.meta.outputs.tags }}
+          cache-from: type=gha,scope=${{ matrix.target }}
+          cache-to: type=gha,mode=max,scope=${{ matrix.target }}
 
       - name: Summary
         run: |
-          echo "## Published images" >> "$GITHUB_STEP_SUMMARY"
+          echo "## Published image: ${{ matrix.target }}" >> "$GITHUB_STEP_SUMMARY"
           echo '```' >> "$GITHUB_STEP_SUMMARY"
-          echo "${{ steps.meta.outputs.apiserver_tags }}" >> "$GITHUB_STEP_SUMMARY"
-          echo "${{ steps.meta.outputs.dashboard_tags }}" >> "$GITHUB_STEP_SUMMARY"
-          echo "${{ steps.meta.outputs.player_tags }}"    >> "$GITHUB_STEP_SUMMARY"
+          echo "${{ steps.meta.outputs.tags }}" >> "$GITHUB_STEP_SUMMARY"
           echo '```' >> "$GITHUB_STEP_SUMMARY"
