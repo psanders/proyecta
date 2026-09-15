@@ -6,15 +6,23 @@ import { useNavigate, useParams } from "react-router-dom";
 import type { Environment, Orientation, PlaceType } from "@proyecta/common";
 import { DayPicker } from "../../components/DayPicker.js";
 import { DevicePanel } from "../../components/DevicePanel.js";
+import { MapLink } from "../../components/MapLink.js";
 import { BackLink, KeyValueRow, PageHeader } from "../../components/PageHeader.js";
 import { StatusBadge } from "../../components/StatusBadge.js";
+import { TagList } from "../../components/TagPicker.js";
 import { Alert } from "../../components/ui/Alert.js";
 import { Button } from "../../components/ui/Button.js";
 import { SectionCard } from "../../components/ui/Card.js";
 import { ConfirmDialog } from "../../components/ui/Dialog.js";
 import { Icon } from "../../components/ui/Icon.js";
 import { errorMessage } from "../../lib/errors.js";
-import { formatCents, formatPlays, formatTime12 } from "../../lib/format.js";
+import {
+  formatCents,
+  formatPlays,
+  formatResolution,
+  formatTime12,
+  resolutionFacets
+} from "../../lib/format.js";
 import { trpc } from "../../lib/trpc.js";
 import { useWorkspace } from "../../lib/useWorkspace.js";
 import { useI18n } from "../../lib/useI18n.js";
@@ -105,6 +113,9 @@ export function ScreenDetailPage() {
       />
 
       <SectionCard title={t("detail.info")}>
+        {s.description ? (
+          <p className="text-sm whitespace-pre-line text-foreground">{s.description}</p>
+        ) : null}
         <KeyValueRow label={t("form.placeType")} value={place ?? na} />
         <KeyValueRow
           label={t("form.environment")}
@@ -120,7 +131,35 @@ export function ScreenDetailPage() {
         />
         <KeyValueRow
           label={t("form.resolution")}
-          value={s.resolution ? s.resolution.replace("x", " x ") : na}
+          value={
+            s.resolution
+              ? [formatResolution(s.resolution), resolutionFacets(s.resolution, s.orientation, t)]
+                  .filter(Boolean)
+                  .join(" · ")
+              : na
+          }
+        />
+        <KeyValueRow
+          label={t("detail.coordinates")}
+          value={
+            s.latitude !== null && s.longitude !== null ? (
+              <span className="inline-flex items-center gap-3">
+                <span className="font-mono">
+                  {s.latitude}, {s.longitude}
+                </span>
+                <MapLink
+                  label={t("detail.openMap")}
+                  coordinates={{ latitude: s.latitude, longitude: s.longitude }}
+                />
+              </span>
+            ) : (
+              na
+            )
+          }
+        />
+        <KeyValueRow
+          label={t("detail.tags")}
+          value={s.tags.length > 0 ? <TagList tags={s.tags} /> : na}
         />
       </SectionCard>
 

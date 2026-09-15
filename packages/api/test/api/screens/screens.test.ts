@@ -25,6 +25,10 @@ function row(overrides: Record<string, unknown> = {}) {
     environment: "OUTDOOR",
     city: "Santo Domingo",
     address: null,
+    description: null,
+    latitude: null,
+    longitude: null,
+    tags: [] as string[],
     widthCm: null,
     heightCm: null,
     orientation: null,
@@ -91,6 +95,77 @@ describe("screen functions", () => {
       name: "Valla Av. 27 de Febrero"
     });
     expect(view).to.include({ status: "UNLINKED", complete: false, archived: false });
+  });
+
+  it("should store description, coordinates, tags and a normalized resolution", async () => {
+    // Arrange
+    const client = db();
+    client.screen.create.resolves(
+      row({
+        description: "Frente al semáforo",
+        latitude: 18.4861,
+        longitude: -69.9312,
+        tags: ["tourists", "retired-tag"],
+        orientation: "PORTRAIT",
+        resolution: "1920x1080",
+        availableDays: [1, 2, 3, 4, 5],
+        startTime: "08:00",
+        endTime: "20:00",
+        ratePerFiveSecondsCents: 25
+      })
+    );
+
+    // Act
+    const view = await createCreateScreen(deps(client))({
+      workspaceAccessKeyId: "WO1",
+      name: "A",
+      city: "Santo Domingo",
+      description: " Frente al semáforo ",
+      latitude: 18.4861,
+      longitude: -69.9312,
+      tags: ["tourists", "tourists"],
+      orientation: "PORTRAIT",
+      resolution: "1080x1920"
+    });
+
+    // Assert
+    expect(client.screen.create.firstCall.args[0].data).to.deep.include({
+      description: "Frente al semáforo",
+      latitude: 18.4861,
+      longitude: -69.9312,
+      tags: ["tourists"],
+      resolution: "1920x1080"
+    });
+    expect(view).to.deep.include({
+      complete: true,
+      tags: ["tourists"],
+      resolutionTier: "FULL_HD",
+      aspectRatio: "9:16"
+    });
+  });
+
+  it("should reject coordinates outside the Dominican Republic before writing", async () => {
+    // Arrange
+    const client = db();
+
+    // Act + Assert
+    try {
+      await createCreateScreen(deps(client))({
+        workspaceAccessKeyId: "WO1",
+        name: "A",
+        city: "Santiago",
+        latitude: 40.7128,
+        longitude: -74.006
+      });
+      expect.fail("expected ValidationError");
+    } catch (err) {
+      expect(err).to.be.instanceOf(ValidationError);
+      expect((err as ValidationError).fieldErrors[0]).to.include({
+        field: "latitude",
+        message: "Las coordenadas quedan fuera de República Dominicana"
+      });
+      expect(client.screen.create.called).to.equal(false);
+    }
   });
 
   it("should reject an end time before the start time", async () => {
@@ -189,7 +264,9 @@ describe("screen functions", () => {
       availableDays: [1, 2, 3],
       startTime: "08:00",
       endTime: "20:00",
-      ratePerFiveSecondsCents: 250
+      ratePerFiveSecondsCents: 250,
+      latitude: 18.4861,
+      longitude: -69.9312
     };
     client.screen.findMany.resolves([
       row({ id: "a", ...complete }),

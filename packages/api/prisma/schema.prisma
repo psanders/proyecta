@@ -98,9 +98,17 @@ model Screen {
   environment             Environment?
   city                    String
   address                 String?
+  /// Plain text shown to advertisers.
+  description             String?
+  /// WGS84 degrees, both or neither (CHECK constraint), inside the Dominican Republic.
+  latitude                Float?
+  longitude               Float?
+  /// Curated tag ids from SCREEN_TAG_GROUPS in @proyecta/common.
+  tags                    String[]        @default([])
   widthCm                 Int?            @map("width_cm")
   heightCm                Int?            @map("height_cm")
   orientation             Orientation?
+  /// Native panel resolution "WxH", larger dimension first.
   resolution              String?
   /// ISO weekdays, 1 = Monday … 7 = Sunday.
   availableDays           Int[]           @map("available_days")

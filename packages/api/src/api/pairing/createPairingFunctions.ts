@@ -5,6 +5,7 @@ import { z } from "zod/v4";
 import {
   checkPairingCodeSchema,
   linkDeviceSchema,
+  normalizeResolution,
   screenIdSchema,
   withErrorHandlingAndValidation,
   type CodeAvailability
@@ -42,7 +43,10 @@ export function createCheckPairingCode(deps: DeviceSyncDeps) {
     if (!isRecentlySeen(device.lastSeenAt, deps.hub.isStreamOpen(device.id), now())) {
       return { available: false, reason: "OFFLINE" };
     }
-    return { available: true, resolution: device.resolution };
+    return {
+      available: true,
+      resolution: device.resolution ? normalizeResolution(device.resolution) : null
+    };
   };
 
   return withErrorHandlingAndValidation(fn, schema);
@@ -88,11 +92,11 @@ export function createLinkDevice(deps: DeviceSyncDeps) {
       }
       throw err;
     }
-    // Resolution reported by the player fills an empty screen field.
+    // Resolution reported by the player fills an empty screen field, larger dimension first.
     if (!screen.resolution && device.resolution) {
       await deps.db.screen.update({
         where: { id: screen.id },
-        data: { resolution: device.resolution }
+        data: { resolution: normalizeResolution(device.resolution) }
       });
     }
     logger.verbose("device linked", { deviceId: device.id, screenId: screen.id });

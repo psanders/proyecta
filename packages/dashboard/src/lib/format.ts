@@ -1,6 +1,7 @@
 /**
  * Copyright (C) 2026 by Proyecta. All rights reserved.
  */
+import { aspectRatio, resolutionTier, type Orientation } from "@proyecta/common";
 import { locales, type Language, type MessageId, type Translate } from "./i18n.js";
 
 const weekday = (t: Translate, day: number) => t(`weekday.${day}` as MessageId);
@@ -93,4 +94,28 @@ export function formatDuration(seconds: number): string {
   const hours = Math.floor(seconds / 3600);
   const minutes = Math.floor((seconds % 3600) / 60);
   return hours > 0 ? `${hours} h ${minutes} min` : `${minutes} min`;
+}
+
+/** Google Maps at a pin, or centered on the Dominican Republic when there are no coordinates. */
+export function mapsUrl(coordinates?: { latitude: number; longitude: number } | null): string {
+  return coordinates
+    ? `https://www.google.com/maps/search/?api=1&query=${coordinates.latitude},${coordinates.longitude}`
+    : "https://www.google.com/maps/@18.7357,-70.1627,8z";
+}
+
+/** "1920 × 1080" for a "1920x1080" resolution. */
+export function formatResolution(resolution: string): string {
+  return resolution.replace(/x/i, " × ");
+}
+
+/** "Full HD · 16:9" (or "Full HD · 9:16" mounted portrait), or null when it isn't a resolution. */
+export function resolutionFacets(
+  resolution: string | null | undefined,
+  orientation: string | null | undefined,
+  t: Translate
+): string | null {
+  const tier = resolutionTier(resolution);
+  if (!tier) return null;
+  const aspect = aspectRatio(resolution, orientation as Orientation | null | undefined);
+  return [t(`resolutionTier.${tier}`), aspect].filter(Boolean).join(" · ");
 }

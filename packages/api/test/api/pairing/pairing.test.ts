@@ -58,6 +58,20 @@ describe("pairing and play attribution", () => {
       expect(result).to.deep.equal({ available: true, resolution: "1920x1080" });
       expect(db.device.findUnique.firstCall.args[0].where).to.deep.equal({ code: "8F3K2QLM" });
     });
+
+    it("should report a portrait player's resolution with the larger dimension first", async () => {
+      // Arrange
+      const db = withDevice({ id: DEVICE, lastSeenAt: NOW, resolution: "1080x1920", bindings: [] });
+
+      // Act
+      const result = await createCheckPairingCode(deps(db))({
+        code: "8F3K2QLM",
+        workspaceAccessKeyId: "WO1"
+      });
+
+      // Assert
+      expect(result).to.deep.equal({ available: true, resolution: "1920x1080" });
+    });
   });
 
   describe("createLinkDevice", () => {
