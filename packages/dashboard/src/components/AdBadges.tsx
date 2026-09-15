@@ -7,14 +7,15 @@ import type { MessageId } from "../lib/i18n.js";
 import { useI18n } from "../lib/useI18n.js";
 import { Icon } from "./ui/Icon.js";
 
-type Tone = "success" | "warning" | "info" | "muted" | "orange";
+type Tone = "success" | "warning" | "info" | "muted" | "orange" | "danger";
 
 const TONES: Record<Tone, string> = {
   success: "bg-success text-success-foreground",
   warning: "bg-warning text-warning-foreground",
   info: "bg-info text-info-foreground",
   muted: "bg-secondary text-muted-foreground",
-  orange: "bg-primary/15 text-primary"
+  orange: "bg-primary/15 text-primary",
+  danger: "bg-destructive/10 text-destructive"
 };
 
 /** Pill badge used across the advertiser pages. */
@@ -39,7 +40,10 @@ const STATUS_TONE: Record<AdStatus | AdScreenStatus, Tone> = {
   FINISHED: "muted",
   CANCELED: "muted",
   NO_SCREENS: "muted",
-  NOT_APPROVED: "muted"
+  REJECTED: "danger",
+  REVOKED: "danger",
+  NO_RESPONSE: "muted",
+  NEEDS_ATTENTION: "danger"
 };
 
 /** An ad's overall status. */

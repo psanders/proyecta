@@ -13,7 +13,7 @@ import {
   type AdDetail,
   type AdListItem,
   type AdPlayStats,
-  type AdScreenStatus,
+  type AdScreenStatusView,
   type AdScreenView,
   type AssetRenditions,
   type CatalogScreenView
@@ -33,7 +33,15 @@ export interface AdQueryDeps {
 const adWithPlacements = {
   asset: true,
   placements: {
-    select: { id: true, screenId: true, assetId: true, status: true, createdAt: true }
+    select: {
+      id: true,
+      screenId: true,
+      assetId: true,
+      status: true,
+      createdAt: true,
+      reasonCode: true,
+      note: true
+    }
   }
 } satisfies Prisma.AdInclude;
 
@@ -59,7 +67,7 @@ function byScreen(placements: PlacementRow[]): Map<string, PlacementRow[]> {
 
 /** Per-screen statuses (removed screens left out) and the ad's list item. */
 function summarize(ad: AdRow, at: Date) {
-  const screens = new Map<string, { status: AdScreenStatus; newFilePending: boolean }>();
+  const screens = new Map<string, AdScreenStatusView>();
   for (const [screenId, rows] of byScreen(ad.placements)) {
     const status = adScreenStatus(ad, rows, at);
     if (status) screens.set(screenId, status);

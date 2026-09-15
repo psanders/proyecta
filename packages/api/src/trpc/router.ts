@@ -1,6 +1,7 @@
 /**
  * Copyright (C) 2026 by Proyecta. All rights reserved.
  */
+import { adReviewRouter } from "./routers/adReview.js";
 import { adsRouter } from "./routers/ads.js";
 import { assetsRouter } from "./routers/assets.js";
 import { authRouter } from "./routers/auth.js";
@@ -16,7 +17,8 @@ export const appRouter = router({
   screens: screensRouter,
   workspaces: workspacesRouter,
   assets: assetsRouter,
-  ads: adsRouter
+  ads: adsRouter,
+  adReview: adReviewRouter
 });
 
 export type AppRouter = typeof appRouter;

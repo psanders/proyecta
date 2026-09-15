@@ -266,6 +266,16 @@ model Ad {
   @@map("ads")
 }
 
+enum ReviewReason {
+  INAPPROPRIATE_CONTENT
+  COMPETITOR
+  NOT_SUITABLE_FOR_VENUE
+  LOW_QUALITY
+  OTHER
+
+  @@map("review_reason")
+}
+
 enum PlacementStatus {
   PENDING
   APPROVED
@@ -278,19 +288,25 @@ enum PlacementStatus {
 
 /// One file of an ad on one screen. Rows are history: a new file adds rows, removing a screen withdraws them.
 model AdPlacement {
-  id          String          @id @default(uuid()) @db.Uuid
-  adId        String          @map("ad_id") @db.Uuid
-  screenId    String          @map("screen_id") @db.Uuid
-  assetId     String          @map("asset_id") @db.Uuid
-  status      PlacementStatus
-  decidedAt   DateTime?       @map("decided_at")
-  withdrawnAt DateTime?       @map("withdrawn_at")
-  createdAt   DateTime        @default(now()) @map("created_at")
-  updatedAt   DateTime        @updatedAt @map("updated_at")
-  ad          Ad              @relation(fields: [adId], references: [id])
-  screen      Screen          @relation(fields: [screenId], references: [id])
-  asset       Asset           @relation(fields: [assetId], references: [id])
-  playLogs    PlayLog[]
+  id               String          @id @default(uuid()) @db.Uuid
+  adId             String          @map("ad_id") @db.Uuid
+  screenId         String          @map("screen_id") @db.Uuid
+  assetId          String          @map("asset_id") @db.Uuid
+  status           PlacementStatus
+  decidedAt        DateTime?       @map("decided_at")
+  /// Identity user who approved, rejected or stopped the placement.
+  decidedByUserRef String?         @map("decided_by_user_ref")
+  /// Why the owner rejected the file (shown to the advertiser).
+  reasonCode       ReviewReason?   @map("reason_code")
+  /// The owner's note to the advertiser when rejecting or stopping.
+  note             String?
+  withdrawnAt      DateTime?       @map("withdrawn_at")
+  createdAt        DateTime        @default(now()) @map("created_at")
+  updatedAt        DateTime        @updatedAt @map("updated_at")
+  ad               Ad              @relation(fields: [adId], references: [id])
+  screen           Screen          @relation(fields: [screenId], references: [id])
+  asset            Asset           @relation(fields: [assetId], references: [id])
+  playLogs         PlayLog[]
 
   @@index([adId, screenId])
   @@index([screenId, status])

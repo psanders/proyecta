@@ -60,7 +60,8 @@ function stubs() {
     },
     adPlacement: {
       createMany: sinon.stub().resolves({ count: 1 }),
-      updateMany: sinon.stub().resolves({ count: 1 })
+      updateMany: sinon.stub().resolves({ count: 1 }),
+      findMany: sinon.stub().resolves([])
     },
     $transaction: sinon.stub().resolves([])
   };
@@ -106,10 +107,23 @@ describe("ad functions", () => {
       expect(data.startsAt.toISOString()).to.equal("2026-06-10T04:00:00.000Z");
       expect(data.endsAt.toISOString()).to.equal("2026-07-01T04:00:00.000Z");
       expect(data.placements.create).to.deep.equal([
-        { screenId: OWN_SCREEN, assetId: ASSET, status: "APPROVED", decidedAt: NOW },
-        { screenId: OTHER_SCREEN, assetId: ASSET, status: "PENDING", decidedAt: null }
+        {
+          screenId: OWN_SCREEN,
+          assetId: ASSET,
+          status: "APPROVED",
+          decidedAt: NOW,
+          decidedByUserRef: null
+        },
+        {
+          screenId: OTHER_SCREEN,
+          assetId: ASSET,
+          status: "PENDING",
+          decidedAt: null,
+          decidedByUserRef: null
+        }
       ]);
-      expect(deps.notifyScreens.firstCall.args[0]).to.deep.equal([OWN_SCREEN, OTHER_SCREEN]);
+      // Only the approved placement changes a rotation.
+      expect(deps.notifyScreens.firstCall.args[0]).to.deep.equal([OWN_SCREEN]);
     });
 
     it("should reject a start date before today in the business time zone", async () => {
@@ -163,7 +177,76 @@ describe("ad functions", () => {
     });
   });
 
+  describe("approval reuse", () => {
+    it("should start approved where the owner's latest decision on the file was an approval", async () => {
+      // Arrange
+      const deps = stubs();
+      deps.db.adPlacement.findMany.resolves([
+        { screenId: OTHER_SCREEN, status: "WITHDRAWN", decidedByUserRef: "owner-1" },
+        { screenId: OTHER_SCREEN, status: "REJECTED", decidedByUserRef: "owner-1" }
+      ]);
+
+      // Act
+      await createCreateAd(deps as never)(create());
+
+      // Assert
+      const query = deps.db.adPlacement.findMany.firstCall.args[0];
+      expect(query.where).to.deep.equal({
+        assetId: ASSET,
+        screenId: { in: [OTHER_SCREEN] },
+        decidedAt: { not: null }
+      });
+      expect(query.orderBy).to.deep.equal({ decidedAt: "desc" });
+      expect(deps.db.ad.create.firstCall.args[0].data.placements.create[1]).to.deep.equal({
+        screenId: OTHER_SCREEN,
+        assetId: ASSET,
+        status: "APPROVED",
+        decidedAt: NOW,
+        decidedByUserRef: "owner-1"
+      });
+    });
+
+    it("should ask again where the owner's latest decision was a rejection or a stop", async () => {
+      // Arrange
+      const deps = stubs();
+      deps.db.adPlacement.findMany.resolves([
+        { screenId: OTHER_SCREEN, status: "REVOKED", decidedByUserRef: "owner-1" },
+        { screenId: OTHER_SCREEN, status: "APPROVED", decidedByUserRef: "owner-1" }
+      ]);
+
+      // Act
+      await createCreateAd(deps as never)(create());
+
+      // Assert
+      expect(deps.db.ad.create.firstCall.args[0].data.placements.create[1]).to.include({
+        status: "PENDING",
+        decidedAt: null
+      });
+    });
+  });
+
   describe("changing screens", () => {
+    it("should let a rejected screen be added again", async () => {
+      // Arrange
+      const deps = stubs();
+      deps.db.ad.findFirst.resolves(
+        existingAd({ placements: [{ screenId: OTHER_SCREEN, status: "REJECTED" }] })
+      );
+      deps.db.screen.findMany.resolves([screens[1]]);
+
+      // Act
+      await createAddAdScreens(deps as never)({
+        id: AD,
+        workspaceAccessKeyId: "WO1",
+        screenIds: [OTHER_SCREEN]
+      });
+
+      // Assert
+      expect(deps.db.adPlacement.createMany.firstCall.args[0].data[0]).to.include({
+        status: "PENDING"
+      });
+    });
+
     it("should refuse a screen that is already in the ad", async () => {
       // Arrange
       const deps = stubs();
@@ -196,7 +279,14 @@ describe("ad functions", () => {
 
       // Assert
       expect(deps.db.adPlacement.createMany.firstCall.args[0].data).to.deep.equal([
-        { adId: AD, screenId: OTHER_SCREEN, assetId: ASSET, status: "PENDING", decidedAt: null }
+        {
+          adId: AD,
+          screenId: OTHER_SCREEN,
+          assetId: ASSET,
+          status: "PENDING",
+          decidedAt: null,
+          decidedByUserRef: null
+        }
       ]);
     });
 
@@ -213,7 +303,7 @@ describe("ad functions", () => {
 
       // Assert
       expect(deps.db.adPlacement.updateMany.firstCall.args[0]).to.deep.equal({
-        where: { adId: AD, screenId: OWN_SCREEN, status: { not: "WITHDRAWN" } },
+        where: { adId: AD, screenId: OWN_SCREEN, status: { in: ["PENDING", "APPROVED"] } },
         data: { status: "WITHDRAWN", withdrawnAt: NOW }
       });
       expect(deps.notifyScreens.firstCall.args[0]).to.deep.equal([OWN_SCREEN]);
@@ -239,8 +329,22 @@ describe("ad functions", () => {
         data: { status: "WITHDRAWN", withdrawnAt: NOW }
       });
       expect(deps.db.adPlacement.createMany.firstCall.args[0].data).to.deep.equal([
-        { adId: AD, screenId: OWN_SCREEN, assetId: ASSET_2, status: "APPROVED", decidedAt: NOW },
-        { adId: AD, screenId: OTHER_SCREEN, assetId: ASSET_2, status: "PENDING", decidedAt: null }
+        {
+          adId: AD,
+          screenId: OWN_SCREEN,
+          assetId: ASSET_2,
+          status: "APPROVED",
+          decidedAt: NOW,
+          decidedByUserRef: null
+        },
+        {
+          adId: AD,
+          screenId: OTHER_SCREEN,
+          assetId: ASSET_2,
+          status: "PENDING",
+          decidedAt: null,
+          decidedByUserRef: null
+        }
       ]);
       expect(deps.db.ad.update.firstCall.args[0].data).to.deep.equal({ assetId: ASSET_2 });
       expect(deps.db.$transaction.calledOnce).to.equal(true);
