@@ -13,3 +13,7 @@ it from this file in the release PR.
       `https://app.proyecta.do/sign-in`, `invite.url` to `https://app.proyecta.do/invitation` and
       `invite.failUrl` to `https://app.proyecta.do/invitation-invalid`, then
       `docker compose restart identity`. Otherwise invite emails link to a page that no longer exists.
+
+- [ ] **deploy-env-cleanup** Once a release with this change is deployed, remove `TLS_DOMAIN` and
+      `TLS_EXTRA_DOMAINS` from `/opt/proyecta/.env`: `tls.sh` now derives them from `APP_HOST`,
+      `PLAY_HOST` and `API_HOST`. Not before: the running release's `tls.sh` still needs them.

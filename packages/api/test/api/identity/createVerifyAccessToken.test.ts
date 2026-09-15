@@ -30,10 +30,16 @@ describe("createVerifyAccessToken", () => {
       .sign(privateKey);
   }
 
-  function verifier(loadPublicKey = sinon.stub().resolves(publicPem)) {
+  function verifier(loadPublicKey = sinon.stub().resolves(publicPem), warn = sinon.stub()) {
     return {
-      verify: createVerifyAccessToken({ loadPublicKey, issuer: "proyecta", audience: "proyecta" }),
-      loadPublicKey
+      verify: createVerifyAccessToken({
+        loadPublicKey,
+        issuer: "proyecta",
+        audience: "proyecta",
+        warn
+      }),
+      loadPublicKey,
+      warn
     };
   }
 
@@ -46,6 +52,38 @@ describe("createVerifyAccessToken", () => {
 
     // Assert
     expect(principal).to.deep.equal({ userRef: "user-1", accessKeyId: "US123", access });
+  });
+
+  it("should reject a token for another audience and warn once about the mismatch", async () => {
+    // Arrange
+    const { verify, warn } = verifier();
+    const token = await sign({}, { aud: "qcobro" });
+
+    // Act
+    const first = await verify(token);
+    const second = await verify(token);
+
+    // Assert
+    expect(first).to.equal(null);
+    expect(second).to.equal(null);
+    expect(warn.calledOnce).to.equal(true);
+    expect(warn.firstCall.args[1]).to.include({
+      claim: "aud",
+      expected: "proyecta",
+      received: "qcobro"
+    });
+  });
+
+  it("should not warn when a token is only expired", async () => {
+    // Arrange
+    const { verify, warn } = verifier();
+
+    // Act
+    const principal = await verify(await sign({}, { exp: "-1m" }));
+
+    // Assert
+    expect(principal).to.equal(null);
+    expect(warn.called).to.equal(false);
   });
 
   it("should reject a refresh token even with a valid signature", async () => {

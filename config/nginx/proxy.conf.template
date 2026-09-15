@@ -16,6 +16,13 @@
 # port 80 stays free at all times for `certbot certonly --standalone`, on
 # both first issuance and every renewal. See scripts/deploy/tls.sh.
 
+# Resolve container names through Docker's embedded DNS on every request (cached 10s) instead of
+# once at startup. With a literal `proxy_pass http://dashboard:80`, nginx keeps the IPs it saw when
+# it started; a deploy that recreates dashboard and player can hand them each other's old IP, and
+# app.proyecta.do then serves the player (happened with v0.2.0). A variable in proxy_pass forces
+# the lookup through this resolver.
+resolver 127.0.0.11 valid=10s ipv6=off;
+
 # app.proyecta.do — owner dashboard
 server {
     listen 443 ssl;
@@ -25,8 +32,14 @@ server {
     ssl_certificate     /etc/nginx/certs/fullchain.pem;
     ssl_certificate_key /etc/nginx/certs/privkey.pem;
 
+    # Advertiser uploads (POST /uploads/assets) are up to 200 MB of video; the API enforces the
+    # per-type limits itself. Stream the body through instead of spooling it here first.
+    client_max_body_size 210m;
+    proxy_request_buffering off;
+
     location / {
-        proxy_pass http://dashboard:80;
+        set $upstream_dashboard http://dashboard:80;
+        proxy_pass $upstream_dashboard;
         proxy_http_version 1.1;
         proxy_set_header Connection "";
         proxy_set_header Host $host;
@@ -51,7 +64,8 @@ server {
     ssl_certificate_key /etc/nginx/certs/privkey.pem;
 
     location / {
-        proxy_pass http://player:80;
+        set $upstream_player http://player:80;
+        proxy_pass $upstream_player;
         proxy_http_version 1.1;
         proxy_set_header Connection "";
         proxy_set_header Host $host;
@@ -74,7 +88,8 @@ server {
     ssl_certificate_key /etc/nginx/certs/privkey.pem;
 
     location / {
-        proxy_pass http://apiserver:3000;
+        set $upstream_apiserver http://apiserver:3000;
+        proxy_pass $upstream_apiserver;
         proxy_http_version 1.1;
         proxy_set_header Connection "";
         proxy_set_header Host $host;

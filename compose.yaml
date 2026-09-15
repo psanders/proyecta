@@ -13,8 +13,9 @@
 # docker compose up -d` — never re-tag images locally.
 #
 # Required .env values: PROYECTA_VERSION, APP_HOST, PLAY_HOST, API_HOST,
-# POSTGRES_PASSWORD, IDENTITY_ISSUER, IDENTITY_AUDIENCE. See
-# docs/deploy/README.md for the full list and how to generate them.
+# POSTGRES_PASSWORD (plus TLS_EMAIL for scripts/deploy/tls.sh). The apiserver reads
+# its own settings from config/proyecta.json, never from .env. See
+# docs/deploy/README.md for how to generate them.
 
 services:
   postgres:
@@ -64,18 +65,17 @@ services:
         condition: service_started
     environment:
       NODE_ENV: production
-      PORT: "3000"
-      DATABASE_URL: postgresql://proyecta:${POSTGRES_PASSWORD}@postgres:5432/proyecta?schema=public
-      IDENTITY_ENDPOINT: identity:50051
-      IDENTITY_BRIDGE_URL: http://identity:9110
-      IDENTITY_ISSUER: ${IDENTITY_ISSUER:-proyecta}
-      IDENTITY_AUDIENCE: ${IDENTITY_AUDIENCE:-proyecta}
-      DASHBOARD_URL: https://${APP_HOST:?set APP_HOST in .env}
     volumes:
+      # Database, Identity and dashboard settings (hand-written on the Droplet
+      # from config/proyecta.example.json; must be readable by the
+      # container's non-root user, e.g. chmod 644).
+      - ./config/proyecta.json:/app/config/proyecta.json:ro
       # Demo rotation media (see scripts/generate-demo-ads.sh). Optional: the
       # app runs fine with this empty, it just has no default rotation to
       # serve until real advertisers exist. See docs/deploy/README.md.
       - media-data:/app/packages/api/.data/media
+      # Advertiser uploads and their renditions. Unlike demo media, this is user data: back it up.
+      - content-data:/app/packages/api/.data/content
     healthcheck:
       test:
         [
@@ -140,3 +140,4 @@ services:
 volumes:
   postgres-data:
   media-data:
+  content-data:

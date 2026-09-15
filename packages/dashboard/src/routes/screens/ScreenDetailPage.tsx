@@ -149,14 +149,24 @@ export function ScreenDetailPage() {
       <SectionCard title={t("detail.activity")} icon="barChart">
         {earnings.data?.available ? (
           <>
-            <p className="text-sm text-foreground">
-              {t("detail.today")} · {formatPlays(earnings.data.today.plays, t)} ·{" "}
-              {formatCents(earnings.data.today.earningsCents, language)}
-            </p>
-            <p className="text-sm text-foreground">
-              {t("detail.last7Days")} · {formatPlays(earnings.data.last7Days.plays, t)} ·{" "}
-              {formatCents(earnings.data.last7Days.earningsCents, language)}
-            </p>
+            {[
+              { label: t("detail.today"), window: earnings.data.today },
+              { label: t("detail.last7Days"), window: earnings.data.last7Days }
+            ].map(({ label, window }) => (
+              <div key={label} className="flex flex-col gap-0.5">
+                <p className="text-sm text-foreground">
+                  {label} · {formatPlays(window.plays, t)} ·{" "}
+                  {formatCents(window.earningsCents, language)}
+                </p>
+                {window.housePlays > 0 ? (
+                  <p className="text-xs text-muted-foreground">
+                    {window.housePlays === 1
+                      ? t("detail.housePlays.one")
+                      : t("detail.housePlays.other", { n: window.housePlays })}
+                  </p>
+                ) : null}
+              </div>
+            ))}
           </>
         ) : (
           <p className="text-sm text-muted-foreground">{t("detail.noRate")}</p>

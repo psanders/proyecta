@@ -18,8 +18,8 @@ this account. Nothing here creates or provisions a new Droplet.
 | Service       | Role                                                                           |
 | ------------- | ------------------------------------------------------------------------------ |
 | **proxy**     | nginx, TLS termination + Host-based routing (`:443`)                           |
-| **dashboard** | nginx serving the owner-dashboard SPA, proxies `/trpc`                         |
-| **player**    | nginx serving the player SPA, proxies `/device`+`/media`                       |
+| **dashboard** | nginx serving the owner-dashboard SPA, proxies `/trpc`, `/uploads`, `/content` |
+| **player**    | nginx serving the player SPA, proxies `/device`, `/media`, `/content`          |
 | **apiserver** | Express + tRPC + `/device/v1`; runs `prisma migrate deploy` on boot            |
 | **identity**  | Fonoster Identity — auth, authz, multi-tenancy                                 |
 | **postgres**  | Postgres 17, one instance holding both the `proyecta` and `identity` databases |
@@ -184,6 +184,7 @@ rsync -avz --relative \
   config/identity/templates/verifyEmail.hbs \
   config/identity/templates/verifyPhone.hbs \
   config/identity/identity.production.example.json \
+  config/proyecta.example.json \
   "$DEPLOY_USER@$DEPLOY_HOST:/opt/proyecta/"
 ```
 
@@ -203,22 +204,39 @@ Edit `config/identity/identity.json` and fill in:
 - `smtp` — your production SMTP provider's host/port/sender/credentials (see
   "Needs you" step 3)
 
+Then the apiserver's own settings:
+
 ```bash
-# 3b. Pin the release, hosts, TLS and Identity settings.
+cp config/proyecta.example.json config/proyecta.json
+chmod 644 config/proyecta.json   # the container runs as a non-root user
+```
+
+Edit `config/proyecta.json`:
+
+- `database.url` — replace `CHANGE_ME` with the same `POSTGRES_PASSWORD`
+  (URL-encode it if it has `/`, `+` or `=`)
+- `dashboard.url` — the public dashboard URL, used in password-reset links
+- only if you changed `issuer` / `audience` in `identity.json`: add the same
+  values as `identity.issuer` / `identity.audience` (both default to
+  `proyecta`, Identity's own default)
+- optional `media.dir` — only if the demo media lives somewhere other than
+  the image default (`/app/packages/api/.data/media`, where compose mounts it)
+- optional `content.dir` — only if advertiser uploads live somewhere other than
+  the image default (`/app/packages/api/.data/content`, where compose mounts it)
+
+```bash
+# 3b. Pin the release, hosts and TLS settings for compose and the deploy scripts.
 cat > .env << 'ENV'
 PROYECTA_VERSION=v0.1.0
 APP_HOST=app.proyecta.do
 PLAY_HOST=play.proyecta.do
 API_HOST=api.proyecta.do
 POSTGRES_PASSWORD=CHANGE_ME
-IDENTITY_ISSUER=proyecta
-IDENTITY_AUDIENCE=proyecta
-TLS_DOMAIN=app.proyecta.do
-TLS_EXTRA_DOMAINS=play.proyecta.do,api.proyecta.do
 TLS_EMAIL=team@proyecta.do
 ENV
-# Generate a real password and put it in both .env (POSTGRES_PASSWORD) and
-# config/identity/identity.json (database.url) — they must match.
+# Generate a real password and put it in .env (POSTGRES_PASSWORD),
+# config/identity/identity.json and config/proyecta.json (both database.url) —
+# all three must match.
 openssl rand -base64 24
 
 # 3c. Issue the TLS certificate. The proxy container listens on 443 only, so
@@ -238,9 +256,9 @@ docker compose up -d
 > **Keys & secrets are never in the repo.** `config/identity/identity.json`
 > and `config/identity/keys/` contain a private key and SMTP credentials, so
 > they're git-ignored and generated only on the Droplet (steps 3a–3b). Only
-> `config/identity/identity.production.example.json` (placeholders) lives in
-> GitHub. `.env` (the Postgres password, hosts, TLS settings) is also
-> git-ignored and Droplet-only.
+> the `*.production.example.json` files (placeholders) live in GitHub.
+> `config/proyecta.json` (database URL) and `.env` (the Postgres password,
+> hosts, TLS settings) are also git-ignored and Droplet-only.
 
 **Verify:**
 
@@ -323,6 +341,15 @@ scripts/generate-demo-ads.sh
 docker compose cp packages/api/.data/media/. apiserver:/app/packages/api/.data/media/
 ```
 
+## Advertiser content
+
+Files advertisers upload (`POST /uploads/assets`, up to 200 MB) and the renditions the apiserver
+prepares from them with ffmpeg (bundled in the image) live in the `content-data` volume, mounted at
+`CONTENT_DIR` (`/app/packages/api/.data/content`) and served at `/content` through the dashboard
+and player nginx. Unlike demo media this is user data: include the volume in backups. The edge proxy
+and the dashboard nginx allow 210 MB request bodies for uploads and stream them to the apiserver,
+which enforces the per-type limits.
+
 ## Backups
 
 Postgres runs as a container, so — unlike QCobro's managed database — backups
@@ -372,6 +399,7 @@ come up healthy within 60 seconds of a CI-triggered deploy.
 | -------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
 | `config/identity/identity.json`                          | `/opt/proyecta/config/identity/identity.json` on the Droplet (DB URL, encryption key, SMTP) |
 | `config/identity/keys/private.pem`                       | `/opt/proyecta/config/identity/keys/` on the Droplet                                        |
+| `config/proyecta.json`                                   | `/opt/proyecta/config/proyecta.json` on the Droplet (apiserver database URL, Identity)      |
 | `.env` (`POSTGRES_PASSWORD`, hosts, TLS)                 | `/opt/proyecta/.env` on the Droplet                                                         |
 | `DEPLOY_SSH_KEY` / `DEPLOY_SSH_USER` / `DEPLOY_SSH_HOST` | GitHub repo secrets (reused from QCobro's setup)                                            |
 | `RELEASE_TOKEN` (GHCR pull, CI)                          | GitHub repo secret                                                                          |
@@ -380,10 +408,10 @@ come up healthy within 60 seconds of a CI-triggered deploy.
 
 ## Troubleshooting
 
-| Symptom                                                             | Check                                                                                                                                                         |
-| ------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `curl: (35) SSL handshake failed`                                   | Are `config/certs/{fullchain,privkey}.pem` present and non-empty? Re-run `scripts/deploy/tls.sh`.                                                             |
-| SSE (`/device/v1/events`, tRPC subscriptions) never delivers events | Confirm `proxy_buffering off` survived in `config/nginx/proxy.conf.template` and the dashboard/player nginx configs — any hop that buffers breaks the stream. |
-| Apiserver restarts in a loop                                        | Migrations failing — `docker compose logs apiserver` and verify `DATABASE_URL`/`POSTGRES_PASSWORD` match between `.env` and `identity.json`.                  |
-| Proxy exits immediately                                             | `docker compose logs proxy` — usually a missing cert file or an nginx template syntax error.                                                                  |
-| Invite/reset emails never arrive                                    | Check `smtp` in `identity.json` and the provider's dashboard for bounces/blocks.                                                                              |
+| Symptom                                                             | Check                                                                                                                                                                                                                             |
+| ------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `curl: (35) SSL handshake failed`                                   | Are `config/certs/{fullchain,privkey}.pem` present and non-empty? Re-run `scripts/deploy/tls.sh`.                                                                                                                                 |
+| SSE (`/device/v1/events`, tRPC subscriptions) never delivers events | Confirm `proxy_buffering off` survived in `config/nginx/proxy.conf.template` and the dashboard/player nginx configs — any hop that buffers breaks the stream.                                                                     |
+| Apiserver restarts in a loop                                        | Migrations failing — `docker compose logs apiserver` and verify `POSTGRES_PASSWORD` matches `database.url` in `proyecta.json` and `identity.json`. "Config file not found" means `config/proyecta.json` is missing or unreadable. |
+| Proxy exits immediately                                             | `docker compose logs proxy` — usually a missing cert file or an nginx template syntax error.                                                                                                                                      |
+| Invite/reset emails never arrive                                    | Check `smtp` in `identity.json` and the provider's dashboard for bounces/blocks.                                                                                                                                                  |

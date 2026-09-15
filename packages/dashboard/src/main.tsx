@@ -9,7 +9,14 @@ import { theme } from "./lib/theme.js";
 import { createClient, trpc } from "./lib/trpc.js";
 import { usePreferenceSync } from "./lib/usePreferenceSync.js";
 import { useSession } from "./lib/useSession.js";
+import { AdDetailPage } from "./routes/ads/AdDetailPage.js";
+import { AdNewPage } from "./routes/ads/AdNewPage.js";
+import { AdsPage } from "./routes/ads/AdsPage.js";
+import { AssetsPage } from "./routes/ads/AssetsPage.js";
+import { ExplorePage } from "./routes/ads/ExplorePage.js";
 import { AppLayout } from "./routes/AppLayout.js";
+import { HomePage } from "./routes/HomePage.js";
+import { WelcomePage } from "./routes/settings/WelcomePage.js";
 import {
   AcceptInvitationPage,
   ForgotPasswordPage,
@@ -23,7 +30,6 @@ import { OnboardingPage } from "./routes/screens/OnboardingPage.js";
 import { SettingsPage } from "./routes/settings/SettingsPage.js";
 import { ScreenDetailPage } from "./routes/screens/ScreenDetailPage.js";
 import { ScreenFormPage } from "./routes/screens/ScreenFormPage.js";
-import { ScreensPage } from "./routes/screens/ScreensPage.js";
 import { TeamPage } from "./routes/team/TeamPage.js";
 import "./index.css";
 
@@ -51,6 +57,14 @@ const router = createBrowserRouter([
   { path: "/invitation", element: <AcceptInvitationPage /> },
   { path: "/invitation-invalid", element: <InvitationInvalidPage /> },
   {
+    path: "/welcome",
+    element: (
+      <RequireSession>
+        <WelcomePage />
+      </RequireSession>
+    )
+  },
+  {
     path: "/onboarding",
     element: (
       <RequireSession>
@@ -62,7 +76,12 @@ const router = createBrowserRouter([
     path: "/",
     element: <AppLayout />,
     children: [
-      { index: true, element: <ScreensPage /> },
+      { index: true, element: <HomePage /> },
+      { path: "explore", element: <ExplorePage /> },
+      { path: "assets", element: <AssetsPage /> },
+      { path: "ads", element: <AdsPage /> },
+      { path: "ads/new", element: <AdNewPage /> },
+      { path: "ads/:id", element: <AdDetailPage /> },
       { path: "screens/new", element: <ScreenFormPage /> },
       { path: "screens/:id", element: <ScreenDetailPage /> },
       { path: "screens/:id/edit", element: <ScreenFormPage /> },

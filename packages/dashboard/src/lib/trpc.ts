@@ -25,6 +25,19 @@ async function refresh(refreshToken: string) {
   return body.result.data;
 }
 
+/** Renews the stored session outside tRPC (plain HTTP uploads). False, and signed out, on failure. */
+export async function refreshSession(): Promise<boolean> {
+  const current = session.get();
+  if (!current) return false;
+  try {
+    session.update(await refresh(current.refreshToken));
+    return true;
+  } catch {
+    session.set(null);
+    return false;
+  }
+}
+
 export function createClient() {
   return trpc.createClient({
     links: [

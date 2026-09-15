@@ -22,6 +22,9 @@ mv .env.next .env
 
 docker compose pull apiserver dashboard player
 docker compose up -d
+# The proxy isn't recreated when only the app images change. Restart it so it renders the
+# freshly synced proxy.conf.template and drops any upstream IPs cached before the recreate.
+docker compose restart proxy
 
 # Wait up to 60s for every service to be running/healthy.
 ok=""
@@ -46,6 +49,7 @@ if [ -z "$ok" ]; then
     mv .env.next .env
     docker compose pull apiserver dashboard player
     docker compose up -d
+    docker compose restart proxy
   fi
   exit 1
 fi

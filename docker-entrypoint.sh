@@ -2,7 +2,7 @@
 # Copyright (C) 2026 by Proyecta. All rights reserved.
 #
 # apiserver container entrypoint: runs pending Prisma migrations against
-# DATABASE_URL, then starts the API server.
+# database.url in the mounted /app/config/proyecta.json, then starts the API server.
 set -e
 
 echo "-> Running database migrations..."

@@ -57,6 +57,24 @@ const es = {
   "validation.tags.invalid": "Etiqueta no válida",
   "validation.tags.max": "Elige como máximo 10 etiquetas",
   "validation.screen.invalid": "Pantalla no válida",
+  "validation.dashboardView.invalid": "Elige Publicar pantallas, Anunciar o Ambos",
+  "validation.assetName.required": "El nombre del archivo es obligatorio",
+  "validation.assetName.max": "El nombre no puede tener más de 80 caracteres",
+  "validation.asset.format": "Sube un video MP4, WebM o MOV, o una imagen JPG, PNG o WebP",
+  "validation.asset.empty": "El archivo está vacío",
+  "validation.asset.tooLarge":
+    "El archivo es demasiado grande: hasta 200 MB para videos y 20 MB para imágenes",
+  "validation.asset.imageDuration": "Elige 5, 10 o 15 segundos para la imagen",
+  "validation.asset.invalid": "Archivo no válido",
+  "validation.adName.required": "El nombre del anuncio es obligatorio",
+  "validation.adName.max": "El nombre no puede tener más de 80 caracteres",
+  "validation.date.format": "Usa una fecha válida",
+  "validation.adDates.order": "La fecha de fin debe ser igual o posterior a la de inicio",
+  "validation.adDates.tooLong": "Un anuncio puede durar hasta 365 días",
+  "validation.adScreens.min": "Elige al menos una pantalla",
+  "validation.adScreens.max": "Puedes elegir hasta 50 pantallas",
+  "validation.adScreens.duplicate": "Elegiste la misma pantalla dos veces",
+  "validation.ad.invalid": "Anuncio no válido",
 
   "errors.internal": "Error interno",
   "errors.forbidden.member": "No perteneces a este negocio",
@@ -83,7 +101,26 @@ const es = {
   "errors.pairing.notFound": "No encontramos un reproductor con ese código",
   "errors.pairing.offline": "El reproductor no está conectado",
   "errors.pairing.alreadyLinked": "El reproductor o la pantalla ya tienen un vínculo",
-  "errors.pairing.tooManyAttempts": "Demasiados intentos. Espera un minuto."
+  "errors.pairing.tooManyAttempts": "Demasiados intentos. Espera un minuto.",
+  "errors.asset.notFound": "Archivo no encontrado",
+  "errors.asset.unreadable": "No pudimos leer el archivo como video o imagen",
+  "errors.asset.videoDuration": "Los videos deben durar 5, 10, 15… segundos, hasta 60",
+  "errors.asset.tooSmall": "El archivo debe medir al menos 480 px en su lado corto",
+  "errors.asset.tooLarge":
+    "El archivo es demasiado grande: hasta 200 MB para videos y 20 MB para imágenes",
+  "errors.asset.inUse": "No puedes eliminar este archivo: lo usa un anuncio",
+  "errors.asset.notReady": "El archivo todavía se está preparando",
+  "errors.asset.orientationMismatch":
+    "El archivo nuevo debe tener la misma orientación que el anterior",
+  "errors.asset.sameFile": "Ese ya es el archivo del anuncio",
+  "errors.ad.notFound": "Anuncio no encontrado",
+  "errors.ad.canceled": "Este anuncio fue cancelado",
+  "errors.ad.finished": "Este anuncio ya terminó",
+  "errors.ad.startInPast": "La fecha de inicio no puede ser anterior a hoy",
+  "errors.ad.screenUnavailable": "Una de las pantallas ya no está disponible",
+  "errors.ad.orientationMismatch": "La orientación de una pantalla no coincide con la del archivo",
+  "errors.ad.screenAlreadyInAd": "Esa pantalla ya está en el anuncio",
+  "errors.ad.screenNotInAd": "Esa pantalla no está en el anuncio"
 } as const;
 
 export type ApiMessageId = keyof typeof es;
@@ -136,6 +173,24 @@ const en: Record<ApiMessageId, string> = {
   "validation.tags.invalid": "Invalid tag",
   "validation.tags.max": "Choose at most 10 tags",
   "validation.screen.invalid": "Invalid screen",
+  "validation.dashboardView.invalid": "Choose Publish screens, Advertise or Both",
+  "validation.assetName.required": "File name is required",
+  "validation.assetName.max": "Name can't be longer than 80 characters",
+  "validation.asset.format": "Upload an MP4, WebM or MOV video, or a JPG, PNG or WebP image",
+  "validation.asset.empty": "The file is empty",
+  "validation.asset.tooLarge":
+    "The file is too large: up to 200 MB for videos and 20 MB for images",
+  "validation.asset.imageDuration": "Choose 5, 10 or 15 seconds for the image",
+  "validation.asset.invalid": "Invalid file",
+  "validation.adName.required": "Ad name is required",
+  "validation.adName.max": "Name can't be longer than 80 characters",
+  "validation.date.format": "Use a valid date",
+  "validation.adDates.order": "End date must be on or after the start date",
+  "validation.adDates.tooLong": "An ad can run for up to 365 days",
+  "validation.adScreens.min": "Choose at least one screen",
+  "validation.adScreens.max": "You can choose up to 50 screens",
+  "validation.adScreens.duplicate": "You chose the same screen twice",
+  "validation.ad.invalid": "Invalid ad",
 
   "errors.internal": "Internal error",
   "errors.forbidden.member": "You don't belong to this business",
@@ -161,7 +216,25 @@ const en: Record<ApiMessageId, string> = {
   "errors.pairing.notFound": "We couldn't find a player with that code",
   "errors.pairing.offline": "The player is not connected",
   "errors.pairing.alreadyLinked": "The player or the screen is already linked",
-  "errors.pairing.tooManyAttempts": "Too many attempts. Wait a minute."
+  "errors.pairing.tooManyAttempts": "Too many attempts. Wait a minute.",
+  "errors.asset.notFound": "File not found",
+  "errors.asset.unreadable": "We couldn't read the file as a video or image",
+  "errors.asset.videoDuration": "Videos must last 5, 10, 15… seconds, up to 60",
+  "errors.asset.tooSmall": "The file must be at least 480 px on its shorter side",
+  "errors.asset.tooLarge": "The file is too large: up to 200 MB for videos and 20 MB for images",
+  "errors.asset.inUse": "You can't delete this file: an ad uses it",
+  "errors.asset.notReady": "The file is still being prepared",
+  "errors.asset.orientationMismatch":
+    "The new file must have the same orientation as the previous one",
+  "errors.asset.sameFile": "That's already the ad's file",
+  "errors.ad.notFound": "Ad not found",
+  "errors.ad.canceled": "This ad was cancelled",
+  "errors.ad.finished": "This ad has already ended",
+  "errors.ad.startInPast": "The start date can't be before today",
+  "errors.ad.screenUnavailable": "One of the screens is no longer available",
+  "errors.ad.orientationMismatch": "A screen's orientation doesn't match the file",
+  "errors.ad.screenAlreadyInAd": "That screen is already in the ad",
+  "errors.ad.screenNotInAd": "That screen isn't in the ad"
 };
 
 export const apiMessages: Record<Language, Record<ApiMessageId, string>> = { es, en };

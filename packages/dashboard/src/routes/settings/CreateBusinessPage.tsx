@@ -3,6 +3,8 @@
  */
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import type { DashboardView } from "@proyecta/common";
+import { ViewChoice } from "../../components/ViewChoice.js";
 import { Alert } from "../../components/ui/Alert.js";
 import { Button } from "../../components/ui/Button.js";
 import { Icon } from "../../components/ui/Icon.js";
@@ -22,6 +24,7 @@ export function CreateBusinessPage() {
   const utils = trpc.useUtils();
   const navigate = useNavigate();
   const [name, setName] = useState("");
+  const [view, setView] = useState<DashboardView>("SCREEN_OWNER");
   const create = trpc.workspaces.create.useMutation();
   const refresh = trpc.auth.refresh.useMutation();
   const [error, setError] = useState<unknown>(null);
@@ -29,7 +32,7 @@ export function CreateBusinessPage() {
   const submit = async () => {
     setError(null);
     try {
-      const created = await create.mutateAsync({ name });
+      const created = await create.mutateAsync({ name, dashboardView: view });
       const current = session.get();
       if (!current) return;
       const tokens = await refresh.mutateAsync({ refreshToken: current.refreshToken });
@@ -76,6 +79,10 @@ export function CreateBusinessPage() {
           onChange={(e) => setName(e.target.value)}
           error={fieldErrors(error).name}
         />
+        <div className="flex flex-col gap-1.5">
+          <span className="text-sm font-medium text-foreground">{t("view.question")}</span>
+          <ViewChoice value={view} onChange={setView} />
+        </div>
         <Button type="submit" loading={busy} className="w-full">
           {t("createBusiness.submit")}
         </Button>

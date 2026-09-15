@@ -3,11 +3,14 @@
  */
 import { z } from "zod/v4";
 import {
+  DEFAULT_DASHBOARD_VIEW,
   DEFAULT_TIMEZONE,
   createWorkspaceSchema,
   deleteWorkspaceSchema,
+  setDashboardViewSchema,
   updateWorkspaceSettingsSchema,
   withErrorHandlingAndValidation,
+  type WorkspaceActivity,
   type WorkspaceSettingsView
 } from "@proyecta/common";
 import type { DbClient } from "../../db.js";
@@ -43,8 +46,8 @@ export async function workspaceTimeZone(
 }
 
 /**
- * Creates a function that reads the active business's settings: name (Identity), time zone
- * (Proyecta) and the fixed US$ currency.
+ * Creates a function that reads the active business's settings: name (Identity), time zone and
+ * dashboard view (Proyecta) and the fixed US$ currency.
  *
  * @param deps - Injected database client and Identity client
  */
@@ -52,9 +55,13 @@ export function createGetWorkspaceSettings(deps: { db: DbClient; identity: Setti
   const schema = z.object(caller);
   const fn = async (params: z.infer<typeof schema>): Promise<WorkspaceSettingsView> => {
     const workspace = await findWorkspace(deps.identity, params.token, params.workspaceAccessKeyId);
+    const row = await deps.db.workspaceSettings.findUnique({
+      where: { workspaceAccessKeyId: params.workspaceAccessKeyId }
+    });
     return {
       name: workspace.name,
-      timezone: await workspaceTimeZone(deps.db, params.workspaceAccessKeyId),
+      timezone: row?.timezone ?? DEFAULT_TIMEZONE,
+      dashboardView: row?.dashboardView ?? DEFAULT_DASHBOARD_VIEW,
       currency: "USD",
       canEdit: params.role === "WORKSPACE_OWNER" || params.role === "WORKSPACE_ADMIN",
       isOwner: params.role === "WORKSPACE_OWNER"
@@ -127,12 +134,83 @@ export function createDeleteWorkspace(deps: {
  *
  * @param identity - Injected Identity client
  */
-export function createCreateWorkspace(identity: SettingsIdentity) {
+export function createCreateWorkspace(deps: {
+  identity: Pick<IdentityApi, "createWorkspace" | "getWorkspace">;
+  db: Pick<DbClient, "workspaceSettings">;
+}) {
   const schema = createWorkspaceSchema.extend({ token: z.string().min(1) });
   const fn = async (params: z.infer<typeof schema>): Promise<{ ref: string }> => {
-    const { ref } = await identity.createWorkspace(params.name, params.token);
+    const { ref } = await deps.identity.createWorkspace(params.name, params.token);
+    if (params.dashboardView) {
+      const { accessKeyId } = await deps.identity.getWorkspace(ref, params.token);
+      await deps.db.workspaceSettings.upsert({
+        where: { workspaceAccessKeyId: accessKeyId },
+        create: { workspaceAccessKeyId: accessKeyId, dashboardView: params.dashboardView },
+        update: { dashboardView: params.dashboardView }
+      });
+    }
     logger.verbose("workspace created", { ref });
     return { ref };
+  };
+  return withErrorHandlingAndValidation(fn, schema);
+}
+
+/**
+ * Creates a function that changes which sides of the dashboard the business sees. Presentation
+ * only: nothing else reads the view.
+ *
+ * @param deps - Injected database client
+ */
+export function createSetDashboardView(deps: { db: Pick<DbClient, "workspaceSettings"> }) {
+  const schema = setDashboardViewSchema.extend({ workspaceAccessKeyId: z.string().min(1) });
+  const fn = async (params: z.infer<typeof schema>): Promise<{ saved: true }> => {
+    await deps.db.workspaceSettings.upsert({
+      where: { workspaceAccessKeyId: params.workspaceAccessKeyId },
+      create: {
+        workspaceAccessKeyId: params.workspaceAccessKeyId,
+        dashboardView: params.dashboardView
+      },
+      update: { dashboardView: params.dashboardView }
+    });
+    logger.verbose("dashboard view saved", {
+      workspace: params.workspaceAccessKeyId,
+      view: params.dashboardView
+    });
+    return { saved: true };
+  };
+  return withErrorHandlingAndValidation(fn, schema);
+}
+
+/**
+ * Creates a function that counts what keeps running on each side of a business (linked screens,
+ * ads on air or scheduled), for the view-switch confirmation.
+ *
+ * @param deps - Injected database client and clock
+ */
+export function createGetWorkspaceActivity(deps: {
+  db: Pick<DbClient, "deviceBinding" | "ad">;
+  now?: () => Date;
+}) {
+  const now = deps.now ?? (() => new Date());
+  const schema = z.object({ workspaceAccessKeyId: z.string().min(1) });
+  const fn = async (params: z.infer<typeof schema>): Promise<WorkspaceActivity> => {
+    const [linkedScreens, activeAds] = await Promise.all([
+      deps.db.deviceBinding.count({
+        where: {
+          unlinkedAt: null,
+          screen: { workspaceAccessKeyId: params.workspaceAccessKeyId, deletedAt: null }
+        }
+      }),
+      deps.db.ad.count({
+        where: {
+          workspaceAccessKeyId: params.workspaceAccessKeyId,
+          state: "SUBMITTED",
+          endsAt: { gt: now() },
+          placements: { some: { status: "APPROVED" } }
+        }
+      })
+    ]);
+    return { linkedScreens, activeAds };
   };
   return withErrorHandlingAndValidation(fn, schema);
 }
