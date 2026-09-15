@@ -170,3 +170,14 @@ model WorkspaceSettings {
 
   @@map("workspace_settings")
 }
+
+/// Proyecta-owned preferences of an Identity user (Identity itself is never modified).
+model UserSettings {
+  userRef   String   @id @map("user_ref")
+  /// Owner dashboard language: "es" or "en" (validated by languageSchema in @proyecta/common).
+  language  String   @default("es")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("user_settings")
+}

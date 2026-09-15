@@ -43,7 +43,7 @@ export function createSignUp(
       });
     } catch (err) {
       if (hasGrpcStatus(err, grpcStatus.ALREADY_EXISTS)) {
-        throw new DomainError("CONFLICT", "Ya existe una cuenta con este correo");
+        throw new DomainError("CONFLICT", "errors.auth.accountExists");
       }
       throw err;
     }

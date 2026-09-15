@@ -29,7 +29,7 @@ type SettingsIdentity = Pick<
 async function findWorkspace(identity: SettingsIdentity, token: string, accessKeyId: string) {
   const { items } = await identity.listWorkspaces(token);
   const workspace = items.find((w) => w.accessKeyId === accessKeyId);
-  if (!workspace) throw new DomainError("NOT_FOUND", "Negocio no encontrado");
+  if (!workspace) throw new DomainError("NOT_FOUND", "errors.workspace.notFound");
   return workspace;
 }
 
@@ -108,10 +108,7 @@ export function createDeleteWorkspace(deps: {
       }
     });
     if (linked > 0) {
-      throw new DomainError(
-        "PRECONDITION_FAILED",
-        "Desvincula todos los reproductores antes de eliminar el negocio"
-      );
+      throw new DomainError("PRECONDITION_FAILED", "errors.workspace.linkedPlayers");
     }
     await deps.db.screen.updateMany({
       where: { workspaceAccessKeyId: params.workspaceAccessKeyId, deletedAt: null },

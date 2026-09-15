@@ -5,11 +5,12 @@ import { z } from "zod/v4";
 import { TIMEZONES } from "../utils/timeZone.js";
 import { businessNameSchema } from "./auth.schema.js";
 
-export const DELETE_WORKSPACE_CONFIRMATION = "ELIMINAR";
+/** The word to type to delete a business, per language. Either is accepted. */
+export const DELETE_WORKSPACE_CONFIRMATIONS = { es: "ELIMINAR", en: "DELETE" } as const;
 
 export const updateWorkspaceSettingsSchema = z.object({
   name: businessNameSchema,
-  timezone: z.enum(TIMEZONES, { error: "Elige una zona horaria de la lista" })
+  timezone: z.enum(TIMEZONES, { error: "validation.timezone.invalid" })
 });
 
 export const createWorkspaceSchema = z.object({ name: businessNameSchema });
@@ -20,8 +21,8 @@ export const deleteWorkspaceSchema = z.object({
     .trim()
     .toUpperCase()
     .refine(
-      (value) => value === DELETE_WORKSPACE_CONFIRMATION,
-      `Escribe ${DELETE_WORKSPACE_CONFIRMATION} para confirmar`
+      (value) => Object.values(DELETE_WORKSPACE_CONFIRMATIONS).some((word) => word === value),
+      "validation.deleteConfirmation"
     )
 });
 

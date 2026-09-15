@@ -34,7 +34,7 @@ export function createChangePassword(
         password: params.currentPassword
       });
     } catch {
-      throw new DomainError("BAD_REQUEST", "Tu contraseña actual no es correcta");
+      throw new DomainError("BAD_REQUEST", "errors.profile.wrongPassword");
     }
     await identity.updateUser({ ref: params.userRef, password: params.newPassword }, params.token);
     return { changed: true };

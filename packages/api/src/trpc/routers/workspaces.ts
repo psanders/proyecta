@@ -1,7 +1,7 @@
 /**
  * Copyright (C) 2026 by Proyecta. All rights reserved.
  */
-import { TRPCError } from "@trpc/server";
+import { DomainError, toTRPCError } from "../../identity/errors.js";
 import {
   acceptInvitationSchema,
   createWorkspaceSchema,
@@ -59,7 +59,7 @@ export const workspacesRouter = router({
   rename: adminProcedure.input(validate(renameWorkspaceSchema)).mutation(async ({ ctx, input }) => {
     const { items } = await ctx.identity.listWorkspaces(ctx.token);
     const workspace = items.find((w) => w.accessKeyId === ctx.workspace.accessKeyId);
-    if (!workspace) throw new TRPCError({ code: "NOT_FOUND", message: "Negocio no encontrado" });
+    if (!workspace) throw toTRPCError(new DomainError("NOT_FOUND", "errors.workspace.notFound"));
     await ctx.identity.updateWorkspace(workspace.ref, input.name, ctx.token);
     return { renamed: true as const };
   }),
@@ -106,7 +106,7 @@ export const workspacesRouter = router({
       return { userRef };
     } catch (err) {
       if (hasGrpcStatus(err, grpcStatus.ALREADY_EXISTS)) {
-        throw new TRPCError({ code: "CONFLICT", message: "Esta persona ya es parte del negocio" });
+        throw toTRPCError(new DomainError("CONFLICT", "errors.member.alreadyInWorkspace"));
       }
       throw err;
     }

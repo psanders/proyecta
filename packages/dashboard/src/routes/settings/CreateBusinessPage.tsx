@@ -10,7 +10,7 @@ import { TextField } from "../../components/ui/Field.js";
 import { errorMessage, fieldErrors } from "../../lib/errors.js";
 import { session } from "../../lib/session.js";
 import { trpc } from "../../lib/trpc.js";
-import { strings } from "../../strings.js";
+import { useI18n } from "../../lib/useI18n.js";
 
 /**
  * Shown instead of the outlet when the signed-in person has no business (e.g. after deleting
@@ -18,6 +18,7 @@ import { strings } from "../../strings.js";
  * it active.
  */
 export function CreateBusinessPage() {
+  const { t } = useI18n();
   const utils = trpc.useUtils();
   const navigate = useNavigate();
   const [name, setName] = useState("");
@@ -56,9 +57,9 @@ export function CreateBusinessPage() {
       </div>
       <div className="flex flex-col gap-1.5">
         <h1 className="font-mono text-2xl font-medium text-foreground">
-          {strings.createBusiness.title}
+          {t("createBusiness.title")}
         </h1>
-        <p className="text-sm text-muted-foreground">{strings.createBusiness.subtitle}</p>
+        <p className="text-sm text-muted-foreground">{t("createBusiness.subtitle")}</p>
       </div>
       <form
         className="flex w-full flex-col gap-4 text-left"
@@ -67,16 +68,16 @@ export function CreateBusinessPage() {
           void submit();
         }}
       >
-        {errorMessage(error) ? <Alert tone="error">{errorMessage(error)}</Alert> : null}
+        {errorMessage(error, t) ? <Alert tone="error">{errorMessage(error, t)}</Alert> : null}
         <TextField
-          label={strings.signUp.business}
-          placeholder={strings.signUp.businessPlaceholder}
+          label={t("signUp.business")}
+          placeholder={t("signUp.businessPlaceholder")}
           value={name}
           onChange={(e) => setName(e.target.value)}
           error={fieldErrors(error).name}
         />
         <Button type="submit" loading={busy} className="w-full">
-          {strings.createBusiness.submit}
+          {t("createBusiness.submit")}
         </Button>
       </form>
     </div>

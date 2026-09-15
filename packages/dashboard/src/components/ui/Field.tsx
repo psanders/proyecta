@@ -5,7 +5,7 @@ import { useId, type InputHTMLAttributes, type ReactNode, type SelectHTMLAttribu
 import { cn } from "../../lib/cn.js";
 import { Icon } from "./Icon.js";
 
-const control =
+export const control =
   "h-10 w-full rounded-full border border-input bg-background px-4 text-sm text-foreground placeholder:text-muted-foreground outline-none focus:border-foreground aria-invalid:border-destructive disabled:opacity-60";
 
 interface FieldShellProps {

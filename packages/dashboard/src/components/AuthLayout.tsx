@@ -2,7 +2,7 @@
  * Copyright (C) 2026 by Proyecta. All rights reserved.
  */
 import type { ReactNode } from "react";
-import { strings } from "../strings.js";
+import { useI18n } from "../lib/useI18n.js";
 import { Icon } from "./ui/Icon.js";
 
 /** Pencil Dashboard/Auth Layout (frame login): dark brand panel (560 px) + centered form (380 px). */
@@ -15,17 +15,18 @@ export function AuthLayout({
   subtitle: string;
   children: ReactNode;
 }) {
+  const { t } = useI18n();
   return (
     <div className="flex min-h-full">
       <aside className="hidden w-[560px] shrink-0 flex-col justify-between bg-brand-panel p-16 lg:flex">
         <Brand />
         <div className="flex w-[400px] flex-col gap-4">
           <p className="font-mono text-[32px] leading-[1.2] font-medium text-white">
-            {strings.authHeadline}
+            {t("authHeadline")}
           </p>
-          <p className="text-[15px] leading-normal text-brand-muted">{strings.authSubtext}</p>
+          <p className="text-[15px] leading-normal text-brand-muted">{t("authSubtext")}</p>
         </div>
-        <p className="text-[13px] text-muted-foreground">{strings.copyright}</p>
+        <p className="text-[13px] text-muted-foreground">{t("copyright")}</p>
       </aside>
       <main className="flex flex-1 items-center justify-center bg-background px-6 py-12">
         <div className="flex w-[380px] max-w-full flex-col gap-6">
@@ -44,11 +45,12 @@ export function AuthLayout({
 }
 
 export function Brand({ dark }: { dark?: boolean }) {
+  const { t } = useI18n();
   return (
     <div className="flex items-center gap-2">
       <Icon name="tv" className="size-7 text-primary" />
       <span className={`font-mono text-lg font-bold ${dark ? "text-foreground" : "text-white"}`}>
-        {strings.brand}
+        {t("brand")}
       </span>
     </div>
   );

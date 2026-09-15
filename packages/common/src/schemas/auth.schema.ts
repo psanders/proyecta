@@ -5,27 +5,27 @@ import { z } from "zod/v4";
 
 // Limits mirror Fonoster Identity's own validation (name ≤ 50, password 8–100).
 export const emailSchema = z
-  .string({ error: "El correo es obligatorio" })
+  .string({ error: "validation.email.required" })
   .trim()
   .toLowerCase()
-  .pipe(z.email({ error: "Escribe un correo válido" }));
+  .pipe(z.email({ error: "validation.email.invalid" }));
 
 export const passwordSchema = z
-  .string({ error: "La contraseña es obligatoria" })
-  .min(8, "La contraseña debe tener al menos 8 caracteres")
-  .max(100, "La contraseña no puede tener más de 100 caracteres");
+  .string({ error: "validation.password.required" })
+  .min(8, "validation.password.min")
+  .max(100, "validation.password.max");
 
 export const personNameSchema = z
-  .string({ error: "El nombre es obligatorio" })
+  .string({ error: "validation.personName.required" })
   .trim()
-  .min(1, "El nombre es obligatorio")
-  .max(50, "El nombre no puede tener más de 50 caracteres");
+  .min(1, "validation.personName.required")
+  .max(50, "validation.personName.max");
 
 export const businessNameSchema = z
-  .string({ error: "El nombre del negocio es obligatorio" })
+  .string({ error: "validation.businessName.required" })
   .trim()
-  .min(1, "El nombre del negocio es obligatorio")
-  .max(50, "El nombre del negocio no puede tener más de 50 caracteres");
+  .min(1, "validation.businessName.required")
+  .max(50, "validation.businessName.max");
 
 export const signUpSchema = z.object({
   name: personNameSchema,
@@ -37,12 +37,12 @@ export const signUpSchema = z.object({
 export const signInSchema = z.object({
   email: emailSchema,
   password: z
-    .string({ error: "La contraseña es obligatoria" })
-    .min(1, "La contraseña es obligatoria")
+    .string({ error: "validation.password.required" })
+    .min(1, "validation.password.required")
 });
 
 export const refreshSessionSchema = z.object({
-  refreshToken: z.string().min(1, "Falta el token de sesión")
+  refreshToken: z.string().min(1, "validation.sessionToken.required")
 });
 
 export const requestPasswordResetSchema = z.object({
@@ -51,7 +51,7 @@ export const requestPasswordResetSchema = z.object({
 
 /** The reset link carries Identity's token: base64 JSON of { username, code }. */
 export const resetPasswordSchema = z.object({
-  token: z.string().min(1, "El enlace para restablecer no es válido"),
+  token: z.string().min(1, "validation.resetLink.invalid"),
   password: passwordSchema
 });
 
@@ -60,7 +60,7 @@ export const updateProfileSchema = z.object({
 });
 
 export const changePasswordSchema = z.object({
-  currentPassword: z.string().min(1, "Escribe tu contraseña actual"),
+  currentPassword: z.string().min(1, "validation.currentPassword.required"),
   newPassword: passwordSchema
 });
 

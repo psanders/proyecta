@@ -5,6 +5,7 @@ import { createTRPCReact } from "@trpc/react-query";
 import { httpBatchLink, httpSubscriptionLink, splitLink } from "@trpc/client";
 import type { inferRouterOutputs } from "@trpc/server";
 import type { AppRouter } from "@proyecta/api/router";
+import { currentLanguage } from "./i18n.js";
 import { createRefreshLink } from "./refreshLink.js";
 import { session } from "./session.js";
 
@@ -43,6 +44,8 @@ export function createClient() {
           headers: () => {
             const current = session.get();
             return {
+              // API messages (field and domain errors) come back in the dashboard's language.
+              "x-language": currentLanguage(),
               ...(current ? { authorization: `Bearer ${current.accessToken}` } : {}),
               ...(current?.workspace ? { "x-workspace": current.workspace } : {})
             };

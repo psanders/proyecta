@@ -2,10 +2,12 @@
  * Copyright (C) 2026 by Proyecta. All rights reserved.
  */
 import type { IncomingHttpHeaders } from "node:http";
+import { parseLanguage, type Language } from "@proyecta/common";
 import type { DeviceSyncDeps } from "../api/screens/deps.js";
 import type { IdentityApi, Principal, WorkspaceAccess } from "../identity/types.js";
 
 export const WORKSPACE_HEADER = "x-workspace";
+export const LANGUAGE_HEADER = "x-language";
 
 /** Long-lived services shared by every request. */
 export interface Services {
@@ -23,6 +25,8 @@ export interface Context extends Services {
   principal: Principal | null;
   /** Set only when the caller belongs to the requested workspace. */
   workspace: WorkspaceAccess | null;
+  /** Language for user-facing API messages (x-language header; Spanish by default). */
+  language: Language;
 }
 
 function header(headers: IncomingHttpHeaders, name: string): string | null {
@@ -49,5 +53,6 @@ export async function resolveContext(
   const requested = header(headers, WORKSPACE_HEADER) ?? connectionParams?.workspace ?? null;
   const workspace =
     (principal && requested && principal.access.find((a) => a.accessKeyId === requested)) || null;
-  return { ...services, token: principal ? token : null, principal, workspace };
+  const language = parseLanguage(header(headers, LANGUAGE_HEADER) ?? connectionParams?.language);
+  return { ...services, token: principal ? token : null, principal, workspace, language };
 }

@@ -5,10 +5,9 @@ import { useEffect, useState, type FormEvent } from "react";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import {
   DR_CITIES,
-  ENVIRONMENT_LABELS,
-  ORIENTATION_LABELS,
+  ENVIRONMENTS,
+  ORIENTATIONS,
   PLACE_TYPES,
-  PLACE_TYPE_LABELS,
   formatPairingCode,
   type CreateScreenInput
 } from "@proyecta/common";
@@ -20,7 +19,7 @@ import { SectionCard } from "../../components/ui/Card.js";
 import { SelectField, TextField } from "../../components/ui/Field.js";
 import { errorMessage, fieldErrors } from "../../lib/errors.js";
 import { trpc } from "../../lib/trpc.js";
-import { strings } from "../../strings.js";
+import { useI18n } from "../../lib/useI18n.js";
 
 interface FormState {
   name: string;
@@ -54,8 +53,6 @@ const EMPTY: FormState = {
   rate: ""
 };
 
-const optionsOf = (labels: Record<string, string>) =>
-  Object.entries(labels).map(([value, label]) => ({ value, label }));
 const text = (v: string) => (v.trim() === "" ? undefined : v.trim());
 const num = (v: string) => (v.trim() === "" ? undefined : Number(v.replace(/[,\s]/g, "")));
 
@@ -79,6 +76,7 @@ function toInput(form: FormState): CreateScreenInput {
 
 /** Pencil frames add-screen / edit-screen: four form sections, create (and link) or save. */
 export function ScreenFormPage() {
+  const { t } = useI18n();
   const { id } = useParams();
   const [params] = useSearchParams();
   const navigate = useNavigate();
@@ -117,7 +115,7 @@ export function ScreenFormPage() {
   const link = trpc.screens.link.useMutation();
   const mutation = id ? update : create;
   const errors = fieldErrors(mutation.error);
-  const failure = errorMessage(mutation.error) ?? errorMessage(link.error);
+  const failure = errorMessage(mutation.error, t) ?? errorMessage(link.error, t);
 
   const submit = async (event: FormEvent) => {
     event.preventDefault();
@@ -147,47 +145,47 @@ export function ScreenFormPage() {
     <form className="mx-auto flex w-full max-w-[760px] flex-col gap-6" onSubmit={submit} noValidate>
       <BackLink
         to={id ? `/pantallas/${id}` : "/"}
-        label={id ? `Volver a ${existing.data?.name ?? ""}` : strings.detail.back}
+        label={id ? t("form.backTo", { name: existing.data?.name ?? "" }) : t("detail.back")}
       />
       <PageHeader
-        title={id ? strings.form.editTitle : strings.form.newTitle}
-        subtitle={id ? strings.form.editSubtitle : strings.form.newSubtitle}
+        title={id ? t("form.editTitle") : t("form.newTitle")}
+        subtitle={id ? t("form.editSubtitle") : t("form.newSubtitle")}
       />
       {code ? (
-        <Alert tone="info" title={strings.form.pairingNoticeTitle(formatPairingCode(code))}>
-          {strings.form.pairingNoticeBody}
+        <Alert tone="info" title={t("form.pairingNoticeTitle", { code: formatPairingCode(code) })}>
+          {t("form.pairingNoticeBody")}
         </Alert>
       ) : null}
       {failure ? <Alert tone="error">{failure}</Alert> : null}
 
-      <SectionCard title={strings.form.basic} hint={strings.form.basicHint}>
+      <SectionCard title={t("form.basic")} hint={t("form.basicHint")}>
         <TextField
-          label={strings.form.name}
-          placeholder={strings.form.namePlaceholder}
+          label={t("form.name")}
+          placeholder={t("form.namePlaceholder")}
           {...bind("name")}
         />
         <div className="grid grid-cols-2 gap-4">
           <SelectField
-            label={strings.form.placeType}
-            placeholder={strings.form.placeTypePlaceholder}
-            options={PLACE_TYPES.map((p) => ({ value: p, label: PLACE_TYPE_LABELS[p] }))}
+            label={t("form.placeType")}
+            placeholder={t("form.placeTypePlaceholder")}
+            options={PLACE_TYPES.map((p) => ({ value: p, label: t(`placeType.${p}`) }))}
             {...bind("placeType")}
           />
           <SelectField
-            label={strings.form.environment}
-            placeholder={strings.form.environmentPlaceholder}
-            options={optionsOf(ENVIRONMENT_LABELS)}
+            label={t("form.environment")}
+            placeholder={t("form.environmentPlaceholder")}
+            options={ENVIRONMENTS.map((e) => ({ value: e, label: t(`environment.${e}`) }))}
             {...bind("environment")}
           />
           <TextField
-            label={strings.form.city}
-            placeholder={strings.form.cityPlaceholder}
+            label={t("form.city")}
+            placeholder={t("form.cityPlaceholder")}
             list="dr-cities"
             {...bind("city")}
           />
           <TextField
-            label={strings.form.address}
-            placeholder={strings.form.addressPlaceholder}
+            label={t("form.address")}
+            placeholder={t("form.addressPlaceholder")}
             {...bind("address")}
           />
         </div>
@@ -198,37 +196,37 @@ export function ScreenFormPage() {
         </datalist>
       </SectionCard>
 
-      <SectionCard title={strings.form.technical} hint={strings.form.technicalHint}>
+      <SectionCard title={t("form.technical")} hint={t("form.technicalHint")}>
         <div className="grid grid-cols-2 gap-4">
           <TextField
-            label={strings.form.width}
+            label={t("form.width")}
             inputMode="numeric"
-            placeholder={strings.form.widthPlaceholder}
+            placeholder={t("form.widthPlaceholder")}
             {...bind("widthCm")}
           />
           <TextField
-            label={strings.form.height}
+            label={t("form.height")}
             inputMode="numeric"
-            placeholder={strings.form.heightPlaceholder}
+            placeholder={t("form.heightPlaceholder")}
             {...bind("heightCm")}
           />
           <SelectField
-            label={strings.form.orientation}
-            placeholder={strings.form.select}
-            options={optionsOf(ORIENTATION_LABELS)}
+            label={t("form.orientation")}
+            placeholder={t("form.select")}
+            options={ORIENTATIONS.map((o) => ({ value: o, label: t(`orientation.${o}`) }))}
             {...bind("orientation")}
           />
           <TextField
-            label={strings.form.resolution}
-            placeholder={strings.form.resolutionPlaceholder}
+            label={t("form.resolution")}
+            placeholder={t("form.resolutionPlaceholder")}
             {...bind("resolution")}
           />
         </div>
       </SectionCard>
 
-      <SectionCard title={strings.form.availability} hint={strings.form.availabilityHint}>
+      <SectionCard title={t("form.availability")} hint={t("form.availabilityHint")}>
         <div className="flex flex-col gap-1.5">
-          <span className="text-sm font-medium">{strings.form.days}</span>
+          <span className="text-sm font-medium">{t("form.days")}</span>
           <DayPicker
             value={form.availableDays}
             onChange={(availableDays) => setForm({ ...form, availableDays })}
@@ -236,38 +234,38 @@ export function ScreenFormPage() {
         </div>
         <div className="grid grid-cols-2 gap-4">
           <TextField
-            label={strings.form.start}
+            label={t("form.start")}
             inputMode="numeric"
             maxLength={5}
-            placeholder={strings.form.startPlaceholder}
+            placeholder={t("form.startPlaceholder")}
             {...bind("startTime")}
           />
           <TextField
-            label={strings.form.end}
+            label={t("form.end")}
             inputMode="numeric"
             maxLength={5}
-            placeholder={strings.form.endPlaceholder}
+            placeholder={t("form.endPlaceholder")}
             {...bind("endTime")}
           />
         </div>
       </SectionCard>
 
-      <SectionCard title={strings.form.commercial} hint={strings.form.commercialHint}>
+      <SectionCard title={t("form.commercial")} hint={t("form.commercialHint")}>
         <TextField
-          label={strings.form.rate}
+          label={t("form.rate")}
           inputMode="decimal"
-          placeholder={strings.form.ratePlaceholder}
-          hint={strings.form.rateHelper}
+          placeholder={t("form.ratePlaceholder")}
+          hint={t("form.rateHelper")}
           {...bind("rate")}
         />
       </SectionCard>
 
       <div className="flex justify-end gap-2">
         <Button type="button" variant="outline" onClick={() => navigate(-1)}>
-          {strings.form.cancel}
+          {t("form.cancel")}
         </Button>
         <Button type="submit" loading={mutation.isPending || link.isPending}>
-          {id ? strings.form.save : strings.form.create}
+          {id ? t("form.save") : t("form.create")}
         </Button>
       </div>
     </form>

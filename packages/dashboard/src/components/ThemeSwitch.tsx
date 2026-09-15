@@ -4,7 +4,7 @@
 import type { ThemePreference } from "../lib/theme.js";
 import { cn } from "../lib/cn.js";
 import { useThemePreference } from "../lib/useTheme.js";
-import { strings } from "../strings.js";
+import { useI18n } from "../lib/useI18n.js";
 import { Icon, type IconName } from "./ui/Icon.js";
 
 const OPTIONS: { value: ThemePreference; icon: IconName }[] = [
@@ -13,13 +13,14 @@ const OPTIONS: { value: ThemePreference; icon: IconName }[] = [
   { value: "dark", icon: "darkMode" }
 ];
 
-/** Pencil profile › Apariencia Card › Theme Tabs: segmented Sistema / Claro / Oscuro, applied on click. */
+/** Pencil profile › Preferencias Card › Apariencia Row: segmented Sistema / Claro / Oscuro, applied on click. */
 export function ThemeSwitch() {
+  const { t } = useI18n();
   const [preference, setPreference] = useThemePreference();
   return (
     <div
       role="radiogroup"
-      aria-label={strings.profile.appearance}
+      aria-label={t("profile.appearance")}
       className="flex w-fit gap-0.5 rounded-full bg-secondary p-1"
     >
       {OPTIONS.map(({ value, icon }) => {
@@ -39,7 +40,7 @@ export function ThemeSwitch() {
             )}
           >
             <Icon name={icon} className="size-4" />
-            {strings.profile.themeOptions[value]}
+            {t(`profile.themeOptions.${value}`)}
           </button>
         );
       })}

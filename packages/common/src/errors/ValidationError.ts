@@ -2,11 +2,15 @@
  * Copyright (C) 2026 by Proyecta. All rights reserved.
  */
 import type { z } from "zod/v4";
+import { isApiMessageId, resolveApiMessage } from "../i18n/apiMessages.js";
+import type { Language } from "../schemas/userSettings.schema.js";
 
 export interface FieldError {
   field: string;
   message: string;
   code: string;
+  /** The catalog id behind `message`, when the schema used one (see apiMessages). */
+  messageId?: string;
 }
 
 /**
@@ -33,14 +37,22 @@ export class ValidationError extends Error {
     }
   }
 
+  /** The field errors with catalog messages in `language` (Spanish is what `fieldErrors` holds). */
+  public localizedFieldErrors(language: Language): FieldError[] {
+    return this.fieldErrors.map((e) =>
+      e.messageId ? { ...e, message: resolveApiMessage(e.messageId, language) } : e
+    );
+  }
+
   /**
-   * Extracts field-level errors from a ZodError for API responses.
+   * Extracts field-level errors from a ZodError for API responses. Catalog ids resolve to Spanish.
    */
   private static extractFieldErrors(zodError: z.ZodError): FieldError[] {
     return zodError.issues.map((issue) => ({
       field: issue.path.join("."),
-      message: issue.message,
-      code: issue.code
+      message: resolveApiMessage(issue.message, "es"),
+      code: issue.code,
+      ...(isApiMessageId(issue.message) ? { messageId: issue.message } : {})
     }));
   }
 

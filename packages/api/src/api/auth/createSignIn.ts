@@ -12,7 +12,7 @@ import { grpcStatus, hasGrpcStatus } from "../../identity/grpc.js";
 import type { IdentityApi } from "../../identity/types.js";
 import { logger } from "../../logger.js";
 
-export const INVALID_CREDENTIALS = "Correo o contraseña incorrectos";
+export const INVALID_CREDENTIALS = "errors.auth.invalidCredentials";
 
 /**
  * Creates a function that exchanges email + password for a session. Every credential failure

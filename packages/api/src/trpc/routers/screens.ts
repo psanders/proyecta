@@ -1,7 +1,7 @@
 /**
  * Copyright (C) 2026 by Proyecta. All rights reserved.
  */
-import { TRPCError } from "@trpc/server";
+import { DomainError, toTRPCError } from "../../identity/errors.js";
 import {
   checkPairingCodeSchema,
   createScreenSchema,
@@ -29,10 +29,7 @@ import { validate } from "../validate.js";
 
 function limit(take: (key: string) => boolean, workspace: string) {
   if (!take(workspace)) {
-    throw new TRPCError({
-      code: "TOO_MANY_REQUESTS",
-      message: "Demasiados intentos. Espera un minuto."
-    });
+    throw toTRPCError(new DomainError("TOO_MANY_REQUESTS", "errors.pairing.tooManyAttempts"));
   }
 }
 

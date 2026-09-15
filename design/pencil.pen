@@ -30481,7 +30481,7 @@
       },
       "clip": true,
       "width": 1440,
-      "height": 1160,
+      "height": 1080,
       "fill": "$--background",
       "children": [
         {
@@ -30552,7 +30552,7 @@
                       "id": "N7FI3Z",
                       "name": "Subtitle",
                       "fill": "$--muted-foreground",
-                      "content": "Tus datos, tu contraseña, tu idioma y la apariencia del panel.",
+                      "content": "Tus datos, tu contraseña y tus preferencias del panel.",
                       "fontFamily": "Geist",
                       "fontSize": 14,
                       "fontWeight": "normal"
@@ -30787,75 +30787,8 @@
                 },
                 {
                   "type": "frame",
-                  "id": "yD1Jt",
-                  "name": "Idioma Card",
-                  "width": "fill_container",
-                  "fill": "$--card",
-                  "stroke": "$--border",
-                  "strokeWidth": 1,
-                  "strokeAlignment": "inner",
-                  "effect": {
-                    "type": "shadow",
-                    "shadowType": "outer",
-                    "color": "#0000000d",
-                    "offset": {
-                      "x": 0,
-                      "y": 1
-                    },
-                    "blur": 1.75
-                  },
-                  "layout": "vertical",
-                  "gap": 20,
-                  "padding": 24,
-                  "children": [
-                    {
-                      "type": "frame",
-                      "id": "TknHI",
-                      "name": "Header",
-                      "layout": "vertical",
-                      "gap": 2,
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "diXY5",
-                          "name": "Title",
-                          "fill": "$--foreground",
-                          "content": "Idioma",
-                          "fontFamily": "Geist",
-                          "fontSize": 15,
-                          "fontWeight": "600"
-                        },
-                        {
-                          "type": "text",
-                          "id": "D7o4q",
-                          "name": "Hint",
-                          "fill": "$--muted-foreground",
-                          "content": "Elige el idioma del panel. Se aplica al instante y se guarda en tu cuenta.",
-                          "fontFamily": "Geist",
-                          "fontSize": 13,
-                          "fontWeight": "normal"
-                        }
-                      ]
-                    },
-                    {
-                      "id": "W2yUHu",
-                      "type": "ref",
-                      "ref": "mTHMq",
-                      "name": "Idioma Select",
-                      "width": 348,
-                      "descendants": {
-                        "q2CuU": {
-                          "content": "Español",
-                          "fill": "$--foreground"
-                        }
-                      }
-                    }
-                  ]
-                },
-                {
-                  "type": "frame",
                   "id": "xi7QD",
-                  "name": "Apariencia Card",
+                  "name": "Preferencias Card",
                   "width": "fill_container",
                   "fill": "$--card",
                   "stroke": "$--border",
@@ -30887,7 +30820,7 @@
                           "id": "HQk1l",
                           "name": "Title",
                           "fill": "$--foreground",
-                          "content": "Apariencia",
+                          "content": "Preferencias",
                           "fontFamily": "Geist",
                           "fontSize": 15,
                           "fontWeight": "600"
@@ -30897,7 +30830,7 @@
                           "id": "MpZjG",
                           "name": "Hint",
                           "fill": "$--muted-foreground",
-                          "content": "Elige cómo se ve el panel en este navegador. Sistema sigue la configuración de tu dispositivo.",
+                          "content": "Cómo ves y usas el panel.",
                           "fontFamily": "Geist",
                           "fontSize": 13,
                           "fontWeight": "normal"
@@ -30906,123 +30839,247 @@
                     },
                     {
                       "type": "frame",
-                      "id": "xAxXR",
-                      "name": "Theme Tabs",
-                      "fill": "$--secondary",
-                      "cornerRadius": 999,
-                      "gap": 2,
-                      "padding": 4,
+                      "id": "xjgt7",
+                      "name": "Rows",
+                      "width": "fill_container",
+                      "layout": "vertical",
                       "children": [
                         {
                           "type": "frame",
-                          "id": "nbOnv",
-                          "name": "Sistema Tab",
-                          "fill": "$--card",
-                          "cornerRadius": 999,
-                          "effect": {
-                            "type": "shadow",
-                            "shadowType": "outer",
-                            "color": "#0000000d",
-                            "offset": {
-                              "x": 0,
-                              "y": 1
-                            },
-                            "blur": 2
-                          },
-                          "gap": 6,
+                          "id": "zc6Zb",
+                          "name": "Idioma Row",
+                          "width": "fill_container",
+                          "gap": 24,
                           "padding": [
-                            6,
-                            16
+                            16,
+                            0
                           ],
+                          "justifyContent": "space_between",
                           "alignItems": "center",
                           "children": [
                             {
-                              "type": "icon",
-                              "id": "w9B0G",
-                              "name": "Icon",
-                              "width": 16,
-                              "height": 16,
-                              "icon": "desktop_windows",
-                              "library": "Material Symbols Sharp",
-                              "fill": "$--foreground"
+                              "type": "frame",
+                              "id": "PIcPg",
+                              "name": "Text",
+                              "width": "fill_container",
+                              "layout": "vertical",
+                              "gap": 2,
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "RpUnv",
+                                  "name": "Label",
+                                  "fill": "$--foreground",
+                                  "content": "Idioma",
+                                  "fontFamily": "Geist",
+                                  "fontSize": 14,
+                                  "fontWeight": "500"
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "NZY7J",
+                                  "name": "Hint",
+                                  "fill": "$--muted-foreground",
+                                  "textGrowth": "fixed-width",
+                                  "width": "fill_container",
+                                  "content": "Se aplica al instante y se guarda en tu cuenta.",
+                                  "fontFamily": "Geist",
+                                  "fontSize": 13,
+                                  "fontWeight": "normal"
+                                }
+                              ]
                             },
                             {
-                              "type": "text",
-                              "id": "BHd4h",
-                              "name": "Label",
-                              "fill": "$--foreground",
-                              "content": "Sistema",
-                              "fontFamily": "Geist",
-                              "fontSize": 13,
-                              "fontWeight": "500"
+                              "id": "W2yUHu",
+                              "type": "ref",
+                              "ref": "mTHMq",
+                              "name": "Idioma Select",
+                              "width": 220,
+                              "descendants": {
+                                "q2CuU": {
+                                  "content": "Español",
+                                  "fill": "$--foreground"
+                                }
+                              }
                             }
                           ]
                         },
                         {
-                          "type": "frame",
-                          "id": "tsoGp",
-                          "name": "Claro Tab",
-                          "cornerRadius": 999,
-                          "gap": 6,
-                          "padding": [
-                            6,
-                            16
-                          ],
-                          "alignItems": "center",
-                          "children": [
-                            {
-                              "type": "icon",
-                              "id": "yXEtZ",
-                              "name": "Icon",
-                              "width": 16,
-                              "height": 16,
-                              "icon": "light_mode",
-                              "library": "Material Symbols Sharp",
-                              "fill": "$--muted-foreground"
-                            },
-                            {
-                              "type": "text",
-                              "id": "aFW2Q",
-                              "name": "Label",
-                              "fill": "$--muted-foreground",
-                              "content": "Claro",
-                              "fontFamily": "Geist",
-                              "fontSize": 13,
-                              "fontWeight": "normal"
-                            }
-                          ]
+                          "type": "rectangle",
+                          "id": "IFlOk",
+                          "name": "Divider",
+                          "fill": "$--border",
+                          "width": "fill_container",
+                          "height": 1
                         },
                         {
                           "type": "frame",
-                          "id": "weei4",
-                          "name": "Oscuro Tab",
-                          "cornerRadius": 999,
-                          "gap": 6,
+                          "id": "QjyYK",
+                          "name": "Apariencia Row",
+                          "width": "fill_container",
+                          "gap": 24,
                           "padding": [
-                            6,
-                            16
+                            16,
+                            0
                           ],
+                          "justifyContent": "space_between",
                           "alignItems": "center",
                           "children": [
                             {
-                              "type": "icon",
-                              "id": "BP5yb",
-                              "name": "Icon",
-                              "width": 16,
-                              "height": 16,
-                              "icon": "dark_mode",
-                              "library": "Material Symbols Sharp",
-                              "fill": "$--muted-foreground"
+                              "type": "frame",
+                              "id": "YB5cB",
+                              "name": "Text",
+                              "width": "fill_container",
+                              "layout": "vertical",
+                              "gap": 2,
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "oWVGI",
+                                  "name": "Label",
+                                  "fill": "$--foreground",
+                                  "content": "Apariencia",
+                                  "fontFamily": "Geist",
+                                  "fontSize": 14,
+                                  "fontWeight": "500"
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "R9oQ0Y",
+                                  "name": "Hint",
+                                  "fill": "$--muted-foreground",
+                                  "textGrowth": "fixed-width",
+                                  "width": "fill_container",
+                                  "content": "Solo en este navegador. Sistema sigue tu dispositivo.",
+                                  "fontFamily": "Geist",
+                                  "fontSize": 13,
+                                  "fontWeight": "normal"
+                                }
+                              ]
                             },
                             {
-                              "type": "text",
-                              "id": "Hzsas",
-                              "name": "Label",
-                              "fill": "$--muted-foreground",
-                              "content": "Oscuro",
-                              "fontFamily": "Geist",
-                              "fontSize": 13,
-                              "fontWeight": "normal"
+                              "type": "frame",
+                              "id": "xAxXR",
+                              "name": "Theme Tabs",
+                              "fill": "$--secondary",
+                              "cornerRadius": 999,
+                              "gap": 2,
+                              "padding": 4,
+                              "children": [
+                                {
+                                  "type": "frame",
+                                  "id": "nbOnv",
+                                  "name": "Sistema Tab",
+                                  "fill": "$--card",
+                                  "cornerRadius": 999,
+                                  "effect": {
+                                    "type": "shadow",
+                                    "shadowType": "outer",
+                                    "color": "#0000000d",
+                                    "offset": {
+                                      "x": 0,
+                                      "y": 1
+                                    },
+                                    "blur": 2
+                                  },
+                                  "gap": 6,
+                                  "padding": [
+                                    6,
+                                    16
+                                  ],
+                                  "alignItems": "center",
+                                  "children": [
+                                    {
+                                      "type": "icon",
+                                      "id": "w9B0G",
+                                      "name": "Icon",
+                                      "width": 16,
+                                      "height": 16,
+                                      "icon": "desktop_windows",
+                                      "library": "Material Symbols Sharp",
+                                      "fill": "$--foreground"
+                                    },
+                                    {
+                                      "type": "text",
+                                      "id": "BHd4h",
+                                      "name": "Label",
+                                      "fill": "$--foreground",
+                                      "content": "Sistema",
+                                      "fontFamily": "Geist",
+                                      "fontSize": 13,
+                                      "fontWeight": "500"
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "tsoGp",
+                                  "name": "Claro Tab",
+                                  "cornerRadius": 999,
+                                  "gap": 6,
+                                  "padding": [
+                                    6,
+                                    16
+                                  ],
+                                  "alignItems": "center",
+                                  "children": [
+                                    {
+                                      "type": "icon",
+                                      "id": "yXEtZ",
+                                      "name": "Icon",
+                                      "width": 16,
+                                      "height": 16,
+                                      "icon": "light_mode",
+                                      "library": "Material Symbols Sharp",
+                                      "fill": "$--muted-foreground"
+                                    },
+                                    {
+                                      "type": "text",
+                                      "id": "aFW2Q",
+                                      "name": "Label",
+                                      "fill": "$--muted-foreground",
+                                      "content": "Claro",
+                                      "fontFamily": "Geist",
+                                      "fontSize": 13,
+                                      "fontWeight": "normal"
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "weei4",
+                                  "name": "Oscuro Tab",
+                                  "cornerRadius": 999,
+                                  "gap": 6,
+                                  "padding": [
+                                    6,
+                                    16
+                                  ],
+                                  "alignItems": "center",
+                                  "children": [
+                                    {
+                                      "type": "icon",
+                                      "id": "BP5yb",
+                                      "name": "Icon",
+                                      "width": 16,
+                                      "height": 16,
+                                      "icon": "dark_mode",
+                                      "library": "Material Symbols Sharp",
+                                      "fill": "$--muted-foreground"
+                                    },
+                                    {
+                                      "type": "text",
+                                      "id": "Hzsas",
+                                      "name": "Label",
+                                      "fill": "$--muted-foreground",
+                                      "content": "Oscuro",
+                                      "fontFamily": "Geist",
+                                      "fontSize": 13,
+                                      "fontWeight": "normal"
+                                    }
+                                  ]
+                                }
+                              ]
                             }
                           ]
                         }

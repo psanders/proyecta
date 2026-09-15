@@ -35,14 +35,14 @@ Proyecta is a digital-out-of-home marketplace for the Dominican Republic. Screen
   - Minted only by the server and keyed to a hardware id. Never generate codes on the device.
   - Stored canonically without the dash.
 - **`/device/v1` is a frozen contract.** Devices in the field update on their own schedule. Only additive, backward-compatible changes; breaking changes need `/device/v2`. The dashboard uses tRPC; devices never do.
-- **Accounts come from Fonoster Identity** (users, workspaces = businesses, roles, invites, tokens). Proyecta never stores passwords. Resources are owned by the workspace `accessKeyId` (`WO…`). tRPC guards: `protectedProcedure` → `workspaceProcedure` (`x-workspace` header) → `adminProcedure` / `ownerProcedure`. Parse router inputs with `validate(schema)` so errors carry Spanish field errors.
+- **Accounts come from Fonoster Identity** (users, workspaces = businesses, roles, invites, tokens). Proyecta never stores passwords. Resources are owned by the workspace `accessKeyId` (`WO…`). tRPC guards: `protectedProcedure` → `workspaceProcedure` (`x-workspace` header) → `adminProcedure` / `ownerProcedure`. Parse router inputs with `validate(schema)` so errors carry localized field errors; schema and `DomainError` messages are `apiMessages` ids, never literal text.
 - **Playback never depends on the network.** Sync modes: realtime (SSE), polling, offline.
 - **Engines:** Chromium, not Chrome; Edge on Windows. Provisional player floor: Chromium 108 (confirm after the device spike).
 - **Player branding:**
   - Tokens live in `packages/player/src/theme.css` and come from Pencil. Never invent colors.
   - Fonts: JetBrains Mono + Geist, self-hosted so they render offline.
   - Designed at 1600×900; sizes use the `--px` unit so any resolution scales.
-- **Language:** all user-facing text is Spanish (es-DO), kept in each app's strings module. No i18n library in v0.
+- **Language:** user-facing text is Spanish (es-DO) by default. The owner dashboard also supports English: copy lives in `packages/dashboard/src/lib/messages/{es,en}.ts` (flat ids, read with `useI18n().t`), and API messages it shows are ids from `apiMessages` in `@proyecta/common`, resolved by the `x-language` header. The player and web stay Spanish, in their strings modules. No i18n library.
 
 ## Coding conventions
 
