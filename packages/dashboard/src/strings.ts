@@ -62,7 +62,10 @@ export const strings = {
     team: "Equipo",
     profile: "Mi perfil",
     signOut: "Cerrar sesión",
-    switchBusiness: "Cambiar de negocio"
+    switchBusiness: "Cambiar de negocio",
+    collapse: "Contraer menú",
+    expand: "Expandir menú",
+    account: "Negocio y cuenta"
   },
   screens: {
     title: "Mis pantallas",

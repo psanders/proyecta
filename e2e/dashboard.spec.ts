@@ -95,6 +95,28 @@ test.describe("owner dashboard", () => {
     await shot(page, "08-screens-empty");
   });
 
+  test("collapses the navigation to an icon rail and remembers it", async ({ page }) => {
+    await signUp(page, Date.now());
+    await page.goto(APP);
+    const nav = page.locator("aside");
+    await expect(nav).toHaveAttribute("data-collapsed", "false");
+    await expect(page.getByRole("heading", { name: "Aún no tienes pantallas" })).toBeVisible();
+    await shot(page, "11-nav-expanded");
+
+    await page.getByRole("button", { name: "Contraer menú" }).click();
+    await expect(nav).toHaveAttribute("data-collapsed", "true");
+    await expect(page.getByRole("link", { name: "Equipo" })).toBeVisible();
+    await expect(page.getByRole("button", { name: "Expandir menú" })).toBeVisible();
+    await expect.poll(async () => (await nav.boundingBox())?.width).toBe(72);
+    await expect(page.getByRole("button", { name: "Negocio y cuenta" })).toHaveText("VC");
+    await shot(page, "12-nav-collapsed");
+
+    await page.reload();
+    await expect(nav).toHaveAttribute("data-collapsed", "true");
+    await page.getByRole("button", { name: "Expandir menú" }).click();
+    await expect(nav).toHaveAttribute("data-collapsed", "false");
+  });
+
   test("invite a teammate who accepts from the email and appears as active", async ({
     page,
     request

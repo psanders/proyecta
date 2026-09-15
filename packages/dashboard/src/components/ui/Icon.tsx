@@ -15,6 +15,8 @@ import download from "@material-symbols/svg-400/sharp/download.svg?raw";
 import error from "@material-symbols/svg-400/sharp/error.svg?raw";
 import group from "@material-symbols/svg-400/sharp/group.svg?raw";
 import info from "@material-symbols/svg-400/sharp/info.svg?raw";
+import leftPanelClose from "@material-symbols/svg-400/sharp/left_panel_close.svg?raw";
+import leftPanelOpen from "@material-symbols/svg-400/sharp/left_panel_open.svg?raw";
 import link from "@material-symbols/svg-400/sharp/link.svg?raw";
 import linkOff from "@material-symbols/svg-400/sharp/link_off.svg?raw";
 import location from "@material-symbols/svg-400/sharp/location_on.svg?raw";
@@ -46,6 +48,8 @@ const ICONS = {
   error,
   group,
   info,
+  leftPanelClose,
+  leftPanelOpen,
   link,
   linkOff,
   location,
