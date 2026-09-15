@@ -14,7 +14,7 @@
   "dependencies": {
     "@fontsource/geist-sans": "^5.3.0",
     "@fontsource/jetbrains-mono": "^5.3.0",
-    "@proyecta/common": "^0.1.0"
+    "@proyecta/common": "*"
   },
   "devDependencies": {
     "@material-symbols/svg-400": "^0.47.2",

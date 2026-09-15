@@ -24,7 +24,7 @@ on:
 
 jobs:
   build:
-    # Skip lerna's own version-bump commits.
+    # Skip release-please's version-bump commits.
     if: "!startsWith(github.event.head_commit.message, 'chore(release):')"
     runs-on: ubuntu-latest
     env:

@@ -2,8 +2,9 @@ name: Deploy
 
 # Deploys a published proyecta image trio to the DigitalOcean droplet.
 #
-# Triggers automatically after "Publish Docker Images" succeeds (workflow_run),
-# or manually via "Run workflow" for rollbacks or forced re-deploys.
+# Triggers when release.yml calls it for a new release, automatically after
+# "Publish Docker Images" succeeds for a hand-pushed tag (workflow_run), or
+# manually via "Run workflow" for rollbacks or forced re-deploys.
 #
 # Flow:
 #   1. resolve — determine the version from the triggering tag or manual input.
@@ -39,6 +40,12 @@ on:
       version:
         description: "Version tag to deploy (e.g. v1.2.0; empty = current package.json version)"
         required: false
+  workflow_call:
+    inputs:
+      version:
+        description: "Version tag to deploy (e.g. v0.2.0)"
+        required: true
+        type: string
 
 concurrency:
   group: deploy
@@ -46,7 +53,7 @@ concurrency:
 
 jobs:
   resolve:
-    if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
+    if: inputs.version != '' || github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
     outputs:
       version: ${{ steps.version.outputs.version }}
@@ -56,10 +63,14 @@ jobs:
 
       - name: Resolve version
         id: version
+        env:
+          INPUT_VERSION: ${{ inputs.version }}
         run: |
-          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-            v="${{ inputs.version }}"
-            [ -n "$v" ] || v="v$(node -p "require('./package.json').version")"
+          if [ -n "$INPUT_VERSION" ]; then
+            # Called from release.yml, or a manual run with an explicit version.
+            v="$INPUT_VERSION"
+          elif [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            v="v$(node -p "require('./package.json').version")"
           else
             # docker-publish runs on vX.Y.Z tags; head_branch carries the tag name.
             v="${{ github.event.workflow_run.head_branch }}"
