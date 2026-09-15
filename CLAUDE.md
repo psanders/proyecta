@@ -18,6 +18,7 @@ Proyecta is a digital-out-of-home marketplace for the Dominican Republic. Screen
   - Business logic lives in `src/api/<domain>/create<Name>.ts`.
 - `packages/dashboard`: minimal owner dashboard (Vite + React + Tailwind + tRPC client). Functional only, **no design pass**.
 - `packages/player`: the player core (Vite + **vanilla TS, no UI framework**). Must follow Pencil branding exactly.
+- `packages/web`: marketing site for proyecta.do (Vite + React + Tailwind, single page, no router). Built from the `web-home` / `web-home-mobile` Pencil frames; copy in `src/strings.ts`.
 - `shells/android`: Kotlin WebView app (Gradle, outside npm workspaces).
 - `shells/kiosk`: Linux Chromium and Windows Edge kiosk launchers.
 - `scripts/transcode.sh`: ffmpeg renditions (VP9 WebM + H.264 MP4 + WebP).
@@ -76,7 +77,7 @@ Full guide, rationale, and scaffolding: `/ps:create-validated-function` (source:
 - `npm run lint && npm run typecheck && npm test`: the green gate before any spec sync.
 - `npm run test:integration`: needs `db:up`.
 - `npm run test:e2e`: needs `npx playwright install chromium` once.
-- `npm run dev:api` / `dev:dashboard` (5175) / `dev:player` (5174)
+- `npm run dev:api` / `dev:dashboard` (5175) / `dev:player` (5174) / `dev:web` (5176)
 
 ## Commits
 

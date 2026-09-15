@@ -10,11 +10,12 @@
     "packages/common",
     "packages/api",
     "packages/dashboard",
-    "packages/player"
+    "packages/player",
+    "packages/web"
   ],
   "scripts": {
-    "build": "tsc -b packages/common packages/api && npm run build -w @proyecta/dashboard -w @proyecta/player",
-    "typecheck": "tsc -b packages/common packages/api && npm run typecheck -w @proyecta/dashboard -w @proyecta/player",
+    "build": "tsc -b packages/common packages/api && npm run build -w @proyecta/dashboard -w @proyecta/player -w @proyecta/web",
+    "typecheck": "tsc -b packages/common packages/api && npm run typecheck -w @proyecta/dashboard -w @proyecta/player -w @proyecta/web",
     "lint": "eslint .",
     "format": "prettier --write .",
     "test": "npm test --workspaces --if-present",
@@ -23,6 +24,7 @@
     "dev:api": "npm run dev -w @proyecta/api",
     "dev:dashboard": "npm run dev -w @proyecta/dashboard",
     "dev:player": "npm run dev -w @proyecta/player",
+    "dev:web": "npm run dev -w @proyecta/web",
     "db:up": "scripts/setup-identity.sh && docker compose up -d --wait postgres identity mailpit",
     "db:down": "docker compose down",
     "db:generate": "npm run db:generate -w @proyecta/api",

@@ -1,0 +1,69 @@
+/**
+ * Copyright (C) 2026 by Proyecta. All rights reserved.
+ *
+ * Marketing site tokens from design/pencil.pen (`web-*` variables and the web-home frames).
+ * Keep in sync with Pencil; never invent colors.
+ */
+@import "tailwindcss";
+@import "@fontsource/jetbrains-mono/400.css";
+@import "@fontsource/jetbrains-mono/500.css";
+@import "@fontsource/jetbrains-mono/600.css";
+@import "@fontsource/jetbrains-mono/700.css";
+@import "@fontsource/geist-sans/400.css";
+@import "@fontsource/geist-sans/500.css";
+@import "@fontsource/geist-sans/600.css";
+
+@theme {
+  --color-stage: #0b0b0b;
+  --color-stage-2: #141414;
+  --color-stage-3: #1a1a1a;
+  --color-stage-line: #262626;
+  --color-stage-line-2: #2e2e2e;
+  --color-stage-muted: #9a9b98;
+  --color-stage-soft: #c9cac7;
+  --color-stage-link: #d6d7d4;
+  --color-stage-answer: #b8b9b6;
+  --color-signal: #ec5e2b;
+  --color-paper: #f2f3f0;
+  --color-paper-line: #cbccc9;
+  --color-ink: #111111;
+  --color-ink-muted: #5c5d5a;
+  --color-subtle: #8a8b88;
+
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+  --font-sans: "Geist Sans", "Geist", system-ui, sans-serif;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background-color: var(--color-stage);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  section[id] {
+    scroll-margin-top: 64px;
+  }
+
+  a[href],
+  button:not(:disabled),
+  summary {
+    cursor: pointer;
+  }
+
+  summary::-webkit-details-marker {
+    display: none;
+  }
+}
+
+.icon svg {
+  width: 100%;
+  height: 100%;
+  fill: currentColor;
+  display: block;
+}
