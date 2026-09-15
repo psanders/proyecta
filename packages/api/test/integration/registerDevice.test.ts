@@ -4,14 +4,13 @@
 import { expect } from "chai";
 import { createDbClient, type DbClient } from "../../src/db.js";
 import { createRegisterDevice } from "../../src/api/devices/createRegisterDevice.js";
+import { testConfig } from "./testConfig.js";
 
 describe("registerDevice (integration, Postgres)", () => {
   let client: DbClient;
 
   before(async () => {
-    const url = process.env.TEST_DATABASE_URL;
-    if (!url) throw new Error("TEST_DATABASE_URL is not set (see .env.example)");
-    client = createDbClient(url);
+    client = createDbClient(testConfig().databaseUrl);
   });
 
   after(async () => {

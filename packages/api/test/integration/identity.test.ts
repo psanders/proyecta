@@ -13,9 +13,10 @@ import { createVerifyAccessToken } from "../../src/identity/createVerifyAccessTo
 import { resolveContext, type Services } from "../../src/trpc/context.js";
 import { appRouter } from "../../src/trpc/router.js";
 import { createCallerFactory } from "../../src/trpc/trpc.js";
+import { testConfig } from "./testConfig.js";
 
 const config = loadConfig();
-const mailpit = process.env.MAILPIT_URL ?? "http://localhost:8026";
+const { databaseUrl, mailpitUrl: mailpit } = testConfig();
 const identity = createIdentityClient(config.identity.endpoint);
 const services: Services = {
   identity,
@@ -28,7 +29,7 @@ const services: Services = {
   identityBridgeUrl: config.identity.bridgeUrl,
   fetch,
   sync: {
-    db: createDbClient(process.env.TEST_DATABASE_URL!),
+    db: createDbClient(databaseUrl),
     hub: new EventHub(),
     loadRotation: async () => null
   },

@@ -1,5 +1,5 @@
 {
-  "node-option": ["import=tsx", "conditions=source", "env-file-if-exists=.env"],
+  "node-option": ["import=tsx", "conditions=source"],
   "spec": "test/integration/**/*.test.ts",
   "extension": ["ts"],
   "timeout": 20000

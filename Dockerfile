@@ -49,8 +49,9 @@ FROM build-common AS build-api
 COPY packages/api packages/api
 # Generates src/generated/prisma (gitignored) before compiling — the Prisma
 # client is plain TS source included by packages/api's tsconfig, not a
-# separate copy step. DATABASE_URL is a placeholder: prisma.config.ts requires
-# it to resolve, but `prisma generate` never connects to a database.
+# separate copy step. DATABASE_URL is a placeholder: prisma.config.ts needs a URL
+# (there's no config/proyecta.json in the build), but `prisma generate` never
+# connects to a database.
 ENV DATABASE_URL="postgresql://proyecta:proyecta@localhost:5432/proyecta"
 RUN npm run db:generate --workspace=@proyecta/api
 RUN npx tsc -b packages/api
@@ -94,9 +95,9 @@ COPY --from=build-api /app/packages/api/package.json    ./packages/api/package.j
 COPY --from=build-api /app/packages/api/dist            ./packages/api/dist
 
 # Prisma schema + migrations + config (needed for `prisma migrate deploy`).
-# prisma.config.ts is where the datasource URL is resolved from DATABASE_URL
-# (schema.prisma itself has no `url =`, per Prisma 7's config-based setup) —
-# without it, migrate deploy has no database to connect to.
+# prisma.config.ts resolves the datasource URL from the mounted
+# /app/config/proyecta.json (schema.prisma itself has no `url =`, per Prisma 7's
+# config-based setup) — without it, migrate deploy has no database to connect to.
 COPY packages/api/prisma            ./packages/api/prisma
 COPY packages/api/prisma.config.ts  ./packages/api/prisma.config.ts
 

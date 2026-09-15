@@ -1,0 +1,15 @@
+{
+  "server": {
+    "port": 3000
+  },
+  "database": {
+    "url": "postgresql://proyecta:CHANGE_ME@postgres:5432/proyecta?schema=public"
+  },
+  "dashboard": {
+    "url": "https://app.proyecta.do"
+  },
+  "identity": {
+    "endpoint": "identity:50051",
+    "bridgeUrl": "http://identity:9110"
+  }
+}

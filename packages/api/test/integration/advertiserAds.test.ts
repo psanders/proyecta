@@ -33,9 +33,10 @@ import { createFfmpegRenderer, createFfprobe } from "../../src/media/ffmpeg.js";
 import { resolveContext, type Services } from "../../src/trpc/context.js";
 import { appRouter } from "../../src/trpc/router.js";
 import { createCallerFactory } from "../../src/trpc/trpc.js";
+import { testConfig } from "./testConfig.js";
 
 const run = promisify(execFile);
-const db = createDbClient(process.env.TEST_DATABASE_URL!);
+const db = createDbClient(testConfig().databaseUrl);
 const defaultRotation: Manifest = {
   version: "default-1",
   name: "Rotación General",

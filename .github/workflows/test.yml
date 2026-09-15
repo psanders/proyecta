@@ -28,11 +28,9 @@ jobs:
     if: "!startsWith(github.event.head_commit.message, 'chore(release):')"
     runs-on: ubuntu-latest
     env:
-      # Only needed to satisfy prisma.config.ts while generating the client —
+      # Placeholder so prisma.config.ts resolves without a config/proyecta.json —
       # `prisma generate` never connects to a database.
       DATABASE_URL: "postgresql://proyecta:proyecta@localhost:5432/proyecta"
-      IDENTITY_ENDPOINT: "localhost:50052"
-      IDENTITY_BRIDGE_URL: "http://localhost:9111"
     steps:
       - uses: actions/checkout@v7
 
