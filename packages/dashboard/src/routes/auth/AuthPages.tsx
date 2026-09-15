@@ -29,7 +29,7 @@ export function SignInPage() {
     onSuccess(tokens) {
       session.set({ ...tokens, workspace: null });
       void utils.invalidate();
-      navigate(safeReturn(params.get("volver")), { replace: true });
+      navigate(safeReturn(params.get("returnTo")), { replace: true });
     }
   });
   const errors = fieldErrors(signIn.error);
@@ -66,7 +66,10 @@ export function SignInPage() {
           />
         </div>
         <div className="flex justify-end">
-          <Link to="/recuperar" className="text-[13px] text-muted-foreground hover:text-foreground">
+          <Link
+            to="/forgot-password"
+            className="text-[13px] text-muted-foreground hover:text-foreground"
+          >
             {t("signIn.forgot")}
           </Link>
         </div>
@@ -75,7 +78,7 @@ export function SignInPage() {
         </Button>
         <p className="text-center text-sm text-muted-foreground">
           {t("signIn.noAccount")}{" "}
-          <Link to="/crear-cuenta" className="font-medium text-primary">
+          <Link to="/sign-up" className="font-medium text-primary">
             {t("signIn.createAccount")}
           </Link>
         </p>
@@ -97,7 +100,7 @@ export function SignUpPage() {
         workspace: result.workspace.accessKeyId
       });
       void utils.invalidate();
-      navigate("/bienvenida", { replace: true });
+      navigate("/onboarding", { replace: true });
     }
   });
   const errors = fieldErrors(signUp.error);
@@ -153,7 +156,7 @@ export function SignUpPage() {
         </Button>
         <p className="text-center text-sm text-muted-foreground">
           {t("signUp.haveAccount")}{" "}
-          <Link to="/ingresar" className="font-medium text-primary">
+          <Link to="/sign-in" className="font-medium text-primary">
             {t("signUp.signIn")}
           </Link>
         </p>
@@ -194,7 +197,7 @@ export function ForgotPasswordPage() {
           </Button>
         </form>
       )}
-      <Link to="/ingresar" className="text-center text-sm font-medium text-primary">
+      <Link to="/sign-in" className="text-center text-sm font-medium text-primary">
         {t("forgot.back")}
       </Link>
     </AuthLayout>
@@ -214,7 +217,7 @@ export function ResetPasswordPage() {
       {reset.isSuccess ? (
         <>
           <Alert tone="success">{t("reset.done")}</Alert>
-          <Link to="/ingresar" className="text-center text-sm font-medium text-primary">
+          <Link to="/sign-in" className="text-center text-sm font-medium text-primary">
             {t("invitation.goSignIn")}
           </Link>
         </>
@@ -276,7 +279,7 @@ export function AcceptInvitationPage() {
     >
       {accept.isSuccess ? (
         <Link
-          to="/ingresar"
+          to="/sign-in"
           className="inline-flex h-10 items-center justify-center rounded-full bg-primary font-mono text-sm font-medium text-primary-foreground"
         >
           {t("invitation.goSignIn")}
@@ -293,7 +296,7 @@ export function InvitationInvalidPage() {
   return (
     <AuthLayout title={t("invitation.invalidTitle")} subtitle={t("invitation.invalidBody")}>
       <Link
-        to="/ingresar"
+        to="/sign-in"
         className="inline-flex h-10 items-center justify-center rounded-full border border-border bg-card font-mono text-sm font-medium"
       >
         {t("invitation.goSignIn")}

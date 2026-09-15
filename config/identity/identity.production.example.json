@@ -22,10 +22,10 @@
     "contactVerificationRequired": false,
     "twoFactorAuthenticationRequired": false
   },
-  "appUrl": "https://app.proyecta.do/ingresar",
+  "appUrl": "https://app.proyecta.do/sign-in",
   "invite": {
-    "url": "https://app.proyecta.do/invitacion",
-    "failUrl": "https://app.proyecta.do/invitacion-invalida",
+    "url": "https://app.proyecta.do/invitation",
+    "failUrl": "https://app.proyecta.do/invitation-invalid",
     "expiration": "7d"
   },
   "smtp": {

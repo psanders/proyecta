@@ -17,7 +17,7 @@ export function AppLayout() {
   if (!current) {
     return (
       <Navigate
-        to={`/ingresar?volver=${encodeURIComponent(location.pathname + location.search)}`}
+        to={`/sign-in?returnTo=${encodeURIComponent(location.pathname + location.search)}`}
         replace
       />
     );

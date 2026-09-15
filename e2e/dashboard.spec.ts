@@ -16,7 +16,7 @@ async function shot(page: Page, name: string) {
 }
 
 async function signUp(page: Page, stamp: number, email = `owner-${stamp}@proyecta.local`) {
-  await page.goto(`${APP}/crear-cuenta`);
+  await page.goto(`${APP}/sign-up`);
   await page.getByLabel("Tu nombre").fill("Rosa Almonte");
   await page.getByLabel("Nombre del negocio").fill("Vallas del Cibao");
   await page.getByLabel("Correo electrónico").fill(email);
@@ -44,7 +44,7 @@ test.describe("owner dashboard", () => {
     await expect(player.getByText("Esperando conexión...")).toBeVisible();
     const code = (await player.locator(".code-box").textContent())!.trim();
 
-    await page.goto(`${APP}/ingresar`);
+    await page.goto(`${APP}/sign-in`);
     await shot(page, "00-sign-in");
     await signUp(page, stamp);
     await page.getByLabel("Ingresa el código de vinculación").fill(code.toLowerCase());
@@ -193,7 +193,7 @@ test.describe("owner dashboard", () => {
     // Another browser that never opened Proyecta: Spanish until the saved language loads.
     const other = await browser.newContext({ locale: "es-DO" });
     const second = await other.newPage();
-    await second.goto(`${APP}/ingresar`);
+    await second.goto(`${APP}/sign-in`);
     await expect(second.getByRole("heading", { name: "Bienvenido de nuevo" })).toBeVisible();
     await second.getByLabel("Correo electrónico").fill(email);
     await second.getByLabel("Contraseña").fill("supersecreta1");
@@ -209,9 +209,9 @@ test.describe("owner dashboard", () => {
     // First visit from an English browser: English before and after signing up (nothing saved yet).
     const english = await browser.newContext({ locale: "en-US" });
     const visitor = await english.newPage();
-    await visitor.goto(`${APP}/ingresar`);
+    await visitor.goto(`${APP}/sign-in`);
     await expect(visitor.getByRole("heading", { name: "Welcome back" })).toBeVisible();
-    await visitor.goto(`${APP}/crear-cuenta`);
+    await visitor.goto(`${APP}/sign-up`);
     await visitor.getByLabel("Your name").fill("Mark Stone");
     await visitor.getByLabel("Business name").fill("Stone Media");
     await visitor.getByLabel("Email").fill(`visitor-${stamp}@proyecta.local`);
@@ -258,11 +258,11 @@ test.describe("owner dashboard", () => {
         link =
           (message.HTML as string)
             .replace(/&#x3D;/g, "=")
-            .match(/href="([^"]*invitacion\?token=[^"]+)"/)?.[1] ?? "";
+            .match(/href="([^"]*invitation\?token=[^"]+)"/)?.[1] ?? "";
       }
       if (!link) await page.waitForTimeout(250);
     }
-    expect(link).toContain("/invitacion?token=");
+    expect(link).toContain("/invitation?token=");
 
     const invitee = await page.context().browser()!.newPage();
     await invitee.goto(link);

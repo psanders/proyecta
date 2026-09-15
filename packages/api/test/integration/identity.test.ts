@@ -153,7 +153,7 @@ describe("identity-auth (integration: Identity + Mailpit)", function () {
       [inviteeEmail, "WORKSPACE_MEMBER", "PENDING"]
     ]);
 
-    const { html, match } = await waitForEmail(inviteeEmail, /invitacion\?token=([^"&\s]+)/);
+    const { html, match } = await waitForEmail(inviteeEmail, /invitation\?token=([^"&\s]+)/);
     expect(html).to.contain("Te invitaron a unirte a <b>Vallas del Cibao</b>");
     const password = html.match(/class="code">([0-9a-f]{10})</)?.[1];
     expect(password, "one-time password in email").to.be.a("string");
@@ -228,7 +228,7 @@ describe("identity-auth (integration: Identity + Mailpit)", function () {
 
   it("resets a forgotten password from the emailed link", async () => {
     await (await caller()).auth.requestPasswordReset({ email: ownerEmail });
-    const { match } = await waitForEmail(ownerEmail, /restablecer\?token=([^"&\s]+)/);
+    const { match } = await waitForEmail(ownerEmail, /reset-password\?token=([^"&\s]+)/);
 
     await (
       await caller()

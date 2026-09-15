@@ -21,7 +21,7 @@ export function ScreensPage() {
   const list = trpc.screens.list.useQuery({ archived });
   const totals = list.data?.totals;
   const add = canManage ? (
-    <Button icon="add" onClick={() => navigate("/pantallas/nueva")}>
+    <Button icon="add" onClick={() => navigate("/screens/new")}>
       {t("screens.add")}
     </Button>
   ) : null;
@@ -35,7 +35,7 @@ export function ScreensPage() {
           body={t("screens.emptyBody")}
           action={
             canManage ? (
-              <Button onClick={() => navigate("/bienvenida")}>{t("screens.add")}</Button>
+              <Button onClick={() => navigate("/onboarding")}>{t("screens.add")}</Button>
             ) : null
           }
         />

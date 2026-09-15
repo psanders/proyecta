@@ -59,12 +59,12 @@ describe("workspace functions", () => {
 
     it("should accept when the bridge redirects to the app", async () => {
       // Arrange
-      const fetch = sinon.stub().resolves(redirect("http://localhost:5173/ingresar"));
+      const fetch = sinon.stub().resolves(redirect("http://localhost:5173/sign-in"));
 
       // Act
       const result = await createAcceptInvitation({
         bridgeUrl: "http://bridge",
-        failPath: "/invitacion-invalida",
+        failPath: "/invitation-invalid",
         fetch
       })({ token: "abc" });
 
@@ -77,13 +77,13 @@ describe("workspace functions", () => {
 
     it("should reject when the bridge redirects to the failure page", async () => {
       // Arrange
-      const fetch = sinon.stub().resolves(redirect("http://localhost:5173/invitacion-invalida"));
+      const fetch = sinon.stub().resolves(redirect("http://localhost:5173/invitation-invalid"));
 
       // Act + Assert
       try {
         await createAcceptInvitation({
           bridgeUrl: "http://bridge",
-          failPath: "/invitacion-invalida",
+          failPath: "/invitation-invalid",
           fetch
         })({ token: "abc" });
         expect.fail("expected DomainError");

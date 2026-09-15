@@ -15,7 +15,7 @@ import { Icon, type IconName } from "./ui/Icon.js";
 
 const NAV: { to: string; label: MessageId; icon: IconName }[] = [
   { to: "/", label: "nav.screens", icon: "tv" },
-  { to: "/configuracion", label: "nav.settings", icon: "settings" }
+  { to: "/settings", label: "nav.settings", icon: "settings" }
 ];
 
 const COLLAPSED_KEY = "proyecta.dashboard.navCollapsed";
@@ -95,7 +95,7 @@ export function AppSidebar() {
   const signOut = () => {
     session.set(null);
     queryClient.clear();
-    navigate("/ingresar");
+    navigate("/sign-in");
   };
 
   return (
@@ -264,7 +264,7 @@ function AccountMenu({
       <button
         type="button"
         role="menuitem"
-        onClick={() => onNavigate("/perfil")}
+        onClick={() => onNavigate("/profile")}
         className="flex items-center gap-2.5 px-4 py-2.5 text-left text-sm text-foreground hover:bg-secondary"
       >
         <Icon name="person" className="size-4 text-muted-foreground" />
@@ -273,7 +273,7 @@ function AccountMenu({
       <button
         type="button"
         role="menuitem"
-        onClick={() => onNavigate("/equipo")}
+        onClick={() => onNavigate("/team")}
         className="flex items-center gap-2.5 px-4 py-2.5 text-left text-sm text-foreground hover:bg-secondary"
       >
         <Icon name="group" className="size-4 text-muted-foreground" />
