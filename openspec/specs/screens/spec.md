@@ -11,9 +11,9 @@ lifecycle. A screen is separate from the physical device that plays on it.
 
 Admins and owners SHALL create and edit screens in their workspace. A screen SHALL require a name and city.
 It MAY carry place type, indoor/outdoor, address, physical width and height in centimeters, orientation,
-resolution, available weekdays, daily start and end time, reference price in Dominican pesos, and pricing model.
-End time SHALL be after start time. A screen missing availability (days and hours) or reference price SHALL be
-reported as incomplete.
+resolution, available weekdays, daily start and end time, and a pay-per-display rate in Dominican dollars (US$)
+per every 5 seconds displayed. End time SHALL be after start time. A screen missing availability (days and
+hours) or a pay-per-display rate SHALL be reported as incomplete.
 
 #### Scenario: Create a screen
 
