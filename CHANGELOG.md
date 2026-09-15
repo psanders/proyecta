@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.3.0](https://github.com/psanders/proyecta/compare/v0.2.1...v0.3.0) (2026-09-15)
+
+
+### ⚠ BREAKING CHANGES
+
+* **api:** the apiserver no longer reads DATABASE_URL, IDENTITY_*, DASHBOARD_URL, PORT or MEDIA_DIR from the environment. Production needs /opt/proyecta/config/proyecta.json (see docs/deploy/PENDING.md) and local setups need config/proyecta.json (npm run db:up writes it).
+
+### Features
+
+* advertiser ads and the dashboard view per business ([#24](https://github.com/psanders/proyecta/issues/24)) ([c59a18a](https://github.com/psanders/proyecta/commit/c59a18ad70f81d28cb20cb9fe6dbf9231c9e468a))
+
+
+### Refactoring
+
+* **api:** read settings from config/proyecta.json instead of .env ([#23](https://github.com/psanders/proyecta/issues/23)) ([5bfcb24](https://github.com/psanders/proyecta/commit/5bfcb2442649ed57d1016457c431fc7db5e875f4))
+
 ## [0.2.1](https://github.com/psanders/proyecta/compare/v0.2.0...v0.2.1) (2026-09-15)
 
 
