@@ -342,4 +342,92 @@ describe("advertiser ads (integration: HTTP + Postgres + ffmpeg)", function () {
     expect((await advertiser.ads.get({ id })).status).to.equal("CANCELED");
     events.close();
   });
+
+  it("lets an owner approve one screen, decline the other, stop it, and reuses approvals", async () => {
+    const OWNER = `WO-owner-${stamp}`;
+    const png = join(work, "desayuno.png");
+    await run("ffmpeg", [
+      "-y",
+      "-loglevel",
+      "error",
+      "-f",
+      "lavfi",
+      "-i",
+      "color=c=blue:s=1280x720",
+      "-frames:v",
+      "1",
+      png
+    ]);
+    const uploaded = await upload(
+      ADVERTISER,
+      await readFile(png),
+      "image/png",
+      "durationMs=5000&name=Desayuno"
+    );
+    const { asset } = (await uploaded.json()) as { asset: AssetView };
+    await services.media.queue.idle();
+
+    const gym = await completeScreen(OWNER, "Gimnasio Norte");
+    const clinic = await completeScreen(OWNER, "Clínica Luz");
+    const device = await register(`hw-review-gym-${stamp}`);
+    const owner = await dashboard(OWNER);
+    await owner.screens.link({ screenId: gym.id, code: device.code });
+    const events = await openEvents(device.deviceToken);
+    await events.next("state");
+
+    const advertiser = await dashboard(ADVERTISER);
+    const today = localDateString(new Date(), "America/Santo_Domingo");
+    const dates = { startDate: today, endDate: today };
+    const { id } = await advertiser.ads.create({
+      name: "Desayuno",
+      assetId: asset.id,
+      ...dates,
+      screenIds: [gym.id, clinic.id]
+    });
+
+    // The owner sees one pending request with both screens, and approves only the gym.
+    expect(await owner.adReview.pendingCount()).to.deep.equal({ count: 1 });
+    const [request] = await owner.adReview.list({ tab: "PENDING" });
+    expect(request!.screens.map((s) => [s.name, s.pending])).to.deep.equal([
+      ["Clínica Luz", true],
+      ["Gimnasio Norte", true]
+    ]);
+    await owner.adReview.approve({ adId: id, screenIds: [gym.id] });
+    const approved = await events.next("rotation.updated");
+    expect(approved.rotation?.items.map((i) => i.title)).to.deep.equal(["Desayuno"]);
+    expect(await owner.adReview.pendingCount()).to.deep.equal({ count: 0 });
+
+    let detail = await advertiser.ads.get({ id });
+    expect(detail.status).to.equal("ON_AIR");
+    expect(detail.adScreens.map((s) => [s.name, s.status, s.reasonCode])).to.deep.equal([
+      ["Clínica Luz", "REJECTED", "NOT_SUITABLE_FOR_VENUE"],
+      ["Gimnasio Norte", "ON_AIR", null]
+    ]);
+
+    // The owner stops it on the gym: the player drops it and the advertiser needs to act.
+    await owner.adReview.revoke({ adId: id, screenId: gym.id, note: "Cambio de programación" });
+    expect((await events.next("rotation.updated")).rotation?.version).to.equal("default-1");
+    detail = await advertiser.ads.get({ id });
+    expect(detail.status).to.equal("NEEDS_ATTENTION");
+    expect(detail.adScreens.find((s) => s.name === "Gimnasio Norte")).to.deep.include({
+      status: "REVOKED",
+      note: "Cambio de programación"
+    });
+    expect((await owner.adReview.list({ tab: "REVIEWED" })).map((r) => r.adId)).to.include(id);
+
+    // Re-adding the declined clinic asks again; once approved, a new ad with the same file on the
+    // clinic starts approved without a request.
+    await advertiser.ads.addScreens({ id, screenIds: [clinic.id] });
+    expect(await owner.adReview.pendingCount()).to.deep.equal({ count: 1 });
+    await owner.adReview.approve({ adId: id, screenIds: [clinic.id] });
+    const second = await advertiser.ads.create({
+      name: "Desayuno 2",
+      assetId: asset.id,
+      ...dates,
+      screenIds: [clinic.id]
+    });
+    expect((await advertiser.ads.get({ id: second.id })).adScreens[0]!.status).to.equal("ON_AIR");
+    expect(await owner.adReview.pendingCount()).to.deep.equal({ count: 0 });
+    events.close();
+  });
 });

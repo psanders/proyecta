@@ -93,7 +93,35 @@ describe("placement statuses", () => {
     const status = adScreenStatus(ad, [row("APPROVED", 1), row("PENDING", 5, "a2")], DURING);
 
     // Assert
-    expect(status).to.deep.equal({ status: "ON_AIR", newFilePending: true });
+    expect(status).to.deep.equal({
+      status: "ON_AIR",
+      newFilePending: true,
+      reasonCode: null,
+      note: null
+    });
+  });
+
+  it("should show the owner's decision: rejected with reason, stopped, or no response once ended", () => {
+    // Arrange
+    const rejected = {
+      ...row("REJECTED", 2),
+      reasonCode: "LOW_QUALITY" as const,
+      note: "Se ve pixelado"
+    };
+
+    // Act + Assert
+    expect(adScreenStatus(ad, [rejected], DURING)).to.deep.equal({
+      status: "REJECTED",
+      newFilePending: false,
+      reasonCode: "LOW_QUALITY",
+      note: "Se ve pixelado"
+    });
+    expect(adScreenStatus(ad, [row("REVOKED", 3)], DURING)!.status).to.equal("REVOKED");
+    expect(adScreenStatus(ad, [row("PENDING", 1)], ad.endsAt)!.status).to.equal("NO_RESPONSE");
+    // Re-added after a rejection: the newest (pending) row wins.
+    expect(adScreenStatus(ad, [rejected, row("PENDING", 9)], DURING)!.status).to.equal(
+      "PENDING_APPROVAL"
+    );
   });
 
   it("should derive pending, scheduled, finished, cancelled and removed screens", () => {
@@ -107,7 +135,7 @@ describe("placement statuses", () => {
       adScreenStatus({ ...ad, state: "CANCELED" }, [row("APPROVED", 1)], DURING)!.status
     ).to.equal("CANCELED");
     expect(adScreenStatus(ad, [row("WITHDRAWN", 1)], DURING)).to.equal(null);
-    expect(adScreenStatus(ad, [row("REJECTED", 1)], DURING)!.status).to.equal("NOT_APPROVED");
+    expect(adScreenStatus(ad, [row("REJECTED", 1)], DURING)!.status).to.equal("REJECTED");
   });
 
   it("should pick the ad status by precedence", () => {
@@ -115,6 +143,9 @@ describe("placement statuses", () => {
     expect(adStatus(ad, ["PENDING_APPROVAL", "ON_AIR"], DURING)).to.equal("ON_AIR");
     expect(adStatus(ad, ["PENDING_APPROVAL", "SCHEDULED"], DURING)).to.equal("SCHEDULED");
     expect(adStatus(ad, ["PENDING_APPROVAL"], DURING)).to.equal("PENDING_APPROVAL");
+    expect(adStatus(ad, ["PENDING_APPROVAL", "REJECTED"], DURING)).to.equal("PENDING_APPROVAL");
+    expect(adStatus(ad, ["REJECTED", "NO_RESPONSE"], DURING)).to.equal("NEEDS_ATTENTION");
+    expect(adStatus(ad, ["REVOKED"], DURING)).to.equal("NEEDS_ATTENTION");
     expect(adStatus(ad, [], DURING)).to.equal("NO_SCREENS");
     expect(adStatus(ad, ["ON_AIR"], ad.endsAt)).to.equal("FINISHED");
     expect(adStatus({ ...ad, state: "CANCELED" }, ["ON_AIR"], DURING)).to.equal("CANCELED");
