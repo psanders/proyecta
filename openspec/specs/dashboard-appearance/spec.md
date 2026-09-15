@@ -7,9 +7,10 @@ Lets each person choose whether the owner dashboard is light, dark or follows th
 ## Requirements
 ### Requirement: Theme preference
 
-The Mi perfil page SHALL offer an Apariencia section with Sistema, Claro and Oscuro, marking the current choice.
-Sistema SHALL be the default. Choosing an option SHALL apply the theme to the whole dashboard immediately, without a
-save button or a reload. The account menu SHALL NOT contain a theme control.
+The Mi perfil page SHALL offer Apariencia with Sistema, Claro and Oscuro, marking the current choice, as one of the
+settings of its Preferencias section (together with Idioma). Sistema SHALL be the default. Choosing an option SHALL
+apply the theme to the whole dashboard immediately, without a save button or a reload. The account menu SHALL NOT
+contain a theme control.
 
 #### Scenario: Switch to dark
 
