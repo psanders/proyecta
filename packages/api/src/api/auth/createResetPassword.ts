@@ -9,7 +9,7 @@ import {
 import { DomainError } from "../../identity/errors.js";
 import type { IdentityApi } from "../../identity/types.js";
 
-const INVALID_LINK = "El enlace para restablecer no es válido o ya expiró";
+const INVALID_LINK = "errors.auth.invalidResetLink";
 
 /** Decodes Identity's reset token: base64 JSON of { username, code }. */
 export function decodeResetToken(token: string): { username: string; code: string } | null {

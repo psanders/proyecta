@@ -24,7 +24,7 @@ export function createRefreshSession(identity: Pick<IdentityApi, "exchangeRefres
       );
       return { accessToken, refreshToken };
     } catch {
-      throw new DomainError("UNAUTHORIZED", "Tu sesión expiró. Ingresa de nuevo.");
+      throw new DomainError("UNAUTHORIZED", "errors.session.expired");
     }
   };
 

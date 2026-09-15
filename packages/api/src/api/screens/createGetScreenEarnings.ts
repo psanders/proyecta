@@ -49,7 +49,7 @@ export function createGetScreenEarnings(deps: ScreenDeps) {
       where: { id: params.id, workspaceAccessKeyId: params.workspaceAccessKeyId, deletedAt: null },
       select: { ratePerFiveSecondsCents: true }
     });
-    if (!screen) throw new DomainError("NOT_FOUND", "Pantalla no encontrada");
+    if (!screen) throw new DomainError("NOT_FOUND", "errors.screen.notFound");
     if (screen.ratePerFiveSecondsCents === null) return { available: false };
 
     const at = now();

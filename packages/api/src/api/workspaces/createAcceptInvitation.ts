@@ -27,14 +27,11 @@ export function createAcceptInvitation(deps: {
     });
     if (response.status < 300 || response.status >= 400) {
       logger.warn("unexpected invite bridge response", { status: response.status });
-      throw new DomainError(
-        "SERVICE_UNAVAILABLE",
-        "No pudimos validar la invitación. Intenta de nuevo."
-      );
+      throw new DomainError("SERVICE_UNAVAILABLE", "errors.invitation.unavailable");
     }
     const location = response.headers.get("location") ?? "";
     if (location.includes(deps.failPath)) {
-      throw new DomainError("BAD_REQUEST", "La invitación no es válida o ya expiró");
+      throw new DomainError("BAD_REQUEST", "errors.invitation.invalid");
     }
     return { accepted: true };
   };

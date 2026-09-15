@@ -3,7 +3,7 @@
  */
 import { status } from "@grpc/grpc-js";
 import { TRPCError } from "@trpc/server";
-import { ValidationError } from "@proyecta/common";
+import { resolveApiMessage, ValidationError, type ApiMessageId } from "@proyecta/common";
 
 type Code = TRPCError["code"];
 
@@ -18,13 +18,16 @@ const GRPC_TO_TRPC: Partial<Record<number, Code>> = {
   [status.UNAVAILABLE]: "SERVICE_UNAVAILABLE"
 };
 
-/** A domain failure with a user-facing (Spanish) message and a tRPC category. */
+/**
+ * A domain failure with a user-facing message and a tRPC category. `message` is the Spanish text;
+ * the API re-resolves `messageId` in the requester's language.
+ */
 export class DomainError extends Error {
   constructor(
     public readonly code: Code,
-    message: string
+    public readonly messageId: ApiMessageId
   ) {
-    super(message);
+    super(resolveApiMessage(messageId, "es"));
     this.name = "DomainError";
   }
 }
@@ -53,5 +56,9 @@ export function toTRPCError(err: unknown): TRPCError {
     if (code)
       return new TRPCError({ code, message: err.details ?? err.message ?? code, cause: err });
   }
-  return new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Error interno", cause: err });
+  return new TRPCError({
+    code: "INTERNAL_SERVER_ERROR",
+    message: resolveApiMessage("errors.internal", "es"),
+    cause: err
+  });
 }

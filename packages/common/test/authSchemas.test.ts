@@ -7,7 +7,8 @@ import {
   changePasswordSchema,
   inviteMemberSchema,
   signInSchema,
-  signUpSchema
+  signUpSchema,
+  ValidationError
 } from "../src/index.js";
 
 describe("auth and workspace schemas", () => {
@@ -41,9 +42,11 @@ describe("auth and workspace schemas", () => {
 
       // Assert
       expect(result.success).to.equal(false);
-      expect(result.error?.issues[0]?.message).to.equal(
-        "La contraseña debe tener al menos 8 caracteres"
-      );
+      expect(new ValidationError(result.error!).fieldErrors[0]).to.include({
+        field: "password",
+        message: "La contraseña debe tener al menos 8 caracteres",
+        messageId: "validation.password.min"
+      });
     });
   });
 

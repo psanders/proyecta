@@ -25,9 +25,9 @@ export function createRemoveMember(
   const fn = async (params: z.infer<typeof schema>): Promise<{ removed: true }> => {
     const { items } = await identity.listWorkspaces(params.token);
     const workspace = items.find((w) => w.accessKeyId === params.workspaceAccessKeyId);
-    if (!workspace) throw new DomainError("NOT_FOUND", "Negocio no encontrado");
+    if (!workspace) throw new DomainError("NOT_FOUND", "errors.workspace.notFound");
     if (workspace.ownerRef === params.userRef) {
-      throw new DomainError("FORBIDDEN", "No puedes quitar al propietario del negocio");
+      throw new DomainError("FORBIDDEN", "errors.member.removeOwner");
     }
     logger.verbose("removing member", { userRef: params.userRef });
     await identity.removeUserFromWorkspace(

@@ -62,9 +62,9 @@ export function createLinkDevice(deps: DeviceSyncDeps) {
   const fn = async (params: z.infer<typeof schema>): Promise<ScreenView> => {
     const at = now();
     const device = await deps.db.device.findUnique({ where: { code: params.code } });
-    if (!device) throw new DomainError("NOT_FOUND", "No encontramos un reproductor con ese código");
+    if (!device) throw new DomainError("NOT_FOUND", "errors.pairing.notFound");
     if (!isRecentlySeen(device.lastSeenAt, deps.hub.isStreamOpen(device.id), at)) {
-      throw new DomainError("PRECONDITION_FAILED", "El reproductor no está conectado");
+      throw new DomainError("PRECONDITION_FAILED", "errors.pairing.offline");
     }
     const screen = await deps.db.screen.findFirst({
       where: {
@@ -73,12 +73,9 @@ export function createLinkDevice(deps: DeviceSyncDeps) {
         deletedAt: null
       }
     });
-    if (!screen) throw new DomainError("NOT_FOUND", "Pantalla no encontrada");
+    if (!screen) throw new DomainError("NOT_FOUND", "errors.screen.notFound");
     if (screen.status === "ARCHIVED") {
-      throw new DomainError(
-        "PRECONDITION_FAILED",
-        "Las pantallas archivadas no se pueden vincular"
-      );
+      throw new DomainError("PRECONDITION_FAILED", "errors.screen.archivedLink");
     }
 
     try {
@@ -87,7 +84,7 @@ export function createLinkDevice(deps: DeviceSyncDeps) {
       });
     } catch (err) {
       if (isUniqueViolation(err)) {
-        throw new DomainError("CONFLICT", "El reproductor o la pantalla ya tienen un vínculo");
+        throw new DomainError("CONFLICT", "errors.pairing.alreadyLinked");
       }
       throw err;
     }
@@ -134,13 +131,9 @@ export function createUnlinkDevice(deps: DeviceSyncDeps) {
       where: { id: params.id, workspaceAccessKeyId: params.workspaceAccessKeyId, deletedAt: null },
       include: { bindings: { where: { unlinkedAt: null } } }
     });
-    if (!screen) throw new DomainError("NOT_FOUND", "Pantalla no encontrada");
+    if (!screen) throw new DomainError("NOT_FOUND", "errors.screen.notFound");
     const binding = screen.bindings[0];
-    if (!binding)
-      throw new DomainError(
-        "PRECONDITION_FAILED",
-        "Esta pantalla no tiene un reproductor vinculado"
-      );
+    if (!binding) throw new DomainError("PRECONDITION_FAILED", "errors.screen.noDevice");
 
     await deps.db.deviceBinding.update({ where: { id: binding.id }, data: { unlinkedAt: now() } });
     logger.verbose("device unlinked", { deviceId: binding.deviceId, screenId: screen.id });

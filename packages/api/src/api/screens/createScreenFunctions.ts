@@ -16,7 +16,7 @@ import type { ScreenDeps } from "./deps.js";
 import { screenWithDevice, toScreenView, type ScreenView } from "./views.js";
 
 const scoped = { workspaceAccessKeyId: z.string().min(1) };
-const NOT_FOUND = "Pantalla no encontrada";
+const NOT_FOUND = "errors.screen.notFound";
 
 async function findScreen(deps: ScreenDeps, workspaceAccessKeyId: string, id: string) {
   const row = await deps.db.screen.findFirst({
@@ -69,7 +69,7 @@ export function createUpdateScreen(deps: ScreenDeps) {
     const { id, workspaceAccessKeyId, ...fields } = params;
     const existing = await findScreen(deps, workspaceAccessKeyId, id);
     if (existing.status === "ARCHIVED") {
-      throw new DomainError("PRECONDITION_FAILED", "Las pantallas archivadas no se pueden editar");
+      throw new DomainError("PRECONDITION_FAILED", "errors.screen.archivedEdit");
     }
     const unset = Object.fromEntries(
       (
@@ -176,8 +176,8 @@ export function createRetireScreen(deps: ScreenDeps, action: "archive" | "delete
       throw new DomainError(
         "PRECONDITION_FAILED",
         action === "archive"
-          ? "Desvincula el reproductor antes de archivar la pantalla"
-          : "Desvincula el reproductor antes de eliminar la pantalla"
+          ? "errors.screen.unlinkBeforeArchive"
+          : "errors.screen.unlinkBeforeDelete"
       );
     }
     await deps.db.screen.update({
