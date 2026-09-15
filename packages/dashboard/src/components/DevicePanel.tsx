@@ -17,6 +17,7 @@ import { StatusBadge } from "./StatusBadge.js";
 import { Alert } from "./ui/Alert.js";
 import { Button } from "./ui/Button.js";
 import { SectionCard } from "./ui/Card.js";
+import { MoreMenu } from "./ui/MoreMenu.js";
 
 export interface DeviceData {
   code: string;
@@ -51,7 +52,9 @@ export function DevicePanel({
   device,
   canManage,
   archived,
-  onUnlink
+  onUnlink,
+  onArchive,
+  onDelete
 }: {
   screenId: string;
   status: ScreenStatusView;
@@ -59,6 +62,8 @@ export function DevicePanel({
   canManage: boolean;
   archived: boolean;
   onUnlink: () => void;
+  onArchive: () => void;
+  onDelete: () => void;
 }) {
   const utils = trpc.useUtils();
   const [code, setCode] = useState("");
@@ -77,23 +82,51 @@ export function DevicePanel({
       ? CODE_UNAVAILABLE_MESSAGES[check.data.reason]
       : null;
   const health = (device?.health ?? {}) as Record<string, number | string | undefined>;
+  const linked = !!device;
+
+  const moreMenu =
+    canManage && !archived ? (
+      <MoreMenu
+        items={[
+          {
+            label: strings.detail.pause,
+            icon: "pause" as const,
+            onSelect: () => {},
+            disabled: true,
+            hint: strings.detail.comingSoon
+          },
+          "divider" as const,
+          ...(linked
+            ? [{ label: strings.detail.unlink, icon: "linkOff" as const, onSelect: onUnlink }]
+            : []),
+          {
+            label: strings.detail.archive,
+            icon: "archive" as const,
+            onSelect: onArchive,
+            disabled: linked,
+            hint: linked ? strings.dialogs.unlinkFirst : undefined
+          },
+          {
+            label: strings.detail.remove,
+            icon: "delete" as const,
+            onSelect: onDelete,
+            destructive: true,
+            disabled: linked,
+            hint: linked ? strings.dialogs.unlinkFirst : undefined
+          }
+        ]}
+      />
+    ) : null;
 
   return (
-    <SectionCard title={strings.detail.device} hint={strings.detail.deviceHint}>
+    <SectionCard title={strings.detail.device} hint={strings.detail.deviceHint} actions={moreMenu}>
       {device ? (
         <>
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <StatusBadge status={status} />
-              <span className="text-[13px] text-muted-foreground">
-                {strings.detail.lastActivity}: {relativeTime(device.lastSeenAt)}
-              </span>
-            </div>
-            {canManage ? (
-              <Button variant="outline" icon="linkOff" onClick={onUnlink}>
-                {strings.detail.unlink}
-              </Button>
-            ) : null}
+          <div className="flex items-center gap-3">
+            <StatusBadge status={status} />
+            <span className="text-[13px] text-muted-foreground">
+              {strings.detail.lastActivity}: {relativeTime(device.lastSeenAt)}
+            </span>
           </div>
           <KeyValueRow
             label={strings.detail.code}

@@ -20,6 +20,8 @@ import linkOff from "@material-symbols/svg-400/sharp/link_off.svg?raw";
 import location from "@material-symbols/svg-400/sharp/location_on.svg?raw";
 import logout from "@material-symbols/svg-400/sharp/logout.svg?raw";
 import mail from "@material-symbols/svg-400/sharp/mail.svg?raw";
+import moreVert from "@material-symbols/svg-400/sharp/more_vert.svg?raw";
+import pause from "@material-symbols/svg-400/sharp/pause.svg?raw";
 import person from "@material-symbols/svg-400/sharp/person.svg?raw";
 import refresh from "@material-symbols/svg-400/sharp/refresh.svg?raw";
 import schedule from "@material-symbols/svg-400/sharp/schedule.svg?raw";
@@ -49,6 +51,8 @@ const ICONS = {
   location,
   logout,
   mail,
+  moreVert,
+  pause,
   person,
   refresh,
   schedule,

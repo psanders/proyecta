@@ -77,13 +77,15 @@ test.describe("owner dashboard", () => {
     await shot(page, "05-screens");
 
     await page.getByTestId("screen-row").click();
-    await page.getByRole("button", { name: "Desvincular reproductor" }).click();
+    await page.getByRole("button", { name: "Más acciones" }).click();
+    await page.getByRole("menuitem", { name: "Desvincular reproductor" }).click();
     await shot(page, "06-unlink-dialog");
     await page.getByRole("dialog").getByRole("button", { name: "Desvincular" }).click();
     await expect(page.getByText("Esta pantalla no tiene un reproductor vinculado.")).toBeVisible();
     await expect(player.locator(".code-box")).toHaveText(code);
 
-    await page.getByRole("button", { name: "Archivar" }).click();
+    await page.getByRole("button", { name: "Más acciones" }).click();
+    await page.getByRole("menuitem", { name: "Archivar" }).click();
     await shot(page, "07-archive-dialog");
     await page.getByRole("dialog").getByRole("button", { name: "Archivar" }).click();
     await expect(page.getByRole("heading", { name: "Aún no tienes pantallas" })).toBeVisible();

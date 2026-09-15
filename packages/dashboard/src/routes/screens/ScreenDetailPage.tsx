@@ -50,7 +50,6 @@ export function ScreenDetailPage() {
   const s = screen.data;
   const na = strings.detail.notSet;
   const place = s.placeType ? PLACE_TYPE_LABELS[s.placeType as PlaceType] : null;
-  const linked = !!s.device;
 
   const dialogs = {
     unlink: {
@@ -86,36 +85,13 @@ export function ScreenDetailPage() {
         subtitle={[place, s.city].filter(Boolean).join(" · ")}
         actions={
           canManage && !s.archived ? (
-            <>
-              <Button
-                variant="outline"
-                icon="archive"
-                onClick={() => setPending("archive")}
-                disabled={linked}
-                title={linked ? strings.dialogs.unlinkFirst : undefined}
-              >
-                {strings.detail.archive}
-              </Button>
-              <Button
-                variant="outline"
-                icon="delete"
-                onClick={() => setPending("delete")}
-                disabled={linked}
-                title={linked ? strings.dialogs.unlinkFirst : undefined}
-              >
-                {strings.detail.remove}
-              </Button>
-              <Button onClick={() => navigate(`/pantallas/${id}/editar`)}>
-                {strings.detail.edit}
-              </Button>
-            </>
+            <Button onClick={() => navigate(`/pantallas/${id}/editar`)}>
+              {strings.detail.edit}
+            </Button>
           ) : null
         }
       />
       {s.archived ? <Alert tone="info">{strings.detail.archivedNotice}</Alert> : null}
-      {canManage && linked && !s.archived ? (
-        <p className="-mt-3 text-xs text-muted-foreground">{strings.dialogs.unlinkFirst}</p>
-      ) : null}
 
       <DevicePanel
         screenId={s.id}
@@ -124,6 +100,8 @@ export function ScreenDetailPage() {
         canManage={canManage}
         archived={s.archived}
         onUnlink={() => setPending("unlink")}
+        onArchive={() => setPending("archive")}
+        onDelete={() => setPending("delete")}
       />
 
       <SectionCard title={strings.detail.info}>
