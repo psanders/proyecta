@@ -1,0 +1,71 @@
+name: Marketing Site
+
+# Builds packages/web (the proyecta.do marketing site) and publishes the static build to the
+# public psanders/proyectasite repo, which GitHub Pages serves. This repo stays private, so
+# only dist/ ever leaves it. Runs when the site, the lockfile or this workflow change.
+#
+# SITE_DEPLOY_KEY is the private half of a write deploy key on psanders/proyectasite.
+# To move to proyecta.do: set SITE_BASE to "/", write "proyecta.do" to CNAME below, point DNS.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "packages/web/**"
+      - "package-lock.json"
+      - ".github/workflows/web.yml"
+  workflow_dispatch:
+
+concurrency:
+  group: site-deploy
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+env:
+  SITE_REPO: psanders/proyectasite
+  SITE_BASE: /proyectasite/
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v7
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      # The site has no workspace dependencies, so install only it (plus root tooling) and
+      # skip lifecycle scripts (husky).
+      - name: Install dependencies
+        run: npm ci --workspace=@proyecta/web --include-workspace-root --ignore-scripts
+
+      - name: Build site
+        env:
+          VITE_BASE: ${{ env.SITE_BASE }}
+        run: npm run build -w @proyecta/web
+
+      - name: Publish to the site repo
+        env:
+          DEPLOY_KEY: ${{ secrets.SITE_DEPLOY_KEY }}
+        run: |
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "$DEPLOY_KEY" > ~/.ssh/site_deploy_key
+          chmod 600 ~/.ssh/site_deploy_key
+          ssh-keyscan github.com >> ~/.ssh/known_hosts 2>/dev/null
+
+          cp -r packages/web/dist /tmp/site
+          touch /tmp/site/.nojekyll
+          cd /tmp/site
+          git init -q -b main
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -q -m "Deploy from proyecta@${GITHUB_SHA::7}"
+          GIT_SSH_COMMAND="ssh -i ~/.ssh/site_deploy_key -o IdentitiesOnly=yes" \
+            git push --force "git@github.com:${SITE_REPO}.git" main
