@@ -4,8 +4,8 @@
     {
       "type": "frame",
       "id": "frame-1761929672442",
-      "x": -2004,
-      "y": 4320,
+      "x": -4343,
+      "y": 4317,
       "name": "lunaris: design system components",
       "theme": {
         "Mode": "Dark"
@@ -5782,13 +5782,90 @@
               "gap": 16,
               "children": [
                 {
-                  "type": "text",
-                  "id": "LViQU",
-                  "fill": "#111111",
-                  "content": "Tus pantallas",
-                  "fontFamily": "JetBrains Mono",
-                  "fontSize": 16,
-                  "fontWeight": "500"
+                  "type": "frame",
+                  "id": "FtUpD",
+                  "name": "List Header",
+                  "width": "fill_container",
+                  "justifyContent": "space_between",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "RzPvO",
+                      "name": "Title",
+                      "fill": "#111111",
+                      "content": "Tus pantallas",
+                      "fontFamily": "JetBrains Mono",
+                      "fontSize": 16,
+                      "fontWeight": "500"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "UOIjI",
+                      "name": "Status Tabs",
+                      "fill": "$--secondary",
+                      "cornerRadius": 999,
+                      "gap": 2,
+                      "padding": 4,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "HU2Yq",
+                          "name": "Activas Tab",
+                          "fill": "$--card",
+                          "cornerRadius": 999,
+                          "effect": {
+                            "type": "shadow",
+                            "shadowType": "outer",
+                            "color": "#0000000d",
+                            "offset": {
+                              "x": 0,
+                              "y": 1
+                            },
+                            "blur": 2
+                          },
+                          "padding": [
+                            6,
+                            16
+                          ],
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "KHoXZ",
+                              "name": "Label",
+                              "fill": "$--foreground",
+                              "content": "Activas",
+                              "fontFamily": "Geist",
+                              "fontSize": 13,
+                              "fontWeight": "500"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "c0VZg",
+                          "name": "Archivadas Tab",
+                          "cornerRadius": 999,
+                          "padding": [
+                            6,
+                            16
+                          ],
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "tk8uS",
+                              "name": "Label",
+                              "fill": "$--muted-foreground",
+                              "content": "Archivadas",
+                              "fontFamily": "Geist",
+                              "fontSize": 13,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
                 },
                 {
                   "type": "frame",
@@ -5864,7 +5941,7 @@
                                       "type": "text",
                                       "id": "WEdjM",
                                       "fill": "#666666",
-                                      "content": "Hospital Central · Santiago",
+                                      "content": "Av. 27 de Febrero · Santo Domingo",
                                       "fontFamily": "Geist",
                                       "fontSize": 13,
                                       "fontWeight": "normal"
@@ -5970,7 +6047,7 @@
                                       "type": "text",
                                       "id": "fEimI",
                                       "fill": "#111111",
-                                      "content": "Vitrina Local Chapinero",
+                                      "content": "Vitrina Plaza Naco",
                                       "fontFamily": "Geist",
                                       "fontSize": 15,
                                       "fontWeight": "600"
@@ -6235,7 +6312,7 @@
                                   "content": "Nombre de la pantalla"
                                 },
                                 "FU4Re": {
-                                  "content": "Ej. Vitrina Local Chapinero"
+                                  "content": "Ej. Valla Av. 27 de Febrero"
                                 }
                               }
                             }
@@ -6295,7 +6372,7 @@
                                   "content": "Ciudad"
                                 },
                                 "FU4Re": {
-                                  "content": "Ej. Bogotá"
+                                  "content": "Ej. Santo Domingo"
                                 }
                               }
                             },
@@ -6309,7 +6386,7 @@
                                   "content": "Dirección o ubicación"
                                 },
                                 "FU4Re": {
-                                  "content": "Ej. Calle 63 #10-20"
+                                  "content": "Ej. Av. Winston Churchill esq. Gustavo Mejía Ricart"
                                 }
                               }
                             }
@@ -6755,10 +6832,10 @@
                               "width": "fill_container",
                               "descendants": {
                                 "6olUK": {
-                                  "content": "Tarifa por 5 segundos (RD$)"
+                                  "content": "Tarifa por 5 segundos (US$)"
                                 },
                                 "FU4Re": {
-                                  "content": "Ej. 2.50"
+                                  "content": "Ej. 0.25"
                                 }
                               }
                             }
@@ -6796,7 +6873,7 @@
                       "type": "ref",
                       "ref": "4x7RU",
                       "name": "Cancel Button",
-                      "enabled": false,
+                      "enabled": true,
                       "descendants": {
                         "r97g1": {
                           "enabled": false
@@ -6832,7 +6909,7 @@
       "type": "frame",
       "id": "K1Tlc",
       "x": 3184,
-      "y": 9030,
+      "y": 9200,
       "name": "screen-detail",
       "clip": true,
       "width": 1440,
@@ -7005,7 +7082,7 @@
                               "type": "text",
                               "id": "GKQCb",
                               "fill": "#666666",
-                              "content": "Hospital Central · Bogotá",
+                              "content": "Av. Winston Churchill · Santo Domingo",
                               "fontFamily": "Geist",
                               "fontSize": 13,
                               "fontWeight": "normal"
@@ -7130,7 +7207,7 @@
                                   "name": "Connection Status",
                                   "descendants": {
                                     "AWwyf": {
-                                      "content": "Conectado"
+                                      "content": "En línea"
                                     }
                                   }
                                 },
@@ -7802,7 +7879,7 @@
                               "type": "text",
                               "id": "ZjeYd",
                               "fill": "#111111",
-                              "content": "RD$ 2.50",
+                              "content": "US$ 0.25",
                               "fontFamily": "Geist",
                               "fontSize": 14,
                               "fontWeight": "500"
@@ -7910,7 +7987,7 @@
                               "type": "text",
                               "id": "lJaAs",
                               "fill": "#111111",
-                              "content": "Hoy · 12 reproducciones · RD$ 30.00",
+                              "content": "Hoy · 12 reproducciones · US$ 9.00",
                               "fontFamily": "Geist",
                               "fontSize": 14,
                               "fontWeight": "normal"
@@ -7928,7 +8005,7 @@
                               "type": "text",
                               "id": "nVX5V",
                               "fill": "#111111",
-                              "content": "Últimos 7 días · 180 reproducciones · RD$ 450.00",
+                              "content": "Últimos 7 días · 180 reproducciones · US$ 135.00",
                               "fontFamily": "Geist",
                               "fontSize": 14,
                               "fontWeight": "normal"
@@ -7952,7 +8029,7 @@
       "type": "frame",
       "id": "boX8x",
       "x": 3184,
-      "y": 10390,
+      "y": 10560,
       "name": "edit-screen",
       "clip": true,
       "width": 1440,
@@ -8210,7 +8287,7 @@
                                   "content": "Ciudad"
                                 },
                                 "FU4Re": {
-                                  "content": "Bogotá",
+                                  "content": "Santo Domingo",
                                   "fill": "$--foreground"
                                 }
                               }
@@ -8225,7 +8302,7 @@
                                   "content": "Dirección o ubicación"
                                 },
                                 "FU4Re": {
-                                  "content": "Hospital Central",
+                                  "content": "Av. Winston Churchill",
                                   "fill": "$--foreground"
                                 }
                               }
@@ -8678,10 +8755,10 @@
                               "width": "fill_container",
                               "descendants": {
                                 "6olUK": {
-                                  "content": "Tarifa por 5 segundos (RD$)"
+                                  "content": "Tarifa por 5 segundos (US$)"
                                 },
                                 "FU4Re": {
-                                  "content": "2.50",
+                                  "content": "0.25",
                                   "fill": "$--foreground"
                                 }
                               }
@@ -8720,7 +8797,7 @@
                       "type": "ref",
                       "ref": "4x7RU",
                       "name": "Cancel Button",
-                      "enabled": false,
+                      "enabled": true,
                       "descendants": {
                         "r97g1": {
                           "enabled": false
@@ -8755,8 +8832,8 @@
     {
       "type": "frame",
       "id": "lrVaf",
-      "x": 3184,
-      "y": 11980,
+      "x": 4784,
+      "y": 9540,
       "name": "screen-dashboard-empty",
       "clip": true,
       "width": 1440,
@@ -8975,8 +9052,8 @@
     {
       "type": "frame",
       "id": "PvUrR",
-      "x": 3184,
-      "y": 12830,
+      "x": 10584,
+      "y": 4320,
       "name": "player-pairing",
       "clip": true,
       "width": 1600,
@@ -9127,8 +9204,8 @@
     {
       "type": "frame",
       "id": "OgqbE",
-      "x": 4864,
-      "y": 12830,
+      "x": 10584,
+      "y": 5500,
       "name": "player-now-playing",
       "clip": true,
       "width": 1600,
@@ -9587,8 +9664,8 @@
     {
       "type": "frame",
       "id": "Pj6Fg",
-      "x": 3344,
-      "y": 17357,
+      "x": 7741,
+      "y": 5637,
       "name": "advertiser-assets",
       "clip": true,
       "width": 1440,
@@ -10302,8 +10379,8 @@
     {
       "type": "frame",
       "id": "I7yiWe",
-      "x": 3344,
-      "y": 18678,
+      "x": 7741,
+      "y": 6958,
       "name": "advertiser-ads",
       "clip": true,
       "width": 1440,
@@ -10977,8 +11054,8 @@
     {
       "type": "frame",
       "id": "xd9Bw",
-      "x": 3344,
-      "y": 19896,
+      "x": 7741,
+      "y": 8176,
       "name": "advertiser-calendar",
       "clip": true,
       "width": 1440,
@@ -11935,8 +12012,8 @@
     {
       "type": "frame",
       "id": "LJTjX",
-      "x": 3349,
-      "y": 16040,
+      "x": 7746,
+      "y": 4320,
       "name": "advertiser-search",
       "clip": true,
       "width": 1440,
@@ -13001,8 +13078,8 @@
     {
       "type": "frame",
       "id": "fmBsV",
-      "x": 7908,
-      "y": 4320,
+      "x": -2004,
+      "y": 14004,
       "name": "web: marketing components",
       "width": 1600,
       "fill": "#1F1F1F",
@@ -13956,8 +14033,8 @@
     {
       "type": "frame",
       "id": "M8RFlZ",
-      "x": 9708,
-      "y": 4320,
+      "x": -204,
+      "y": 14004,
       "name": "web-home",
       "clip": true,
       "width": 1440,
@@ -17378,8 +17455,8 @@
                 {
                   "type": "frame",
                   "id": "R6qSD",
-                  "x": 212,
-                  "y": 194,
+                  "x": 215,
+                  "y": 163,
                   "name": "Pin Santiago",
                   "gap": 10,
                   "alignItems": "center",
@@ -17423,23 +17500,12 @@
                 {
                   "type": "frame",
                   "id": "pXb9Y",
-                  "x": 300,
-                  "y": 312,
+                  "x": 184,
+                  "y": 296,
                   "name": "Pin Santo Domingo",
                   "gap": 10,
                   "alignItems": "center",
                   "children": [
-                    {
-                      "type": "ellipse",
-                      "id": "F0KtHM",
-                      "name": "Dot",
-                      "fill": "$web-signal",
-                      "width": 14,
-                      "height": 14,
-                      "stroke": "#EC5E2B55",
-                      "strokeWidth": 6,
-                      "strokeAlignment": "outer"
-                    },
                     {
                       "type": "frame",
                       "id": "F1aLcH",
@@ -17462,14 +17528,25 @@
                           "fontWeight": "500"
                         }
                       ]
+                    },
+                    {
+                      "type": "ellipse",
+                      "id": "F0KtHM",
+                      "name": "Dot",
+                      "fill": "$web-signal",
+                      "width": 14,
+                      "height": 14,
+                      "stroke": "#EC5E2B55",
+                      "strokeWidth": 6,
+                      "strokeAlignment": "outer"
                     }
                   ]
                 },
                 {
                   "type": "frame",
                   "id": "vlmCb",
-                  "x": 404,
-                  "y": 290,
+                  "x": 412,
+                  "y": 286,
                   "name": "Pin Punta Cana",
                   "gap": 10,
                   "alignItems": "center",
@@ -17526,8 +17603,8 @@
                 {
                   "type": "frame",
                   "id": "mwSmL",
-                  "x": 204,
-                  "y": 110,
+                  "x": 216,
+                  "y": 115,
                   "name": "Pin Puerto Plata",
                   "gap": 10,
                   "alignItems": "center",
@@ -17923,8 +18000,8 @@
     {
       "type": "frame",
       "id": "wxNnc",
-      "x": 9708,
-      "y": 14490,
+      "x": -204,
+      "y": 24174,
       "name": "web-mock-buscar-pantallas",
       "clip": true,
       "width": 1440,
@@ -18989,8 +19066,8 @@
     {
       "type": "frame",
       "id": "dqHbv",
-      "x": 11268,
-      "y": 4320,
+      "x": 1356,
+      "y": 14004,
       "name": "web-home-mobile",
       "clip": true,
       "width": 390,
@@ -22421,23 +22498,12 @@
                 {
                   "type": "frame",
                   "id": "cYtfS",
-                  "x": 168,
-                  "y": 143,
+                  "x": 72,
+                  "y": 133,
                   "name": "Pin Santo Domingo",
                   "gap": 10,
                   "alignItems": "center",
                   "children": [
-                    {
-                      "type": "ellipse",
-                      "id": "S1qd9",
-                      "name": "Dot",
-                      "fill": "$web-signal",
-                      "width": 14,
-                      "height": 14,
-                      "stroke": "#EC5E2B55",
-                      "strokeWidth": 6,
-                      "strokeAlignment": "outer"
-                    },
                     {
                       "type": "frame",
                       "id": "roNnM",
@@ -22460,6 +22526,17 @@
                           "fontWeight": "500"
                         }
                       ]
+                    },
+                    {
+                      "type": "ellipse",
+                      "id": "S1qd9",
+                      "name": "Dot",
+                      "fill": "$web-signal",
+                      "width": 14,
+                      "height": 14,
+                      "stroke": "#EC5E2B55",
+                      "strokeWidth": 6,
+                      "strokeAlignment": "outer"
                     }
                   ]
                 },
@@ -22479,8 +22556,8 @@
                 {
                   "type": "frame",
                   "id": "s9iT9",
-                  "x": 38,
-                  "y": -30,
+                  "x": 43,
+                  "y": -81,
                   "name": "Pin Santiago (fuera de vista)",
                   "gap": 10,
                   "alignItems": "center",
@@ -22524,8 +22601,8 @@
                 {
                   "type": "frame",
                   "id": "hfe2T",
-                  "x": 25,
-                  "y": -165,
+                  "x": 45,
+                  "y": -156,
                   "name": "Pin Puerto Plata (fuera de vista)",
                   "gap": 10,
                   "alignItems": "center",
@@ -22569,8 +22646,8 @@
                 {
                   "type": "frame",
                   "id": "YEtOK",
-                  "x": 411,
-                  "y": 123,
+                  "x": 424,
+                  "y": 116,
                   "name": "Pin Punta Cana (fuera de vista)",
                   "gap": 10,
                   "alignItems": "center",
@@ -23000,8 +23077,8 @@
     {
       "type": "frame",
       "id": "gS3mU",
-      "x": 1076,
-      "y": 4320,
+      "x": -792,
+      "y": 4317,
       "name": "dashboard: components",
       "width": 2028,
       "fill": "$--background",
@@ -23809,8 +23886,8 @@
     {
       "type": "frame",
       "id": "c8J6l",
-      "x": 4744,
-      "y": 9030,
+      "x": 4784,
+      "y": 8180,
       "name": "screen-detail-more-menu",
       "clip": true,
       "width": 1440,
@@ -23983,7 +24060,7 @@
                               "type": "text",
                               "id": "F9KVTO",
                               "fill": "#666666",
-                              "content": "Hospital Central · Bogotá",
+                              "content": "Av. Winston Churchill · Santo Domingo",
                               "fontFamily": "Geist",
                               "fontSize": 13,
                               "fontWeight": "normal"
@@ -24108,7 +24185,7 @@
                                   "name": "Connection Status",
                                   "descendants": {
                                     "AWwyf": {
-                                      "content": "Conectado"
+                                      "content": "En línea"
                                     }
                                   }
                                 },
@@ -24734,7 +24811,7 @@
                   }
                 },
                 {
-                  "id": "o0jb05",
+                  "id": "H41gVo",
                   "type": "ref",
                   "ref": "ERkuB",
                   "name": "Precio Card",
@@ -24746,7 +24823,7 @@
                       "children": [
                         {
                           "type": "text",
-                          "id": "GHJco",
+                          "id": "K4TXdW",
                           "fill": "#111111",
                           "content": "Precio",
                           "fontFamily": "Geist",
@@ -24761,7 +24838,7 @@
                       "children": [
                         {
                           "type": "frame",
-                          "id": "T5XFJA",
+                          "id": "vUNjn",
                           "name": "Tarifa de referencia",
                           "width": "fill_container",
                           "gap": 16,
@@ -24769,18 +24846,18 @@
                           "children": [
                             {
                               "type": "text",
-                              "id": "g5SFvk",
+                              "id": "JMeHM",
                               "fill": "#666666",
-                              "content": "Tarifa de referencia",
+                              "content": "Tarifa por 5 segundos",
                               "fontFamily": "Geist",
                               "fontSize": 14,
                               "fontWeight": "normal"
                             },
                             {
                               "type": "text",
-                              "id": "wWxMb",
+                              "id": "zHRja",
                               "fill": "#111111",
-                              "content": "45.000 COP",
+                              "content": "US$ 0.25",
                               "fontFamily": "Geist",
                               "fontSize": 14,
                               "fontWeight": "500"
@@ -24789,15 +24866,18 @@
                         },
                         {
                           "type": "frame",
-                          "id": "gZ7le",
+                          "id": "nQMy1",
+                          "x": 24,
+                          "y": 54,
                           "name": "Modelo",
-                          "width": "fill_container",
+                          "enabled": false,
+                          "width": "fill_container(712)",
                           "gap": 16,
                           "justifyContent": "space_between",
                           "children": [
                             {
                               "type": "text",
-                              "id": "D6GDaR",
+                              "id": "cDXSe",
                               "fill": "#666666",
                               "content": "Modelo",
                               "fontFamily": "Geist",
@@ -24806,7 +24886,7 @@
                             },
                             {
                               "type": "text",
-                              "id": "U47xOB",
+                              "id": "Mx8VK",
                               "fill": "#111111",
                               "content": "Por hora",
                               "fontFamily": "Geist",
@@ -24823,7 +24903,7 @@
                   }
                 },
                 {
-                  "id": "UhLuT",
+                  "id": "Q0Af9L",
                   "type": "ref",
                   "ref": "ERkuB",
                   "name": "Actividad publicitaria Card",
@@ -24837,16 +24917,16 @@
                       "children": [
                         {
                           "type": "icon",
-                          "id": "hDXv0",
+                          "id": "oee6y",
                           "width": 16,
                           "height": 16,
-                          "icon": "lock",
+                          "icon": "bar_chart",
                           "library": "Material Symbols Sharp",
                           "fill": "#666666"
                         },
                         {
                           "type": "text",
-                          "id": "c7wG4h",
+                          "id": "BYKTY",
                           "fill": "#111111",
                           "content": "Actividad publicitaria",
                           "fontFamily": "Geist",
@@ -24857,18 +24937,58 @@
                     },
                     "QMHOm": {
                       "layout": "vertical",
+                      "gap": 12,
                       "children": [
                         {
                           "type": "text",
-                          "id": "rynNN",
+                          "id": "jdT5d",
+                          "x": 24,
+                          "y": 24,
+                          "enabled": false,
                           "fill": "#666666",
                           "textGrowth": "fixed-width",
-                          "width": "fill_container",
+                          "width": "fill_container(712)",
                           "content": "Próximamente: aquí verás las campañas activas y el historial de anuncios reproducidos en esta pantalla.",
                           "lineHeight": 1.5,
                           "fontFamily": "Geist",
                           "fontSize": 13,
                           "fontWeight": "normal"
+                        },
+                        {
+                          "type": "frame",
+                          "id": "Uz4Qw",
+                          "name": "Hoy",
+                          "width": "fill_container",
+                          "gap": 16,
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "NP1sM",
+                              "fill": "#111111",
+                              "content": "Hoy · 12 reproducciones · US$ 9.00",
+                              "fontFamily": "Geist",
+                              "fontSize": 14,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "e9ivx",
+                          "name": "Últimos 7 días",
+                          "width": "fill_container",
+                          "gap": 16,
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "jrRPv",
+                              "fill": "#111111",
+                              "content": "Últimos 7 días · 180 reproducciones · US$ 135.00",
+                              "fontFamily": "Geist",
+                              "fontSize": 14,
+                              "fontWeight": "normal"
+                            }
+                          ]
                         }
                       ]
                     },
@@ -25197,8 +25317,8 @@
     {
       "type": "frame",
       "id": "Pvu5l",
-      "x": 11738,
-      "y": 12185,
+      "x": 1826,
+      "y": 21869,
       "name": "note: web-home-mobile / La Red",
       "width": 360,
       "fill": "#FFF4D6",
@@ -25313,8 +25433,8 @@
     {
       "type": "frame",
       "id": "Qormy",
-      "x": 4744,
-      "y": 6360,
+      "x": 4784,
+      "y": 5340,
       "name": "screen-dashboard-nav-collapsed",
       "clip": true,
       "width": 1440,
@@ -25769,6 +25889,1208 @@
                         },
                         "tiojM": {
                           "enabled": false
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "RQa8O",
+      "x": 4784,
+      "y": 4320,
+      "name": "onboarding-code-found",
+      "clip": true,
+      "width": 1440,
+      "height": 900,
+      "fill": "#F2F3F0",
+      "layout": "vertical",
+      "children": [
+        {
+          "type": "frame",
+          "id": "wwSlh",
+          "name": "Top Bar",
+          "width": "fill_container",
+          "height": 88,
+          "padding": [
+            0,
+            64
+          ],
+          "justifyContent": "space_between",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "zbX3h",
+              "name": "Logo",
+              "gap": 8,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon",
+                  "id": "K7hBw",
+                  "width": 24,
+                  "height": 24,
+                  "icon": "tv",
+                  "library": "Material Symbols Sharp",
+                  "fill": "$--primary"
+                },
+                {
+                  "type": "text",
+                  "id": "Eqd1l",
+                  "fill": "#111111",
+                  "content": "PROYECTA",
+                  "fontFamily": "JetBrains Mono",
+                  "fontSize": 16,
+                  "fontWeight": "700"
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "id": "EQhgi",
+              "fill": "#666666",
+              "content": "Salir",
+              "fontFamily": "Geist",
+              "fontSize": 14,
+              "fontWeight": "normal"
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "IkqUR",
+          "name": "Center",
+          "width": "fill_container",
+          "height": "fill_container",
+          "layout": "vertical",
+          "gap": 40,
+          "justifyContent": "center",
+          "alignItems": "center",
+          "children": [
+            {
+              "id": "X29AH",
+              "type": "ref",
+              "ref": "it00G",
+              "name": "Badge",
+              "descendants": {
+                "ULBkt": {
+                  "enabled": false
+                },
+                "izLyj": {
+                  "content": "Paso único · 2 minutos"
+                }
+              }
+            },
+            {
+              "type": "frame",
+              "id": "uAxOi",
+              "name": "Text Block",
+              "width": 560,
+              "layout": "vertical",
+              "gap": 16,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "MFrh1",
+                  "name": "Headline",
+                  "fill": "#111111",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Publiquemos tu primera pantalla",
+                  "lineHeight": 1.2,
+                  "textAlign": "center",
+                  "fontFamily": "JetBrains Mono",
+                  "fontSize": 36,
+                  "fontWeight": "500"
+                },
+                {
+                  "type": "text",
+                  "id": "ZsxDy",
+                  "name": "Subtext",
+                  "fill": "#666666",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Proyecta conecta tus pantallas digitales con anunciantes que buscan espacios como el tuyo. Cuéntanos sobre tu pantalla y hazla parte de la red.",
+                  "lineHeight": 1.5,
+                  "textAlign": "center",
+                  "fontFamily": "Geist",
+                  "fontSize": 16,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "id": "GXfrJ",
+              "type": "ref",
+              "ref": "ERkuB",
+              "name": "Pairing Card",
+              "width": 640,
+              "descendants": {
+                "4zoFt": {
+                  "layout": "vertical",
+                  "gap": 4,
+                  "justifyContent": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "k2yCfd",
+                      "fill": "$--foreground",
+                      "content": "Conecta tu pantalla física",
+                      "fontFamily": "$--font-secondary",
+                      "fontSize": 16,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "text",
+                      "id": "yyFQj",
+                      "fill": "$--muted-foreground",
+                      "content": "Antes de publicarla, confirmemos que tu pantalla está encendida y lista.",
+                      "fontFamily": "$--font-secondary",
+                      "fontSize": 13,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                "QMHOm": {
+                  "layout": "vertical",
+                  "gap": 20,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "crSWW",
+                      "name": "Step 1",
+                      "width": "fill_container",
+                      "gap": 16,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "E2nDrj",
+                          "name": "Number",
+                          "width": 28,
+                          "height": 28,
+                          "fill": "$--secondary",
+                          "cornerRadius": "$--radius-pill",
+                          "justifyContent": "center",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "CH7V9",
+                              "fill": "$--secondary-foreground",
+                              "content": "1",
+                              "fontFamily": "$--font-secondary",
+                              "fontSize": 13,
+                              "fontWeight": "600"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "xKdQW",
+                          "name": "Text",
+                          "width": "fill_container",
+                          "layout": "vertical",
+                          "gap": 2,
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "y5NXLi",
+                              "fill": "$--foreground",
+                              "content": "Descarga el reproductor Proyecta",
+                              "fontFamily": "$--font-secondary",
+                              "fontSize": 14,
+                              "fontWeight": "600"
+                            },
+                            {
+                              "type": "text",
+                              "id": "hiq3F",
+                              "fill": "$--muted-foreground",
+                              "textGrowth": "fixed-width",
+                              "width": "fill_container",
+                              "content": "Instálalo en el dispositivo conectado a tu pantalla.",
+                              "fontFamily": "$--font-secondary",
+                              "fontSize": 13,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        },
+                        {
+                          "id": "ZeWhJ",
+                          "type": "ref",
+                          "ref": "4x7RU",
+                          "name": "Download Button",
+                          "descendants": {
+                            "r97g1": {
+                              "enabled": false
+                            },
+                            "7ZVG7": {
+                              "content": "Descargar"
+                            }
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "VI4LA",
+                      "name": "Step 2",
+                      "width": "fill_container",
+                      "gap": 16,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "eSeHQ",
+                          "name": "Number",
+                          "width": 28,
+                          "height": 28,
+                          "fill": "$--secondary",
+                          "cornerRadius": "$--radius-pill",
+                          "justifyContent": "center",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "KctLQ",
+                              "fill": "$--secondary-foreground",
+                              "content": "2",
+                              "fontFamily": "$--font-secondary",
+                              "fontSize": 13,
+                              "fontWeight": "600"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "bXBGA",
+                          "name": "Text",
+                          "width": "fill_container",
+                          "layout": "vertical",
+                          "gap": 2,
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "pBrUB",
+                              "fill": "$--foreground",
+                              "content": "Ingresa el código de vinculación",
+                              "fontFamily": "$--font-secondary",
+                              "fontSize": 14,
+                              "fontWeight": "600"
+                            },
+                            {
+                              "type": "text",
+                              "id": "CQwhk",
+                              "fill": "$--muted-foreground",
+                              "textGrowth": "fixed-width",
+                              "width": "fill_container",
+                              "content": "Aparece en tu pantalla luego de instalar el reproductor.",
+                              "fontFamily": "$--font-secondary",
+                              "fontSize": 13,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        },
+                        {
+                          "id": "sMRTD",
+                          "type": "ref",
+                          "ref": "gKpi4",
+                          "width": 160,
+                          "descendants": {
+                            "KbqaX": {
+                              "enabled": false
+                            },
+                            "6olUK": {
+                              "enabled": false
+                            },
+                            "soBSx": {
+                              "stroke": "$--color-success-foreground"
+                            },
+                            "FU4Re": {
+                              "content": "8F3K-2QLM",
+                              "fill": "$--foreground"
+                            }
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "XZpsZ",
+                      "name": "Found Row",
+                      "width": "fill_container",
+                      "gap": 6,
+                      "padding": [
+                        0,
+                        0,
+                        0,
+                        40
+                      ],
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "icon",
+                          "id": "cXY4x",
+                          "name": "Check",
+                          "width": 16,
+                          "height": 16,
+                          "icon": "check_circle",
+                          "library": "Material Symbols Sharp",
+                          "fill": "$--color-success-foreground"
+                        },
+                        {
+                          "type": "text",
+                          "id": "wSZFS",
+                          "name": "Found Text",
+                          "fill": "$--color-success-foreground",
+                          "content": "Pantalla encontrada · lista para vincular",
+                          "fontFamily": "Geist",
+                          "fontSize": 13,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                "tiojM": {
+                  "justifyContent": "space_between",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "b7OwSL",
+                      "fill": "$--muted-foreground",
+                      "content": "Prefiero configurarlo más tarde",
+                      "fontFamily": "$--font-secondary",
+                      "fontSize": 13,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "id": "gYfUP",
+                      "type": "ref",
+                      "ref": "ZETEA",
+                      "name": "Continue Button",
+                      "descendants": {
+                        "mRGd3": {
+                          "enabled": false
+                        },
+                        "q5Hn5": {
+                          "content": "Vincular y continuar"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "aBcZd",
+      "x": 4784,
+      "y": 6420,
+      "name": "add-screen-from-onboarding",
+      "clip": true,
+      "width": 1440,
+      "height": 1640,
+      "fill": "#F2F3F0",
+      "children": [
+        {
+          "id": "lUtw5",
+          "type": "ref",
+          "ref": "d5ZTS",
+          "height": "fill_container",
+          "name": "Sidebar",
+          "descendants": {
+            "FY0oG": {
+              "type": "icon",
+              "id": "W6SHKf",
+              "width": 28,
+              "height": 28,
+              "icon": "tv",
+              "library": "Material Symbols Sharp",
+              "fill": "$--primary"
+            },
+            "MIpaj": {
+              "content": "PROYECTA"
+            },
+            "NvL81": {
+              "children": [
+                {
+                  "id": "y5hMg2",
+                  "type": "ref",
+                  "ref": "dOLzc",
+                  "name": "Pantallas Item",
+                  "descendants": {
+                    "xGT5g": {
+                      "icon": "tv"
+                    },
+                    "TXca3": {
+                      "content": "Pantallas"
+                    }
+                  }
+                },
+                {
+                  "id": "ve30b",
+                  "type": "ref",
+                  "ref": "X6nwq",
+                  "name": "Config Item",
+                  "descendants": {
+                    "xGT5g": {
+                      "icon": "settings"
+                    },
+                    "TXca3": {
+                      "content": "Configuración"
+                    }
+                  }
+                }
+              ]
+            },
+            "uiUgV": {
+              "content": "Casa de la Cultura"
+            },
+            "eUcmA": {
+              "content": "contacto@casacultura.com"
+            }
+          }
+        },
+        {
+          "type": "frame",
+          "id": "bWWBc",
+          "name": "Main",
+          "width": "fill_container",
+          "height": "fill_container",
+          "layout": "vertical",
+          "padding": [
+            40,
+            0
+          ],
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "kjEdE",
+              "name": "Form Column",
+              "width": 720,
+              "layout": "vertical",
+              "gap": 24,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "DArgF",
+                  "name": "Breadcrumb",
+                  "gap": 6,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "LFOxf",
+                      "width": 16,
+                      "height": 16,
+                      "icon": "arrow_back",
+                      "library": "Material Symbols Sharp",
+                      "fill": "#666666"
+                    },
+                    {
+                      "type": "text",
+                      "id": "QNHTG",
+                      "fill": "#666666",
+                      "content": "Volver a Mis pantallas",
+                      "fontFamily": "Geist",
+                      "fontSize": 13,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "iaUrd",
+                  "name": "Page Header",
+                  "layout": "vertical",
+                  "gap": 4,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "xgli6",
+                      "fill": "#111111",
+                      "content": "Agregar pantalla",
+                      "fontFamily": "JetBrains Mono",
+                      "fontSize": 24,
+                      "fontWeight": "500"
+                    },
+                    {
+                      "type": "text",
+                      "id": "jYHbN",
+                      "fill": "#666666",
+                      "content": "Completa la información para publicar tu pantalla en la red de Proyecta.",
+                      "fontFamily": "Geist",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "id": "i6XiV",
+                  "type": "ref",
+                  "ref": "ITZkn",
+                  "name": "Pairing Notice",
+                  "width": "fill_container",
+                  "descendants": {
+                    "TPf8O": {
+                      "content": "Reproductor 8F3K-2QLM listo"
+                    },
+                    "X4L5E": {
+                      "content": "Al guardar, vincularemos este reproductor a la pantalla y empezará a reproducir anuncios."
+                    }
+                  }
+                },
+                {
+                  "id": "R16gCM",
+                  "type": "ref",
+                  "ref": "ERkuB",
+                  "name": "Información básica Card",
+                  "width": "fill_container",
+                  "descendants": {
+                    "4zoFt": {
+                      "height": "fit_content",
+                      "layout": "vertical",
+                      "gap": 2,
+                      "justifyContent": "start",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "y7IvEE",
+                          "fill": "#111111",
+                          "content": "Información básica",
+                          "fontFamily": "Geist",
+                          "fontSize": 16,
+                          "fontWeight": "600"
+                        },
+                        {
+                          "type": "text",
+                          "id": "EUjjP",
+                          "fill": "#666666",
+                          "content": "Cómo y dónde se ve tu pantalla",
+                          "fontFamily": "Geist",
+                          "fontSize": 13,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    "QMHOm": {
+                      "layout": "vertical",
+                      "gap": 16,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "DbDWK",
+                          "name": "Row Nombre",
+                          "width": "fill_container",
+                          "gap": 16,
+                          "children": [
+                            {
+                              "id": "Mq7TA",
+                              "type": "ref",
+                              "ref": "gKpi4",
+                              "width": "fill_container",
+                              "descendants": {
+                                "6olUK": {
+                                  "content": "Nombre de la pantalla"
+                                },
+                                "FU4Re": {
+                                  "content": "Ej. Valla Av. 27 de Febrero"
+                                }
+                              }
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "Ky11o",
+                          "name": "Row Tipo",
+                          "width": "fill_container",
+                          "gap": 16,
+                          "children": [
+                            {
+                              "id": "sZZOk",
+                              "type": "ref",
+                              "ref": "XhJWF",
+                              "width": "fill_container",
+                              "descendants": {
+                                "uEVNH": {
+                                  "content": "Tipo de lugar"
+                                },
+                                "q2CuU": {
+                                  "content": "Selecciona un tipo"
+                                }
+                              }
+                            },
+                            {
+                              "id": "L7FKcM",
+                              "type": "ref",
+                              "ref": "XhJWF",
+                              "width": "fill_container",
+                              "descendants": {
+                                "uEVNH": {
+                                  "content": "Ambiente"
+                                },
+                                "q2CuU": {
+                                  "content": "Interior / Exterior"
+                                }
+                              }
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "ZjYRB",
+                          "name": "Row Ciudad",
+                          "width": "fill_container",
+                          "gap": 16,
+                          "children": [
+                            {
+                              "id": "rmsUl",
+                              "type": "ref",
+                              "ref": "gKpi4",
+                              "width": "fill_container",
+                              "descendants": {
+                                "6olUK": {
+                                  "content": "Ciudad"
+                                },
+                                "FU4Re": {
+                                  "content": "Ej. Santo Domingo"
+                                }
+                              }
+                            },
+                            {
+                              "id": "lOWle",
+                              "type": "ref",
+                              "ref": "gKpi4",
+                              "width": "fill_container",
+                              "descendants": {
+                                "6olUK": {
+                                  "content": "Dirección o ubicación"
+                                },
+                                "FU4Re": {
+                                  "content": "Ej. Av. Winston Churchill esq. Gustavo Mejía Ricart"
+                                }
+                              }
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    "tiojM": {
+                      "enabled": false
+                    }
+                  }
+                },
+                {
+                  "id": "sRx9V",
+                  "type": "ref",
+                  "ref": "ERkuB",
+                  "name": "Información técnica Card",
+                  "width": "fill_container",
+                  "descendants": {
+                    "4zoFt": {
+                      "height": "fit_content",
+                      "layout": "vertical",
+                      "gap": 2,
+                      "justifyContent": "start",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "lIGXR",
+                          "fill": "#111111",
+                          "content": "Información técnica",
+                          "fontFamily": "Geist",
+                          "fontSize": 16,
+                          "fontWeight": "600"
+                        },
+                        {
+                          "type": "text",
+                          "id": "J39Q6k",
+                          "fill": "#666666",
+                          "content": "Especificaciones del panel",
+                          "fontFamily": "Geist",
+                          "fontSize": 13,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    "QMHOm": {
+                      "layout": "vertical",
+                      "gap": 16,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "hnsHD",
+                          "name": "Row Tamano",
+                          "width": "fill_container",
+                          "gap": 16,
+                          "children": [
+                            {
+                              "id": "miXwj",
+                              "type": "ref",
+                              "ref": "gKpi4",
+                              "width": "fill_container",
+                              "descendants": {
+                                "6olUK": {
+                                  "content": "Ancho (cm)"
+                                },
+                                "FU4Re": {
+                                  "content": "Ej. 120"
+                                }
+                              }
+                            },
+                            {
+                              "id": "rLtjy",
+                              "type": "ref",
+                              "ref": "gKpi4",
+                              "width": "fill_container",
+                              "descendants": {
+                                "6olUK": {
+                                  "content": "Alto (cm)"
+                                },
+                                "FU4Re": {
+                                  "content": "Ej. 70"
+                                }
+                              }
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "Bpy7t",
+                          "name": "Row Orientacion",
+                          "width": "fill_container",
+                          "gap": 16,
+                          "children": [
+                            {
+                              "id": "Tf213",
+                              "type": "ref",
+                              "ref": "XhJWF",
+                              "width": "fill_container",
+                              "descendants": {
+                                "uEVNH": {
+                                  "content": "Orientación"
+                                },
+                                "q2CuU": {
+                                  "content": "Horizontal"
+                                }
+                              }
+                            },
+                            {
+                              "id": "O7HQW",
+                              "type": "ref",
+                              "ref": "gKpi4",
+                              "width": "fill_container",
+                              "descendants": {
+                                "6olUK": {
+                                  "content": "Resolución"
+                                },
+                                "FU4Re": {
+                                  "content": "Ej. 1920x1080"
+                                }
+                              }
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    "tiojM": {
+                      "enabled": false,
+                      "layout": "none"
+                    }
+                  }
+                },
+                {
+                  "id": "aDIkC",
+                  "type": "ref",
+                  "ref": "ERkuB",
+                  "name": "Disponibilidad Card",
+                  "width": "fill_container",
+                  "descendants": {
+                    "4zoFt": {
+                      "height": "fit_content",
+                      "layout": "vertical",
+                      "gap": 2,
+                      "justifyContent": "start",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "QzGT3",
+                          "fill": "#111111",
+                          "content": "Disponibilidad",
+                          "fontFamily": "Geist",
+                          "fontSize": 16,
+                          "fontWeight": "600"
+                        },
+                        {
+                          "type": "text",
+                          "id": "gmRE9",
+                          "fill": "#666666",
+                          "content": "¿Cuándo puede usarse tu pantalla para anuncios?",
+                          "fontFamily": "Geist",
+                          "fontSize": 13,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    "QMHOm": {
+                      "layout": "vertical",
+                      "gap": 16,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "daF0T",
+                          "name": "Days",
+                          "width": "fill_container",
+                          "layout": "vertical",
+                          "gap": 8,
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "nPzcc",
+                              "fill": "#111111",
+                              "content": "Días disponibles",
+                              "fontFamily": "Geist",
+                              "fontSize": 14,
+                              "fontWeight": "500"
+                            },
+                            {
+                              "type": "frame",
+                              "id": "u0krC",
+                              "name": "Day Chips",
+                              "gap": 8,
+                              "children": [
+                                {
+                                  "type": "frame",
+                                  "id": "ByD0U",
+                                  "name": "Day Lun",
+                                  "width": 44,
+                                  "height": 36,
+                                  "fill": "#111111",
+                                  "cornerRadius": 999,
+                                  "justifyContent": "center",
+                                  "alignItems": "center",
+                                  "children": [
+                                    {
+                                      "type": "text",
+                                      "id": "AeOiD",
+                                      "fill": "#FFFFFF",
+                                      "content": "Lun",
+                                      "fontFamily": "Geist",
+                                      "fontSize": 13,
+                                      "fontWeight": "500"
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "v7DTE",
+                                  "name": "Day Mar",
+                                  "width": 44,
+                                  "height": 36,
+                                  "fill": "#111111",
+                                  "cornerRadius": 999,
+                                  "justifyContent": "center",
+                                  "alignItems": "center",
+                                  "children": [
+                                    {
+                                      "type": "text",
+                                      "id": "alXwH",
+                                      "fill": "#FFFFFF",
+                                      "content": "Mar",
+                                      "fontFamily": "Geist",
+                                      "fontSize": 13,
+                                      "fontWeight": "500"
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "NxOI4",
+                                  "name": "Day Mié",
+                                  "width": 44,
+                                  "height": 36,
+                                  "fill": "#111111",
+                                  "cornerRadius": 999,
+                                  "justifyContent": "center",
+                                  "alignItems": "center",
+                                  "children": [
+                                    {
+                                      "type": "text",
+                                      "id": "D4Vid",
+                                      "fill": "#FFFFFF",
+                                      "content": "Mié",
+                                      "fontFamily": "Geist",
+                                      "fontSize": 13,
+                                      "fontWeight": "500"
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "v38b9e",
+                                  "name": "Day Jue",
+                                  "width": 44,
+                                  "height": 36,
+                                  "fill": "#111111",
+                                  "cornerRadius": 999,
+                                  "justifyContent": "center",
+                                  "alignItems": "center",
+                                  "children": [
+                                    {
+                                      "type": "text",
+                                      "id": "f8b0n",
+                                      "fill": "#FFFFFF",
+                                      "content": "Jue",
+                                      "fontFamily": "Geist",
+                                      "fontSize": 13,
+                                      "fontWeight": "500"
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "EVwLN",
+                                  "name": "Day Vie",
+                                  "width": 44,
+                                  "height": 36,
+                                  "fill": "#111111",
+                                  "cornerRadius": 999,
+                                  "justifyContent": "center",
+                                  "alignItems": "center",
+                                  "children": [
+                                    {
+                                      "type": "text",
+                                      "id": "D9k85",
+                                      "fill": "#FFFFFF",
+                                      "content": "Vie",
+                                      "fontFamily": "Geist",
+                                      "fontSize": 13,
+                                      "fontWeight": "500"
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "O0znJ0",
+                                  "name": "Day Sáb",
+                                  "width": 44,
+                                  "height": 36,
+                                  "fill": "#E7E8E5",
+                                  "cornerRadius": 999,
+                                  "justifyContent": "center",
+                                  "alignItems": "center",
+                                  "children": [
+                                    {
+                                      "type": "text",
+                                      "id": "j6QoZv",
+                                      "fill": "#111111",
+                                      "content": "Sáb",
+                                      "fontFamily": "Geist",
+                                      "fontSize": 13,
+                                      "fontWeight": "500"
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "EjrPm",
+                                  "name": "Day Dom",
+                                  "width": 44,
+                                  "height": 36,
+                                  "fill": "#E7E8E5",
+                                  "cornerRadius": 999,
+                                  "justifyContent": "center",
+                                  "alignItems": "center",
+                                  "children": [
+                                    {
+                                      "type": "text",
+                                      "id": "pE5hI",
+                                      "fill": "#111111",
+                                      "content": "Dom",
+                                      "fontFamily": "Geist",
+                                      "fontSize": 13,
+                                      "fontWeight": "500"
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "jJXqu",
+                          "name": "Row Horario",
+                          "width": "fill_container",
+                          "gap": 16,
+                          "children": [
+                            {
+                              "id": "G2AuE5",
+                              "type": "ref",
+                              "ref": "gKpi4",
+                              "width": "fill_container",
+                              "descendants": {
+                                "6olUK": {
+                                  "content": "Hora de inicio"
+                                },
+                                "FU4Re": {
+                                  "content": "08:00"
+                                }
+                              }
+                            },
+                            {
+                              "id": "AvJwB",
+                              "type": "ref",
+                              "ref": "gKpi4",
+                              "width": "fill_container",
+                              "descendants": {
+                                "6olUK": {
+                                  "content": "Hora de fin"
+                                },
+                                "FU4Re": {
+                                  "content": "20:00"
+                                }
+                              }
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    "tiojM": {
+                      "enabled": false,
+                      "layout": "none"
+                    }
+                  }
+                },
+                {
+                  "id": "ZRAUm",
+                  "type": "ref",
+                  "ref": "ERkuB",
+                  "name": "Información comercial Card",
+                  "width": "fill_container",
+                  "descendants": {
+                    "4zoFt": {
+                      "height": "fit_content",
+                      "layout": "vertical",
+                      "gap": 2,
+                      "justifyContent": "start",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "d6qp1",
+                          "fill": "#111111",
+                          "content": "Información comercial",
+                          "fontFamily": "Geist",
+                          "fontSize": 16,
+                          "fontWeight": "600"
+                        },
+                        {
+                          "type": "text",
+                          "id": "odVyr",
+                          "fill": "#666666",
+                          "content": "Se cobra por cada 5 segundos que se muestra un anuncio",
+                          "fontFamily": "Geist",
+                          "fontSize": 13,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    "QMHOm": {
+                      "layout": "vertical",
+                      "gap": 16,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "f50Hg",
+                          "name": "Row Precio",
+                          "width": "fill_container",
+                          "gap": 16,
+                          "children": [
+                            {
+                              "id": "nX4Sc",
+                              "type": "ref",
+                              "ref": "gKpi4",
+                              "width": "fill_container",
+                              "descendants": {
+                                "6olUK": {
+                                  "content": "Tarifa por 5 segundos (US$)"
+                                },
+                                "FU4Re": {
+                                  "content": "Ej. 0.25"
+                                }
+                              }
+                            }
+                          ]
+                        },
+                        {
+                          "type": "text",
+                          "id": "VuLZe",
+                          "name": "Rate Helper",
+                          "fill": "#666666",
+                          "content": "Ej.: un anuncio de 15 s = 3 × tarifa",
+                          "fontFamily": "Geist",
+                          "fontSize": 13,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    "tiojM": {
+                      "enabled": false,
+                      "layout": "none"
+                    }
+                  }
+                },
+                {
+                  "type": "frame",
+                  "id": "YDTDA",
+                  "name": "Form Footer",
+                  "width": "fill_container",
+                  "gap": 12,
+                  "justifyContent": "end",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "id": "m2CBrK",
+                      "type": "ref",
+                      "ref": "4x7RU",
+                      "name": "Cancel Button",
+                      "enabled": true,
+                      "descendants": {
+                        "r97g1": {
+                          "enabled": false
+                        },
+                        "7ZVG7": {
+                          "content": "Cancelar"
+                        }
+                      }
+                    },
+                    {
+                      "id": "V12Qll",
+                      "type": "ref",
+                      "ref": "ZETEA",
+                      "name": "Publish Button",
+                      "descendants": {
+                        "mRGd3": {
+                          "enabled": false
+                        },
+                        "q5Hn5": {
+                          "content": "Guardar y publicar pantalla"
                         }
                       }
                     }
