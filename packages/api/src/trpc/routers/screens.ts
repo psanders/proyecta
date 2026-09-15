@@ -15,6 +15,7 @@ import {
   createLinkDevice,
   createUnlinkDevice
 } from "../../api/pairing/createPairingFunctions.js";
+import { createGetScreenEarnings } from "../../api/screens/createGetScreenEarnings.js";
 import {
   createCreateScreen,
   createGetScreen,
@@ -47,6 +48,13 @@ export const screensRouter = router({
     .query(({ ctx, input }) =>
       createGetScreen(ctx.sync)({ ...input, workspaceAccessKeyId: ctx.workspace.accessKeyId })
     ),
+
+  earnings: workspaceProcedure.input(validate(screenIdSchema)).query(({ ctx, input }) =>
+    createGetScreenEarnings(ctx.sync)({
+      ...input,
+      workspaceAccessKeyId: ctx.workspace.accessKeyId
+    })
+  ),
 
   create: adminProcedure
     .input(validate(createScreenSchema))

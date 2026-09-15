@@ -74,15 +74,6 @@ enum Orientation {
   @@map("orientation")
 }
 
-enum PriceModel {
-  PER_HOUR
-  PER_DAY
-  PER_WEEK
-  PER_MONTH
-
-  @@map("price_model")
-}
-
 enum ScreenStatus {
   ACTIVE
   ARCHIVED
@@ -100,31 +91,30 @@ enum PlayResult {
 
 /// A virtual screen a business publishes. Owned by an Identity workspace (WO… accessKeyId).
 model Screen {
-  id                   String          @id @default(uuid()) @db.Uuid
-  workspaceAccessKeyId String          @map("workspace_access_key_id")
-  name                 String
-  placeType            PlaceType?      @map("place_type")
-  environment          Environment?
-  city                 String
-  address              String?
-  widthCm              Int?            @map("width_cm")
-  heightCm             Int?            @map("height_cm")
-  orientation          Orientation?
-  resolution           String?
+  id                      String          @id @default(uuid()) @db.Uuid
+  workspaceAccessKeyId    String          @map("workspace_access_key_id")
+  name                    String
+  placeType               PlaceType?      @map("place_type")
+  environment             Environment?
+  city                    String
+  address                 String?
+  widthCm                 Int?            @map("width_cm")
+  heightCm                Int?            @map("height_cm")
+  orientation             Orientation?
+  resolution              String?
   /// ISO weekdays, 1 = Monday … 7 = Sunday.
-  availableDays        Int[]           @map("available_days")
+  availableDays           Int[]           @map("available_days")
   /// "HH:MM", local time (America/Santo_Domingo).
-  startTime            String?         @map("start_time")
-  endTime              String?         @map("end_time")
-  /// Reference price in whole Dominican pesos.
-  priceReference       Int?            @map("price_reference")
-  priceModel           PriceModel?     @map("price_model")
-  status               ScreenStatus    @default(ACTIVE)
-  deletedAt            DateTime?       @map("deleted_at")
-  createdAt            DateTime        @default(now()) @map("created_at")
-  updatedAt            DateTime        @updatedAt @map("updated_at")
-  bindings             DeviceBinding[]
-  playLogs             PlayLog[]
+  startTime               String?         @map("start_time")
+  endTime                 String?         @map("end_time")
+  /// Pay-per-display rate: RD$ centavos charged for every 5 seconds an ad displays.
+  ratePerFiveSecondsCents Int?            @map("rate_per_five_seconds_cents")
+  status                  ScreenStatus    @default(ACTIVE)
+  deletedAt               DateTime?       @map("deleted_at")
+  createdAt               DateTime        @default(now()) @map("created_at")
+  updatedAt               DateTime        @updatedAt @map("updated_at")
+  bindings                DeviceBinding[]
+  playLogs                PlayLog[]
 
   @@index([workspaceAccessKeyId, status])
   @@map("screens")
@@ -148,19 +138,24 @@ model DeviceBinding {
 
 /// One ad play reported by a device. Idempotent per device, item and start time.
 model PlayLog {
-  id        String     @id @default(uuid()) @db.Uuid
-  deviceId  String     @map("device_id") @db.Uuid
-  screenId  String?    @map("screen_id") @db.Uuid
-  itemId    String     @map("item_id")
-  codec     String
-  result    PlayResult
-  startedAt DateTime   @map("started_at")
-  endedAt   DateTime   @map("ended_at")
-  createdAt DateTime   @default(now()) @map("created_at")
-  device    Device     @relation(fields: [deviceId], references: [id])
-  screen    Screen?    @relation(fields: [screenId], references: [id])
+  id              String     @id @default(uuid()) @db.Uuid
+  deviceId        String     @map("device_id") @db.Uuid
+  screenId        String?    @map("screen_id") @db.Uuid
+  itemId          String     @map("item_id")
+  codec           String
+  result          PlayResult
+  startedAt       DateTime   @map("started_at")
+  endedAt         DateTime   @map("ended_at")
+  /// Pay-per-display billed units (planned duration ÷ 5000ms), set only for billable plays.
+  billedUnits     Int?       @map("billed_units")
+  /// The screen's rate (RD$ centavos per 5s) snapshotted at record time; null if unset then.
+  rateCentsAtPlay Int?       @map("rate_cents_at_play")
+  createdAt       DateTime   @default(now()) @map("created_at")
+  device          Device     @relation(fields: [deviceId], references: [id])
+  screen          Screen?    @relation(fields: [screenId], references: [id])
 
   @@unique([deviceId, itemId, startedAt])
   @@index([screenId, startedAt])
+  @@index([screenId, result, startedAt])
   @@map("play_logs")
 }

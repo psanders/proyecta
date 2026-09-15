@@ -20,7 +20,11 @@ export const manifestItemSchema = z
     type: z.enum(["image", "video"], { error: "Item type must be image or video" }),
     advertiser: z.string().min(1, "Advertiser is required"),
     title: z.string().min(1, "Title is required"),
-    durationMs: z.number().int().min(1000, "Items must last at least 1 second"),
+    durationMs: z
+      .number()
+      .int()
+      .positive("Item duration must be a positive multiple of 5000 ms")
+      .refine((ms) => ms % 5000 === 0, "Item duration must be a multiple of 5000 ms (5 seconds)"),
     renditions: renditionsSchema
   })
   .refine(

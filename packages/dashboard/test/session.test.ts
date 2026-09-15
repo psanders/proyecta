@@ -7,7 +7,7 @@ import { TRPCClientError } from "@trpc/client";
 import { observable } from "@trpc/server/observable";
 import { createRefreshLink } from "../src/lib/refreshLink.js";
 import { createSessionStore } from "../src/lib/session.js";
-import { availabilitySummary, formatPesos } from "../src/lib/format.js";
+import { availabilitySummary, formatCents, formatPlays } from "../src/lib/format.js";
 
 function memoryStorage() {
   const data = new Map<string, string>();
@@ -117,13 +117,16 @@ describe("dashboard session", () => {
     expect(refresh.called).to.equal(false);
   });
 
-  it("should summarize availability and format pesos like the design", () => {
+  it("should summarize availability and format pay-per-display centavos like the design", () => {
     expect(availabilitySummary([1, 2, 3, 4, 5], "08:00", "20:00")).to.equal("Lun–Vie · 8:00–20:00");
     expect(availabilitySummary([1, 2, 3, 4, 5, 6, 7], "09:00", "22:00")).to.equal(
       "Todos los días · 9:00–22:00"
     );
     expect(availabilitySummary([6, 7], "10:00", "18:00")).to.equal("Sáb, Dom · 10:00–18:00");
     expect(availabilitySummary([], "08:00", "20:00")).to.equal(null);
-    expect(formatPesos(2500)).to.equal("RD$ 2,500");
+    expect(formatCents(250)).to.equal("RD$ 2.50");
+    expect(formatCents(45000)).to.equal("RD$ 450.00");
+    expect(formatPlays(1)).to.equal("1 reproducción");
+    expect(formatPlays(12)).to.equal("12 reproducciones");
   });
 });

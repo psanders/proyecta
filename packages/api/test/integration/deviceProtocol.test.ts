@@ -34,7 +34,7 @@ const rotation: Manifest = {
       type: "image",
       advertiser: "Café Aroma",
       title: "Café",
-      durationMs: 8000,
+      durationMs: 10000,
       renditions: { webp: "/media/cafe-aroma.webp" }
     }
   ]
@@ -266,5 +266,119 @@ describe("device-protocol (integration: HTTP + Postgres)", function () {
     expect(await db.playLog.count({ where: { screenId: screen.id } })).to.equal(1);
 
     expect((await post("heartbeat", { uptimeSec: -1 })).status).to.equal(400);
+  });
+
+  it("bills pay-per-display plays by the reported duration, falling back to the rotation and snapshotting the rate", async () => {
+    const device = await register(`hw-ppd-${stamp}`);
+    const owner = await dashboard(`WO-ppd-${stamp}`);
+    const screen = await owner.screens.create({ name: "Pantalla Tarifa", city: "La Vega" });
+    await owner.screens.link({ screenId: screen.id, code: device.code });
+    const post = (body: unknown) =>
+      fetch(`${base}/device/v1/play-logs`, {
+        method: "POST",
+        headers: {
+          authorization: `Bearer ${device.deviceToken}`,
+          "content-type": "application/json"
+        },
+        body: JSON.stringify(body)
+      });
+    let t = Date.now();
+    const at = () => new Date(t++).toISOString();
+
+    // Before any rate is set, earnings are unavailable.
+    expect(await owner.screens.earnings({ id: screen.id })).to.deep.equal({ available: false });
+
+    await owner.screens.update({
+      id: screen.id,
+      name: "Pantalla Tarifa",
+      city: "La Vega",
+      ratePerFiveSecondsPesos: 2.5
+    });
+
+    await post({
+      plays: [
+        // Billed by the device-reported duration (15s -> 3 units).
+        {
+          itemId: "cafe-aroma",
+          codec: "webp",
+          result: "completed",
+          startedAt: at(),
+          endedAt: at(),
+          durationMs: 15000
+        },
+        // No duration reported (older player) -> falls back to the rotation's 10s (2 units).
+        {
+          itemId: "cafe-aroma",
+          codec: "webp",
+          result: "completed",
+          startedAt: at(),
+          endedAt: at()
+        },
+        // Reported but not a multiple of 5000ms -> not billable, no rotation fallback.
+        {
+          itemId: "cafe-aroma",
+          codec: "webp",
+          result: "completed",
+          startedAt: at(),
+          endedAt: at(),
+          durationMs: 8000
+        },
+        // Stalled -> never billable, even with a valid duration.
+        {
+          itemId: "cafe-aroma",
+          codec: "webp",
+          result: "stalled",
+          startedAt: at(),
+          endedAt: at(),
+          durationMs: 15000
+        }
+      ]
+    });
+
+    const afterFirstBatch = await owner.screens.earnings({ id: screen.id });
+    expect(afterFirstBatch).to.deep.equal({
+      available: true,
+      today: { plays: 2, billableSeconds: 25, earningsCents: 1250 },
+      last7Days: { plays: 2, billableSeconds: 25, earningsCents: 1250 }
+    });
+
+    // Changing the rate doesn't rewrite the plays already recorded.
+    await owner.screens.update({
+      id: screen.id,
+      name: "Pantalla Tarifa",
+      city: "La Vega",
+      ratePerFiveSecondsPesos: 3
+    });
+    await post({
+      plays: [
+        {
+          itemId: "cafe-aroma",
+          codec: "webp",
+          result: "completed",
+          startedAt: at(),
+          endedAt: at(),
+          durationMs: 20000
+        }
+      ]
+    });
+
+    const afterRateChange = await owner.screens.earnings({ id: screen.id });
+    expect(afterRateChange).to.deep.equal({
+      available: true,
+      today: { plays: 3, billableSeconds: 45, earningsCents: 2450 },
+      last7Days: { plays: 3, billableSeconds: 45, earningsCents: 2450 }
+    });
+
+    const rows = await db.playLog.findMany({
+      where: { screenId: screen.id, result: "COMPLETED" },
+      orderBy: { startedAt: "asc" },
+      select: { billedUnits: true, rateCentsAtPlay: true }
+    });
+    expect(rows).to.deep.equal([
+      { billedUnits: 3, rateCentsAtPlay: 250 },
+      { billedUnits: 2, rateCentsAtPlay: 250 },
+      { billedUnits: null, rateCentsAtPlay: 250 },
+      { billedUnits: 4, rateCentsAtPlay: 300 }
+    ]);
   });
 });

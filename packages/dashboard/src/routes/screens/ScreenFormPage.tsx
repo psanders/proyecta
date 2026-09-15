@@ -9,7 +9,6 @@ import {
   ORIENTATION_LABELS,
   PLACE_TYPES,
   PLACE_TYPE_LABELS,
-  PRICE_MODEL_LABELS,
   formatPairingCode,
   type CreateScreenInput
 } from "@proyecta/common";
@@ -36,8 +35,7 @@ interface FormState {
   availableDays: number[];
   startTime: string;
   endTime: string;
-  priceReference: string;
-  priceModel: string;
+  rate: string;
 }
 
 const EMPTY: FormState = {
@@ -53,14 +51,13 @@ const EMPTY: FormState = {
   availableDays: [],
   startTime: "",
   endTime: "",
-  priceReference: "",
-  priceModel: ""
+  rate: ""
 };
 
 const optionsOf = (labels: Record<string, string>) =>
   Object.entries(labels).map(([value, label]) => ({ value, label }));
 const text = (v: string) => (v.trim() === "" ? undefined : v.trim());
-const int = (v: string) => (v.trim() === "" ? undefined : Number(v.replace(/[,\s]/g, "")));
+const num = (v: string) => (v.trim() === "" ? undefined : Number(v.replace(/[,\s]/g, "")));
 
 function toInput(form: FormState): CreateScreenInput {
   return {
@@ -69,15 +66,14 @@ function toInput(form: FormState): CreateScreenInput {
     placeType: text(form.placeType) as CreateScreenInput["placeType"],
     environment: text(form.environment) as CreateScreenInput["environment"],
     address: text(form.address),
-    widthCm: int(form.widthCm),
-    heightCm: int(form.heightCm),
+    widthCm: num(form.widthCm),
+    heightCm: num(form.heightCm),
     orientation: text(form.orientation) as CreateScreenInput["orientation"],
     resolution: text(form.resolution),
     availableDays: form.availableDays,
     startTime: text(form.startTime),
     endTime: text(form.endTime),
-    priceReference: int(form.priceReference),
-    priceModel: text(form.priceModel) as CreateScreenInput["priceModel"]
+    ratePerFiveSecondsPesos: num(form.rate)
   };
 }
 
@@ -110,8 +106,7 @@ export function ScreenFormPage() {
       availableDays: s.availableDays,
       startTime: s.startTime ?? "",
       endTime: s.endTime ?? "",
-      priceReference: s.priceReference?.toString() ?? "",
-      priceModel: s.priceModel ?? ""
+      rate: s.ratePerFiveSecondsCents !== null ? (s.ratePerFiveSecondsCents / 100).toFixed(2) : ""
     });
   }, [existing.data]);
 
@@ -242,20 +237,13 @@ export function ScreenFormPage() {
       </SectionCard>
 
       <SectionCard title={strings.form.commercial} hint={strings.form.commercialHint}>
-        <div className="grid grid-cols-2 gap-4">
-          <TextField
-            label={strings.form.price}
-            inputMode="numeric"
-            placeholder={strings.form.pricePlaceholder}
-            {...bind("priceReference")}
-          />
-          <SelectField
-            label={strings.form.priceModel}
-            placeholder={strings.form.select}
-            options={optionsOf(PRICE_MODEL_LABELS)}
-            {...bind("priceModel")}
-          />
-        </div>
+        <TextField
+          label={strings.form.rate}
+          inputMode="decimal"
+          placeholder={strings.form.ratePlaceholder}
+          hint={strings.form.rateHelper}
+          {...bind("rate")}
+        />
       </SectionCard>
 
       <div className="flex justify-end gap-2">

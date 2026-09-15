@@ -1,7 +1,7 @@
 # Ship checkpoint — pay-per-display
 
 Started: 2026-09-14
-Current stage: 3 — Build
+Current stage: 4 — Test (done, gate before Sync)
 
 **Scope:** Replace the screen's "reference price + pricing model" with a single pay-per-display (PPD) rate: RD$
 per every 5 seconds displayed, stored in integer centavos. Ad durations must be a multiple of 5 seconds. Each play
@@ -17,13 +17,15 @@ today/last-7-days earnings summary from play logs, shown on the screen detail in
 | 0 | Frame | done | |
 | 1 | Design (Pencil) | done | Approved by product owner with 2 tweaks (player-reported durationMs; activity card leads with plays+money) + remove (not disable) Modelo de precio select. Both applied in Pencil and verified with TakeScreenshot. |
 | 2 | Spec reconcile | done | accounting spec Billable-plays/Screen-earnings-summary requirements + design.md updated for both tweaks; `openspec validate --strict` clean (same expected screens-spec INFO as before). |
-| 3 | Build | in-progress | |
+| 3 | Build | done | Prisma migration `20260914223000_pay_per_display`; common schemas (screen rate, manifest 5s multiple, deviceProtocol optional durationMs, new accounting.schema.ts); player engine/main report durationMs; API createRecordPlayLogs billing + createGetScreenEarnings + screens.earnings route; dashboard form/detail cards; demo ads regenerated at 5s-aligned durations. Branch `feat/pay-per-display`. |
+| 4 | Test | done | 92 unit (common 19, api 59, dashboard 5, player 9) + 16 integration + 3 e2e, all green. Found and fixed a real bug via the integration test: schema-level pesos→cents transform double-applied (input validated twice: tRPC boundary + validated-function layer) — fixed by making the schema validation-only and converting once in the API layer (see design.md). |
 | 4 | Test | pending | |
 | 5 | Sync | pending | Human gate |
 | 6 | Archive | pending | Human gate |
 
 ## Decision log
 
+- 2026-09-14 — Product owner approved design/spec with 2 tweaks (player-reported `durationMs` for billing instead of a rotation-only lookup; Actividad publicitaria leads with plays+money, not seconds) plus removing (not disabling) "Modelo de precio" in Pencil. Applied both in Pencil (verified with TakeScreenshot) and in the accounting spec/design before any code (spec-reconcile stage). Then built the whole vertical slice (common → player → API → dashboard → demo assets) on branch `feat/pay-per-display` and got a full green gate (lint, typecheck, 92 unit + 16 integration + 3 e2e tests). Stopping here per instructions — human gate before sync/archive.
 - 2026-09-14 — Pencil design done: add-screen (Y2jVW) and edit-screen (h9a2Qh) "Información comercial" reduced to one field "Tarifa por 5 segundos (RD$)" + helper "Ej.: un anuncio de 15 s = 3 × tarifa"; old "Modelo de precio" select disabled (enabled:false — can't hard-delete a component-instance descendant). Also fixed leftover Colombian-peso placeholder copy ("COP" → RD$) while touching this section. screen-detail Precio card (GVMr9) now shows "Tarifa por 5 segundos → RD$ 2.50" (Modelo row disabled). Actividad publicitaria card (qpw6k) replaced the "Próximamente" lock/text with a bar_chart icon and two rows (Hoy / Últimos 7 días, each "Xs · RD$Y"). Built entirely with Copy()+Update() per the known Insert() +50px/blank-screenshot bug — no Insert() used. add-screen/edit-screen frame height bumped 1470→1520 to fit the added helper line (verified visually; the "Cancel Button fully clipped" warning is pre-existing noise from an already-disabled Cancel button, unrelated to this change).
 - 2026-09-14 — Checkpoint created; openspec change `pay-per-display` proposed and validated (proposal, specs/accounting, specs/screens delta, design, tasks). `openspec validate` gives an expected INFO: `screens` main spec doesn't exist yet (device-protocol not synced/archived) — noted as a dependency in the proposal.
 - 2026-09-14 — Rate storage: integer centavos of RD$ per 5s (`Screen.ratePerFiveSecondsCents`) — exact fractional pesos (e.g. RD$2.50), no float drift.

@@ -50,7 +50,15 @@ export const playLogBatchSchema = z.object({
         codec: z.string().min(1).max(16),
         result: z.enum(["completed", "stalled", "failed"]),
         startedAt: z.iso.datetime(),
-        endedAt: z.iso.datetime()
+        endedAt: z.iso.datetime(),
+        /**
+         * Additive (v0.2 of the play-log batch): the ad's planned duration in ms, as the player
+         * knows it. Deliberately unconstrained beyond "a plain integer" here — a zero, negative,
+         * or non-multiple-of-5000 value still gets the play stored, just not billed; see the
+         * `accounting` capability. Absent on older players, which fall back to a server-side
+         * rotation lookup.
+         */
+        durationMs: z.number().int().optional()
       })
     )
     .min(1)

@@ -25,9 +25,18 @@ function trimHour(time: string): string {
   return time.replace(/^0(\d)/, "$1");
 }
 
-/** "RD$ 2,500" */
-export function formatPesos(amount: number): string {
-  return `RD$ ${new Intl.NumberFormat("es-DO", { maximumFractionDigits: 0 }).format(amount)}`;
+/** "RD$ 2.50" — `cents` are integer RD$ centavos (pay-per-display rates and earnings). */
+export function formatCents(cents: number): string {
+  const pesos = cents / 100;
+  return `RD$ ${new Intl.NumberFormat("es-DO", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+  }).format(pesos)}`;
+}
+
+/** "1 reproducción" / "12 reproducciones" */
+export function formatPlays(n: number): string {
+  return n === 1 ? "1 reproducción" : `${n} reproducciones`;
 }
 
 /** "hace 5 min" */

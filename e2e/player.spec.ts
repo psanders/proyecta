@@ -70,6 +70,12 @@ test.describe("player on the device protocol", () => {
     });
     const plays = await page.evaluate(() => window.__proyecta.plays);
     expect(plays.slice(0, 2).map((p) => p.itemId)).toEqual(["cafe-aroma", "cerveceria-caribe"]);
+    // Every play reports the ad's real planned duration (pay-per-display billing), not the
+    // `slotMs` debug cap used to speed up this test.
+    for (const play of plays.slice(0, 2)) {
+      expect(play.durationMs).toBeGreaterThan(0);
+      expect(play.durationMs % 5000).toBe(0);
+    }
 
     await trpc(request, "screens.unlink", { id: screen.id }, auth);
     await expect(page.getByRole("heading", { name: "Vincula esta pantalla" })).toBeVisible();

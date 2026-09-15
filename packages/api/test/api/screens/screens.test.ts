@@ -32,8 +32,7 @@ function row(overrides: Record<string, unknown> = {}) {
     availableDays: [] as number[],
     startTime: null,
     endTime: null,
-    priceReference: null,
-    priceModel: null,
+    ratePerFiveSecondsCents: null,
     status: "ACTIVE",
     deletedAt: null,
     createdAt: NOW,
@@ -118,6 +117,49 @@ describe("screen functions", () => {
     }
   });
 
+  it("should convert a fractional pay-per-display rate into exact centavos", async () => {
+    // Arrange
+    const client = db();
+    client.screen.create.resolves(row({ ratePerFiveSecondsCents: 250 }));
+
+    // Act
+    const view = await createCreateScreen(deps(client))({
+      workspaceAccessKeyId: "WO1",
+      name: "A",
+      city: "Santiago",
+      ratePerFiveSecondsPesos: 2.5
+    });
+
+    // Assert
+    expect(client.screen.create.firstCall.args[0].data).to.include({
+      ratePerFiveSecondsCents: 250
+    });
+    expect(view.ratePerFiveSecondsCents).to.equal(250);
+  });
+
+  it("should reject a rate with more than two decimal places", async () => {
+    // Arrange
+    const client = db();
+
+    // Act + Assert
+    try {
+      await createCreateScreen(deps(client))({
+        workspaceAccessKeyId: "WO1",
+        name: "A",
+        city: "Santiago",
+        ratePerFiveSecondsPesos: 2.505
+      });
+      expect.fail("expected ValidationError");
+    } catch (err) {
+      expect(err).to.be.instanceOf(ValidationError);
+      expect((err as ValidationError).fieldErrors[0]).to.include({
+        field: "ratePerFiveSecondsPesos",
+        message: "Usa como máximo dos decimales"
+      });
+      expect(client.screen.create.called).to.equal(false);
+    }
+  });
+
   it("should not find screens of another workspace", async () => {
     // Arrange
     const client = db();
@@ -147,8 +189,7 @@ describe("screen functions", () => {
       availableDays: [1, 2, 3],
       startTime: "08:00",
       endTime: "20:00",
-      priceReference: 2500,
-      priceModel: "PER_HOUR"
+      ratePerFiveSecondsCents: 250
     };
     client.screen.findMany.resolves([
       row({ id: "a", ...complete }),

@@ -17,7 +17,7 @@ describe("manifestSchema", () => {
         type: "image",
         advertiser: "Café Aroma",
         title: "Tu mañana empieza aquí",
-        durationMs: 8000,
+        durationMs: 10000,
         renditions: { webp: "/dev/media/cafe-aroma.webp" }
       },
       {
@@ -43,6 +43,18 @@ describe("manifestSchema", () => {
     // Arrange
     const broken = structuredClone(manifest);
     broken.items[1]!.renditions = { webp: "/dev/media/poster.webp" } as never;
+
+    // Act
+    const result = manifestSchema.safeParse(broken);
+
+    // Assert
+    expect(result.success).to.equal(false);
+  });
+
+  it("should reject an item duration that isn't a multiple of 5000 ms", () => {
+    // Arrange
+    const broken = structuredClone(manifest);
+    broken.items[0]!.durationMs = 8000;
 
     // Act
     const result = manifestSchema.safeParse(broken);

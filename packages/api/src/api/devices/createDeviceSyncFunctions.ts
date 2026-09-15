@@ -5,6 +5,7 @@ import { z } from "zod/v4";
 import {
   heartbeatSchema,
   playLogBatchSchema,
+  unitsForDurationMs,
   withErrorHandlingAndValidation
 } from "@proyecta/common";
 import { logger } from "../../logger.js";
@@ -69,11 +70,14 @@ export function createRecordHeartbeat(deps: DeviceSyncDeps) {
 
 /**
  * Creates a function that stores a batch of plays idempotently, attributing each play to the
- * screen the device was linked to when it started (by link history).
+ * screen the device was linked to when it started (by link history), and pricing every completed
+ * play under pay-per-display: the play's duration — as reported by the device, falling back to a
+ * rotation lookup only when the device didn't report one (older players) — converted to billed
+ * 5-second units, priced at the screen's rate snapshotted at this moment.
  *
- * @param deps - Injected database client
+ * @param deps - Injected database client and default-rotation loader
  */
-export function createRecordPlayLogs(deps: Pick<DeviceSyncDeps, "db">) {
+export function createRecordPlayLogs(deps: Pick<DeviceSyncDeps, "db" | "loadRotation">) {
   const schema = playLogBatchSchema.extend({ deviceId: z.uuid() });
 
   const fn = async (params: z.infer<typeof schema>): Promise<{ accepted: number }> => {
@@ -85,17 +89,49 @@ export function createRecordPlayLogs(deps: Pick<DeviceSyncDeps, "db">) {
       bindings.find((b) => b.linkedAt <= startedAt && (!b.unlinkedAt || startedAt < b.unlinkedAt))
         ?.screenId ?? null;
 
+    // Only load the default rotation when some completed play needs it as a fallback.
+    const needsRotation = params.plays.some(
+      (play) => play.result === "completed" && play.durationMs === undefined
+    );
+    const rotation = needsRotation ? await deps.loadRotation() : null;
+    const rotationDurationFor = (itemId: string): number | undefined =>
+      rotation?.items.find((item) => item.id === itemId)?.durationMs;
+
+    const resolved = params.plays.map((play) => ({
+      play,
+      startedAt: new Date(play.startedAt),
+      screenId: screenAt(new Date(play.startedAt))
+    }));
+
+    const screenIds = [...new Set(resolved.map((r) => r.screenId).filter((id) => id !== null))];
+    const screens = screenIds.length
+      ? await deps.db.screen.findMany({
+          where: { id: { in: screenIds } },
+          select: { id: true, ratePerFiveSecondsCents: true }
+        })
+      : [];
+    const rateFor = (screenId: string | null): number | null => {
+      if (!screenId) return null;
+      return screens.find((s) => s.id === screenId)?.ratePerFiveSecondsCents ?? null;
+    };
+
     const { count } = await deps.db.playLog.createMany({
-      data: params.plays.map((play) => {
-        const startedAt = new Date(play.startedAt);
+      data: resolved.map(({ play, startedAt, screenId }) => {
+        // A duration the device reported is used as-is (even if invalid — no rotation fallback);
+        // it's only looked up when absent entirely.
+        const durationMs = play.durationMs ?? rotationDurationFor(play.itemId);
+        const billedUnits =
+          play.result === "completed" ? unitsForDurationMs(durationMs ?? null) : null;
         return {
           deviceId: params.deviceId,
-          screenId: screenAt(startedAt),
+          screenId,
           itemId: play.itemId,
           codec: play.codec,
           result: play.result.toUpperCase() as "COMPLETED" | "STALLED" | "FAILED",
           startedAt,
-          endedAt: new Date(play.endedAt)
+          endedAt: new Date(play.endedAt),
+          billedUnits,
+          rateCentsAtPlay: rateFor(screenId)
         };
       }),
       skipDuplicates: true

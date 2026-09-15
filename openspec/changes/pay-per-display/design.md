@@ -19,11 +19,17 @@ later change); backfilling earnings for plays recorded before this change ships.
 
 ## Decisions
 
-- **Rate storage: integer centavos.** `Screen.ratePerFiveSecondsCents Int?`, e.g. RD$ 2.50 → `250`. Whole pesos in
-  a float or decimal-as-float would risk rounding drift once multiplied by billed units across many plays;
-  centavos as an integer make every calculation exact integer arithmetic. The dashboard form takes pesos with up
-  to two decimals and converts ×100 (rejecting anything finer than a centavo, e.g. `2.505`, as a Spanish validation
-  error — mirrors the existing `screenFieldsSchema` pattern of Spanish `ctx.addIssue` messages).
+- **Rate storage: integer centavos, converted outside the schema.** `Screen.ratePerFiveSecondsCents Int?`, e.g.
+  RD$ 2.50 → `250`. Whole pesos in a float or decimal-as-float would risk rounding drift once multiplied by billed
+  units across many plays; centavos as an integer make every calculation exact integer arithmetic. The dashboard
+  form takes pesos with up to two decimals; `screen.schema.ts` validates that (rejecting anything finer than a
+  centavo, e.g. `2.505`, as a Spanish validation error — mirrors the existing `screenFieldsSchema` pattern of
+  Spanish `ctx.addIssue` messages) via `ratePerFiveSecondsPesos`, but does **not** transform it to cents in the
+  schema. This codebase validates mutation input twice — once at the tRPC boundary (`validate(schema)`) and again
+  inside the validated function (`withErrorHandlingAndValidation(fn, schema)`) — so a `.transform()` here would
+  run twice and double-convert (2.5 → 250 → 25000), which is exactly what happened until the integration test
+  caught it. The fix: the schema only validates; an exported `ratePesosToCents()` function does the ×100
+  conversion exactly once, called by `createCreateScreen`/`createUpdateScreen` right before the Prisma write.
 - **Snapshot on `PlayLog`, not a join to `Screen` at read time.** Add `PlayLog.billedUnits Int?` (planned duration
   ÷ 5000, only set for completed plays) and `PlayLog.rateCentsAtPlay Int?` (the screen's rate at the moment the
   play was recorded, `null` when the screen had no rate yet). Earnings for a play are always `billedUnits *
