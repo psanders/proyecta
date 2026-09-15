@@ -9,4 +9,7 @@ it from this file in the release PR.
 
 <!-- Add steps as: - [ ] **<PR #>** what to change, and why. -->
 
-_None._
+- [ ] **#16** Dashboard routes are now English. In `config/identity/identity.json` set `appUrl` to
+      `https://app.proyecta.do/sign-in`, `invite.url` to `https://app.proyecta.do/invitation` and
+      `invite.failUrl` to `https://app.proyecta.do/invitation-invalid`, then
+      `docker compose restart identity`. Otherwise invite emails link to a page that no longer exists.
