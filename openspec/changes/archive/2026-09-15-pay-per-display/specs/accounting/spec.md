@@ -8,10 +8,11 @@ charging (invoicing, payouts) is out of scope — this capability only turns pla
 
 ### Requirement: Pay-per-display rate
 
-A screen MAY carry a pay-per-display rate: a price in Dominican dollars (US$), with cent precision, charged for
-every 5 seconds an ad displays on it. A screen without a rate SHALL be reported incomplete. Every ad's duration
-SHALL be a whole multiple of 5 seconds (5, 10, 15, …); the platform SHALL reject an ad rotation containing an item
-whose duration is not a multiple of 5000 ms, so every play divides evenly into billable 5-second units.
+The platform SHALL let a screen carry a pay-per-display rate: a price in Dominican dollars (US$), with cent
+precision, charged for every 5 seconds an ad displays on it, and SHALL report a screen without a rate as
+incomplete. Every ad's duration SHALL be a whole multiple of 5 seconds (5, 10, 15, …); the platform SHALL reject
+an ad rotation containing an item whose duration is not a multiple of 5000 ms, so every play divides evenly into
+billable 5-second units.
 
 #### Scenario: Set a fractional rate
 

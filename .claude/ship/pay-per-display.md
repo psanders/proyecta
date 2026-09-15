@@ -1,7 +1,7 @@
 # Ship checkpoint — pay-per-display
 
 Started: 2026-09-14
-Current stage: 4 — Test (done, gate before Sync)
+Current stage: 6 — Archive (done)
 
 **Scope:** Replace the screen's "reference price + pricing model" with a single pay-per-display (PPD) rate: RD$
 per every 5 seconds displayed, stored in integer centavos. Ad durations must be a multiple of 5 seconds. Each play
@@ -19,9 +19,8 @@ today/last-7-days earnings summary from play logs, shown on the screen detail in
 | 2 | Spec reconcile | done | accounting spec Billable-plays/Screen-earnings-summary requirements + design.md updated for both tweaks; `openspec validate --strict` clean (same expected screens-spec INFO as before). |
 | 3 | Build | done | Prisma migration `20260914223000_pay_per_display`; common schemas (screen rate, manifest 5s multiple, deviceProtocol optional durationMs, new accounting.schema.ts); player engine/main report durationMs; API createRecordPlayLogs billing + createGetScreenEarnings + screens.earnings route; dashboard form/detail cards; demo ads regenerated at 5s-aligned durations. Committed on `feat/pay-per-display` (2 commits), fast-forward merged into `main` (not pushed). |
 | 4 | Test | done | 92 unit (common 19, api 59, dashboard 5, player 9) + 16 integration + 3 e2e, all green. Found and fixed a real bug via the integration test: schema-level pesos→cents transform double-applied (input validated twice: tRPC boundary + validated-function layer) — fixed by making the schema validation-only and converting once in the API layer (see design.md). |
-| 4 | Test | pending | |
-| 5 | Sync | pending | Human gate |
-| 6 | Archive | pending | Human gate |
+| 5 | Sync | done | accounting synced as new main spec; screens' "Create and edit screens" requirement merged (rate replaces reference price/pricing model); `openspec validate --strict` clean |
+| 6 | Archive | done | Moved to openspec/changes/archive/2026-09-15-pay-per-display |
 
 ## Decision log
 
@@ -33,3 +32,4 @@ today/last-7-days earnings summary from play logs, shown on the screen detail in
 - 2026-09-14 — Billable = COMPLETED only, priced by planned duration (looked up by itemId against the currently loaded rotation at play-log record time, since the frozen `/device/v1` play-log schema doesn't carry duration).
 - 2026-09-14 — Manifest `durationMs` must be a multiple of 5000ms (schema-level, common validation point for the demo loader and any future ad ingestion).
 - 2026-09-14 — Migration drops `priceReference`/`priceModel`/`PriceModel` outright (no real value to carry forward); screens become incomplete until a rate is set.
+- 2026-09-15 — Re-verified green on current main (db:generate, eslint, typecheck, full `npm test`) before sync, branched after device-protocol's sync/archive (this change's `screens` delta modifies the `screens` capability device-protocol creates). Found and fixed a real `openspec validate --strict` ERROR pre-existing in the change's own delta: the "Pay-per-display rate" requirement's body led with "MAY" only, no SHALL/MUST — reworded to lead with "The platform SHALL let a screen carry..." (same meaning, RFC 2119 compliant); no other requirements affected. Synced `accounting` as a new main spec (openspec/specs/accounting/spec.md) and merged the "Create and edit screens" MODIFIED requirement into `openspec/specs/screens/spec.md` (pay-per-display rate replaces reference price/pricing model). `openspec validate --all --strict` clean (7/7). Archived to `openspec/changes/archive/2026-09-15-pay-per-display`.
