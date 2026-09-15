@@ -251,7 +251,7 @@ export const strings = {
   },
   profile: {
     title: "Mi perfil",
-    subtitle: "Tus datos y tu contraseña",
+    subtitle: "Tus datos, tu contraseña y la apariencia del panel.",
     personal: "Datos personales",
     name: "Nombre",
     email: "Correo electrónico",
@@ -260,7 +260,11 @@ export const strings = {
     current: "Contraseña actual",
     newPassword: "Nueva contraseña",
     changePassword: "Cambiar contraseña",
-    saved: "Cambios guardados"
+    saved: "Cambios guardados",
+    appearance: "Apariencia",
+    appearanceHint:
+      "Elige cómo se ve el panel en este navegador. Sistema sigue la configuración de tu dispositivo.",
+    themeOptions: { system: "Sistema", light: "Claro", dark: "Oscuro" }
   },
   errors: {
     generic: "Algo salió mal. Intenta de nuevo.",

@@ -3,6 +3,7 @@
  */
 import { useEffect, useState } from "react";
 import { PageHeader } from "../../components/PageHeader.js";
+import { ThemeSwitch } from "../../components/ThemeSwitch.js";
 import { Alert } from "../../components/ui/Alert.js";
 import { Button } from "../../components/ui/Button.js";
 import { SectionCard } from "../../components/ui/Card.js";
@@ -78,6 +79,9 @@ export function ProfilePage() {
             {strings.profile.changePassword}
           </Button>
         </div>
+      </SectionCard>
+      <SectionCard title={strings.profile.appearance} hint={strings.profile.appearanceHint}>
+        <ThemeSwitch />
       </SectionCard>
     </div>
   );

@@ -1,7 +1,8 @@
 /**
  * Copyright (C) 2026 by Proyecta. All rights reserved.
  *
- * Dashboard tokens from design/pencil.pen (Lunaris, light mode). Keep in sync with Pencil variables.
+ * Dashboard tokens from design/pencil.pen (Lunaris `Mode` Light, with Dark overrides below). Keep in
+ * sync with Pencil variables.
  */
 @import "tailwindcss";
 @import "@fontsource/jetbrains-mono/400.css";
@@ -38,6 +39,30 @@
   --color-brand-muted: #b8b9b6;
   --font-mono: "JetBrains Mono", ui-monospace, monospace;
   --font-sans: "Geist Sans", "Geist", system-ui, sans-serif;
+}
+
+/* Pencil Lunaris `Mode: Dark` values. <html data-theme> is set before first paint (index.html). */
+:root[data-theme="dark"] {
+  --color-background: #111111;
+  --color-foreground: #ffffff;
+  --color-card: #1a1a1a;
+  --color-muted: #2e2e2e;
+  --color-muted-foreground: #b8b9b6;
+  --color-secondary: #2e2e2e;
+  --color-border: #2e2e2e;
+  --color-input: #2e2e2e;
+  --color-destructive: #ff5c33;
+  --color-success: #222924;
+  --color-success-foreground: #b6ffce;
+  --color-warning: #291c0f;
+  --color-warning-foreground: #ec5e2b;
+  --color-error: #24100b;
+  --color-error-foreground: #ff5c33;
+  --color-info: #222229;
+  --color-info-foreground: #b2b2ff;
+  --color-sidebar: #18181b;
+  --color-sidebar-border: #ffffff1a;
+  --color-sidebar-accent: #2a2a30;
 }
 
 html,
