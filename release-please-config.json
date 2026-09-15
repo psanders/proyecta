@@ -1,0 +1,64 @@
+{
+  "$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json",
+  "release-type": "node",
+  "bootstrap-sha": "919199906f72eddb23c04f3539fcb32b7e91ae26",
+  "include-component-in-tag": false,
+  "include-v-in-tag": true,
+  "bump-minor-pre-major": true,
+  "bump-patch-for-minor-pre-major": false,
+  "pull-request-title-pattern": "chore(release): ${version}",
+  "pull-request-header": "Merging this PR tags the release, publishes the images and starts the production deploy (it waits for approval). Before merging, do every step in docs/deploy/PENDING.md on the droplet and empty that file in this PR.",
+  "changelog-sections": [
+    { "type": "feat", "section": "Features" },
+    { "type": "fix", "section": "Bug Fixes" },
+    { "type": "perf", "section": "Performance" },
+    { "type": "refactor", "section": "Refactoring" },
+    { "type": "revert", "section": "Reverts" },
+    { "type": "docs", "section": "Documentation", "hidden": true },
+    { "type": "style", "section": "Styles", "hidden": true },
+    { "type": "test", "section": "Tests", "hidden": true },
+    { "type": "build", "section": "Build", "hidden": true },
+    { "type": "ci", "section": "CI", "hidden": true },
+    { "type": "chore", "section": "Miscellaneous", "hidden": true }
+  ],
+  "packages": {
+    ".": {
+      "package-name": "proyecta",
+      "changelog-path": "CHANGELOG.md",
+      "extra-files": [
+        { "type": "json", "path": "lerna.json", "jsonpath": "$.version" },
+        { "type": "json", "path": "packages/common/package.json", "jsonpath": "$.version" },
+        { "type": "json", "path": "packages/api/package.json", "jsonpath": "$.version" },
+        { "type": "json", "path": "packages/dashboard/package.json", "jsonpath": "$.version" },
+        { "type": "json", "path": "packages/player/package.json", "jsonpath": "$.version" },
+        { "type": "json", "path": "packages/web/package.json", "jsonpath": "$.version" },
+        {
+          "type": "json",
+          "path": "package-lock.json",
+          "jsonpath": "$.packages['packages/common'].version"
+        },
+        {
+          "type": "json",
+          "path": "package-lock.json",
+          "jsonpath": "$.packages['packages/api'].version"
+        },
+        {
+          "type": "json",
+          "path": "package-lock.json",
+          "jsonpath": "$.packages['packages/dashboard'].version"
+        },
+        {
+          "type": "json",
+          "path": "package-lock.json",
+          "jsonpath": "$.packages['packages/player'].version"
+        },
+        {
+          "type": "json",
+          "path": "package-lock.json",
+          "jsonpath": "$.packages['packages/web'].version"
+        },
+        { "type": "generic", "path": "packages/player/src/main.ts" }
+      ]
+    }
+  }
+}
