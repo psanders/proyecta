@@ -35,8 +35,11 @@ should offer the same so a team can share one business while each person reads t
   before sign in, and API messages in the requester's language.
 
 ### Modified Capabilities
-<!-- None in openspec/specs/ (nothing synced yet). Scenarios in active changes that say "a Spanish validation error"
-     remain true: Spanish is what a request without a language gets. The dashboard-language spec states the rule. -->
+- `dashboard-appearance`: Apariencia becomes one row of Mi perfil's Preferencias section, next to Idioma, instead of its
+  own section. Behavior is unchanged.
+
+<!-- Specs that say "a Spanish validation error" (accounting, screens, owner-auth) remain true: Spanish is what a
+     request without a language gets. The dashboard-language spec states the rule. -->
 
 ## Impact
 
