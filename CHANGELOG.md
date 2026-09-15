@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.2.1](https://github.com/psanders/proyecta/compare/v0.2.0...v0.2.1) (2026-09-15)
+
+
+### Bug Fixes
+
+* **deploy:** stop the proxy from routing hosts to recreated containers' old IPs ([#22](https://github.com/psanders/proyecta/issues/22)) ([bd9a340](https://github.com/psanders/proyecta/commit/bd9a340e23dfe119f661d8e14fa2b007e9477ce1))
+
+
+### Refactoring
+
+* **dashboard:** english route paths and query params ([#16](https://github.com/psanders/proyecta/issues/16)) ([0346601](https://github.com/psanders/proyecta/commit/0346601010b68c1d7021938a56278858f13b9564))
+
 ## [0.2.0](https://github.com/psanders/proyecta/compare/v0.1.0...v0.2.0) (2026-09-15)
 
 
