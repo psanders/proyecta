@@ -83,3 +83,5 @@ Full guide, rationale, and scaffolding: `/ps:create-validated-function` (source:
 ## Commits
 
 Use **Conventional Commits** (`type(scope): subject`, e.g. `feat(api): add device register endpoint`). A Husky `commit-msg` hook runs commitlint and rejects non-conforming messages.
+
+The type decides the release: release-please (`.github/workflows/release.yml`) turns `feat`/`fix`/`perf`/`refactor` commits on `main` into a `chore(release)` PR; merging it tags, publishes and deploys. Never bump versions or push tags by hand. **If a change needs a manual step on the production droplet** (e.g. editing `config/identity/identity.json`, a new file to mount), add it to `docs/deploy/PENDING.md` in the same PR.
