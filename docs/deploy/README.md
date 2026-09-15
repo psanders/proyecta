@@ -254,18 +254,30 @@ curl -I https://play.proyecta.do/               # player, 200
 ### 5. First deploy vs. later deploys
 
 The steps above (3a–3d) are the **first** deploy, done by hand because they
-also bootstrap secrets that must never touch CI. Every deploy after that is
-just:
+also bootstrap secrets that must never touch CI. After that, releases come
+from Conventional Commits (`release.yml`, release-please):
 
-```bash
-git tag v0.2.0 && git push origin v0.2.0
-```
+1. Every push to `main` updates one **`chore(release): X.Y.Z`** PR with the
+   version bump (`feat` → minor, `fix` → patch while below 1.0) and the
+   `CHANGELOG.md` entry. `docs`, `chore`, `ci`, `test` and `build` commits
+   alone don't cut a release.
+2. Before merging it, do every step listed in
+   [`PENDING.md`](./PENDING.md) on the droplet, then empty that file in the
+   release PR.
+3. Merging it tags `vX.Y.Z`, creates the GitHub release, runs
+   `docker-publish.yml` (builds and pushes the three images to GHCR) and then
+   `deploy.yml` (pauses for the `production` environment's approval, rsyncs
+   the version-pinned `compose.yaml` / nginx template / deploy scripts, pins
+   `PROYECTA_VERSION`, pulls, and restarts — rolling back automatically if a
+   container doesn't come up healthy).
 
-which runs `docker-publish.yml` (builds and pushes the three images to
-GHCR) and then `deploy.yml` (pauses for the `production` environment's
-approval, rsyncs the version-pinned `compose.yaml` / nginx template /
-deploy scripts, pins `PROYECTA_VERSION`, pulls, and restarts — rolling back
-automatically if a container doesn't come up healthy).
+One-time repo setting: Settings → Actions → General → **Allow GitHub Actions
+to create and approve pull requests** (release-please opens the release PR
+with `GITHUB_TOKEN`).
+
+Pushing a tag by hand (`git tag v0.2.0 && git push origin v0.2.0`) still
+publishes and deploys, but skips the changelog and version bump; prefer the
+release PR.
 
 To redeploy or roll back manually:
 

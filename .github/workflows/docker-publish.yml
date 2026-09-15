@@ -1,7 +1,7 @@
 name: Publish Docker Images
 
 # Builds and pushes the apiserver/dashboard/player images to GHCR on every
-# vX.Y.Z tag (or manually). Modeled on QCobro's docker-publish.yml, extended
+# vX.Y.Z tag, when release.yml calls it for a new release, or manually. Modeled on QCobro's docker-publish.yml, extended
 # to three targets. The three targets build and push in parallel via a
 # matrix, each on its own runner with its own GHA cache scope so the legs
 # don't clobber each other's layer cache.
@@ -16,6 +16,17 @@ on:
         description: "Image tag (default: latest)"
         required: false
         default: "latest"
+  workflow_call:
+    inputs:
+      tag:
+        description: "Release tag to build and publish (e.g. v0.2.0)"
+        required: true
+        type: string
+      latest:
+        description: "Also tag the images as latest"
+        required: false
+        type: boolean
+        default: false
 
 env:
   REGISTRY: ghcr.io
@@ -35,6 +46,9 @@ jobs:
     steps:
       - name: Checkout proyecta
         uses: actions/checkout@v7
+        with:
+          # Called from release.yml on a push to main: build the release tag, not the branch.
+          ref: ${{ github.event_name == 'workflow_dispatch' && github.ref || inputs.tag || github.ref }}
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -55,7 +69,7 @@ jobs:
             T="${GITHUB_REF#refs/tags/}"
           else
             T="${{ inputs.tag }}"
-            ADD_LATEST=false
+            ADD_LATEST="${{ inputs.latest == true }}"
           fi
           {
             echo "tags<<__TAGS_EOF__"
