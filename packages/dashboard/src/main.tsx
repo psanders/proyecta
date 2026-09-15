@@ -17,6 +17,8 @@ import { ExplorePage } from "./routes/ads/ExplorePage.js";
 import { AppLayout } from "./routes/AppLayout.js";
 import { HomePage } from "./routes/HomePage.js";
 import { WelcomePage } from "./routes/settings/WelcomePage.js";
+import { RequestReviewPage } from "./routes/requests/RequestReviewPage.js";
+import { RequestsPage } from "./routes/requests/RequestsPage.js";
 import {
   AcceptInvitationPage,
   ForgotPasswordPage,
@@ -82,6 +84,8 @@ const router = createBrowserRouter([
       { path: "ads", element: <AdsPage /> },
       { path: "ads/new", element: <AdNewPage /> },
       { path: "ads/:id", element: <AdDetailPage /> },
+      { path: "requests", element: <RequestsPage /> },
+      { path: "requests/:adId", element: <RequestReviewPage /> },
       { path: "screens/new", element: <ScreenFormPage /> },
       { path: "screens/:id", element: <ScreenDetailPage /> },
       { path: "screens/:id/edit", element: <ScreenFormPage /> },

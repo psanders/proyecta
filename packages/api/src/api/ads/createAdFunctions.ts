@@ -43,15 +43,51 @@ export function orientationFits(screen: string | null, asset: string): boolean {
   return screen === null || screen === asset;
 }
 
-/** Own screens start approved; other businesses' screens wait for their owner. */
-function initialPlacement(
+interface InitialPlacement {
+  status: PlacementStatus;
+  decidedAt: Date | null;
+  decidedByUserRef: string | null;
+}
+
+/**
+ * The starting status of a new placement for `assetId` on each screen: own screens start approved;
+ * another business's screen starts approved when its latest decision on this file was an approval
+ * that was never stopped (an approved row, or one withdrawn later — only approved and pending rows
+ * are withdrawn, and pending rows have no decision); otherwise it waits for the owner.
+ */
+export async function initialPlacements(
+  db: Pick<DbClient, "adPlacement">,
   advertiser: string,
-  screenWorkspace: string,
+  assetId: string,
+  screens: { id: string; workspaceAccessKeyId: string }[],
   at: Date
-): { status: PlacementStatus; decidedAt: Date | null } {
-  return advertiser === screenWorkspace
-    ? { status: "APPROVED", decidedAt: at }
-    : { status: "PENDING", decidedAt: null };
+): Promise<Map<string, InitialPlacement>> {
+  const others = screens.filter((s) => s.workspaceAccessKeyId !== advertiser).map((s) => s.id);
+  const decided = others.length
+    ? await db.adPlacement.findMany({
+        where: { assetId, screenId: { in: others }, decidedAt: { not: null } },
+        orderBy: { decidedAt: "desc" },
+        select: { screenId: true, status: true, decidedByUserRef: true }
+      })
+    : [];
+  const latest = new Map<string, (typeof decided)[number]>();
+  for (const row of decided) if (!latest.has(row.screenId)) latest.set(row.screenId, row);
+
+  return new Map(
+    screens.map((screen) => {
+      if (screen.workspaceAccessKeyId === advertiser) {
+        return [screen.id, { status: "APPROVED", decidedAt: at, decidedByUserRef: null }];
+      }
+      const previous = latest.get(screen.id);
+      const reuse = previous?.status === "APPROVED" || previous?.status === "WITHDRAWN";
+      return [
+        screen.id,
+        reuse
+          ? { status: "APPROVED", decidedAt: at, decidedByUserRef: previous!.decidedByUserRef }
+          : { status: "PENDING", decidedAt: null, decidedByUserRef: null }
+      ];
+    })
+  );
 }
 
 async function findReadyAsset(db: DbClient, workspaceAccessKeyId: string, assetId: string) {
@@ -88,9 +124,22 @@ async function findEditableAd(db: DbClient, workspaceAccessKeyId: string, id: st
   return ad;
 }
 
-/** Screen ids that still have a non-withdrawn placement in the ad. */
-function activeScreenIds(placements: { screenId: string; status: PlacementStatus }[]): string[] {
+type PlacementRef = { screenId: string; status: PlacementStatus };
+
+/** Screen ids that still have a non-withdrawn placement in the ad (decided ones included). */
+function activeScreenIds(placements: PlacementRef[]): string[] {
   return [...new Set(placements.filter((p) => p.status !== "WITHDRAWN").map((p) => p.screenId))];
+}
+
+/** Screen ids the ad is on or waiting for: a pending or approved placement. */
+function liveScreenIds(placements: PlacementRef[]): string[] {
+  return [
+    ...new Set(
+      placements
+        .filter((p) => p.status === "PENDING" || p.status === "APPROVED")
+        .map((p) => p.screenId)
+    )
+  ];
 }
 
 /**
@@ -114,6 +163,13 @@ export function createCreateAd(deps: AdDeps) {
       throw new DomainError("BAD_REQUEST", "errors.ad.startInPast");
     }
     const screens = await findCatalogScreens(deps.db, params.screenIds, asset.orientation);
+    const initial = await initialPlacements(
+      deps.db,
+      params.workspaceAccessKeyId,
+      asset.id,
+      screens,
+      at
+    );
 
     const ad = await deps.db.ad.create({
       data: {
@@ -129,13 +185,16 @@ export function createCreateAd(deps: AdDeps) {
           create: screens.map((screen) => ({
             screenId: screen.id,
             assetId: asset.id,
-            ...initialPlacement(params.workspaceAccessKeyId, screen.workspaceAccessKeyId, at)
+            ...initial.get(screen.id)!
           }))
         }
       }
     });
     logger.verbose("ad created", { id: ad.id, screens: screens.length });
-    await deps.notifyScreens(screens.map((s) => s.id));
+    // Only approved placements change what a player plays; pending ones never do.
+    await deps.notifyScreens(
+      screens.filter((s) => initial.get(s.id)!.status === "APPROVED").map((s) => s.id)
+    );
     return { id: ad.id };
   };
 
@@ -155,21 +214,33 @@ export function createAddAdScreens(deps: AdDeps) {
   const fn = async (params: z.infer<typeof schema>): Promise<{ id: string }> => {
     const at = now();
     const ad = await findEditableAd(deps.db, params.workspaceAccessKeyId, params.id, at);
-    const current = new Set(activeScreenIds(ad.placements));
+    // Screens whose placements were all rejected or stopped count as not in the ad: adding them
+    // again asks their owner again.
+    const current = new Set(liveScreenIds(ad.placements));
     if (params.screenIds.some((id) => current.has(id))) {
       throw new DomainError("CONFLICT", "errors.ad.screenAlreadyInAd");
     }
     const screens = await findCatalogScreens(deps.db, params.screenIds, ad.asset.orientation);
+    const initial = await initialPlacements(
+      deps.db,
+      ad.workspaceAccessKeyId,
+      ad.assetId,
+      screens,
+      at
+    );
     await deps.db.adPlacement.createMany({
       data: screens.map((screen) => ({
         adId: ad.id,
         screenId: screen.id,
         assetId: ad.assetId,
-        ...initialPlacement(ad.workspaceAccessKeyId, screen.workspaceAccessKeyId, at)
+        ...initial.get(screen.id)!
       }))
     });
     logger.verbose("ad screens added", { id: ad.id, screens: screens.length });
-    await deps.notifyScreens(screens.map((s) => s.id));
+    // Only approved placements change what a player plays; pending ones never do.
+    await deps.notifyScreens(
+      screens.filter((s) => initial.get(s.id)!.status === "APPROVED").map((s) => s.id)
+    );
     return { id: ad.id };
   };
 
@@ -177,8 +248,9 @@ export function createAddAdScreens(deps: AdDeps) {
 }
 
 /**
- * Creates a function that removes a screen from an ad: its placements are withdrawn, so the ad
- * stops playing there; past plays stay attributed.
+ * Creates a function that removes a screen from an ad: its pending and approved placements are
+ * withdrawn, so the ad stops playing there; past plays stay attributed and owners' rejections and
+ * stops stay on record.
  *
  * @param deps - Injected database client, screen notifier and clock
  */
@@ -193,7 +265,11 @@ export function createRemoveAdScreen(deps: AdDeps) {
       throw new DomainError("NOT_FOUND", "errors.ad.screenNotInAd");
     }
     await deps.db.adPlacement.updateMany({
-      where: { adId: ad.id, screenId: params.screenId, status: { not: "WITHDRAWN" } },
+      where: {
+        adId: ad.id,
+        screenId: params.screenId,
+        status: { in: ["PENDING", "APPROVED"] }
+      },
       data: { status: "WITHDRAWN", withdrawnAt: at }
     });
     logger.verbose("ad screen removed", { id: ad.id, screenId: params.screenId });
@@ -231,6 +307,13 @@ export function createReplaceAdAsset(deps: AdDeps) {
       where: { id: { in: screenIds } },
       select: { id: true, workspaceAccessKeyId: true }
     });
+    const initial = await initialPlacements(
+      deps.db,
+      ad.workspaceAccessKeyId,
+      asset.id,
+      screens,
+      at
+    );
 
     await deps.db.$transaction([
       deps.db.adPlacement.updateMany({
@@ -242,7 +325,7 @@ export function createReplaceAdAsset(deps: AdDeps) {
           adId: ad.id,
           screenId: screen.id,
           assetId: asset.id,
-          ...initialPlacement(ad.workspaceAccessKeyId, screen.workspaceAccessKeyId, at)
+          ...initial.get(screen.id)!
         }))
       }),
       deps.db.ad.update({ where: { id: ad.id }, data: { assetId: asset.id } })

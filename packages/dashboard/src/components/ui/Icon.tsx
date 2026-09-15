@@ -42,6 +42,7 @@ import unarchive from "@material-symbols/svg-400/sharp/unarchive.svg?raw";
 import warning from "@material-symbols/svg-400/sharp/warning.svg?raw";
 import campaign from "@material-symbols/svg-400/sharp/campaign.svg?raw";
 import image from "@material-symbols/svg-400/sharp/image.svg?raw";
+import inbox from "@material-symbols/svg-400/sharp/inbox.svg?raw";
 import permMedia from "@material-symbols/svg-400/sharp/perm_media.svg?raw";
 import playCircle from "@material-symbols/svg-400/sharp/play_circle.svg?raw";
 import search from "@material-symbols/svg-400/sharp/search.svg?raw";
@@ -56,6 +57,7 @@ const ICONS = {
   arrowBack,
   campaign,
   image,
+  inbox,
   permMedia,
   playCircle,
   search,

@@ -75,6 +75,10 @@ const es = {
   "validation.adScreens.max": "Puedes elegir hasta 50 pantallas",
   "validation.adScreens.duplicate": "Elegiste la misma pantalla dos veces",
   "validation.ad.invalid": "Anuncio no válido",
+  "validation.review.screens": "Elige al menos una pantalla para aprobar",
+  "validation.review.reason": "Elige un motivo",
+  "validation.review.noteRequired": "Escribe una nota para el anunciante",
+  "validation.review.noteMax": "La nota no puede tener más de 280 caracteres",
 
   "errors.internal": "Error interno",
   "errors.forbidden.member": "No perteneces a este negocio",
@@ -120,7 +124,11 @@ const es = {
   "errors.ad.screenUnavailable": "Una de las pantallas ya no está disponible",
   "errors.ad.orientationMismatch": "La orientación de una pantalla no coincide con la del archivo",
   "errors.ad.screenAlreadyInAd": "Esa pantalla ya está en el anuncio",
-  "errors.ad.screenNotInAd": "Esa pantalla no está en el anuncio"
+  "errors.ad.screenNotInAd": "Esa pantalla no está en el anuncio",
+  "errors.review.notFound": "Solicitud no encontrada",
+  "errors.review.screenNotPending": "Esa pantalla no tiene este anuncio pendiente de aprobación",
+  "errors.review.nothingPending": "Esta solicitud ya no tiene pantallas pendientes",
+  "errors.review.notApproved": "Este anuncio no está aprobado en esa pantalla"
 } as const;
 
 export type ApiMessageId = keyof typeof es;
@@ -191,6 +199,10 @@ const en: Record<ApiMessageId, string> = {
   "validation.adScreens.max": "You can choose up to 50 screens",
   "validation.adScreens.duplicate": "You chose the same screen twice",
   "validation.ad.invalid": "Invalid ad",
+  "validation.review.screens": "Choose at least one screen to approve",
+  "validation.review.reason": "Choose a reason",
+  "validation.review.noteRequired": "Write a note for the advertiser",
+  "validation.review.noteMax": "The note can't be longer than 280 characters",
 
   "errors.internal": "Internal error",
   "errors.forbidden.member": "You don't belong to this business",
@@ -234,7 +246,11 @@ const en: Record<ApiMessageId, string> = {
   "errors.ad.screenUnavailable": "One of the screens is no longer available",
   "errors.ad.orientationMismatch": "A screen's orientation doesn't match the file",
   "errors.ad.screenAlreadyInAd": "That screen is already in the ad",
-  "errors.ad.screenNotInAd": "That screen isn't in the ad"
+  "errors.ad.screenNotInAd": "That screen isn't in the ad",
+  "errors.review.notFound": "Request not found",
+  "errors.review.screenNotPending": "That screen doesn't have this ad waiting for approval",
+  "errors.review.nothingPending": "This request has no screens waiting anymore",
+  "errors.review.notApproved": "This ad isn't approved on that screen"
 };
 
 export const apiMessages: Record<Language, Record<ApiMessageId, string>> = { es, en };

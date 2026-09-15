@@ -97,6 +97,9 @@ describe("tRPC guards", () => {
     await expectCode(caller.ads.removeScreen({ id, screenId: id }), "FORBIDDEN");
     await expectCode(caller.assets.delete({ id }), "FORBIDDEN");
     await expectCode(caller.workspaces.setDashboardView({ dashboardView: "BOTH" }), "FORBIDDEN");
+    await expectCode(caller.adReview.approve({ adId: id, screenIds: [id] }), "FORBIDDEN");
+    await expectCode(caller.adReview.reject({ adId: id, reason: "COMPETITOR" }), "FORBIDDEN");
+    await expectCode(caller.adReview.revoke({ adId: id, screenId: id }), "FORBIDDEN");
   });
 
   it("should let admins invite", async () => {

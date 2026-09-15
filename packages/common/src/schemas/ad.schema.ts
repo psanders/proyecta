@@ -25,9 +25,21 @@ export const AD_SCREEN_STATUSES = [
   "ON_AIR",
   "FINISHED",
   "CANCELED",
-  "NOT_APPROVED"
+  "REJECTED",
+  "REVOKED",
+  "NO_RESPONSE"
 ] as const;
 export type AdScreenStatus = (typeof AD_SCREEN_STATUSES)[number];
+
+/** Why an owner rejected a file on a screen. */
+export const REVIEW_REASONS = [
+  "INAPPROPRIATE_CONTENT",
+  "COMPETITOR",
+  "NOT_SUITABLE_FOR_VENUE",
+  "LOW_QUALITY",
+  "OTHER"
+] as const;
+export type ReviewReason = (typeof REVIEW_REASONS)[number];
 
 /** What an advertiser sees for an ad as a whole. */
 export const AD_STATUSES = [
@@ -36,6 +48,7 @@ export const AD_STATUSES = [
   "ON_AIR",
   "SCHEDULED",
   "PENDING_APPROVAL",
+  "NEEDS_ATTENTION",
   "NO_SCREENS"
 ] as const;
 export type AdStatus = (typeof AD_STATUSES)[number];
@@ -110,6 +123,16 @@ export interface PlacementFacts {
   status: PlacementStatus;
   assetId: string;
   createdAt: Date;
+  reasonCode?: ReviewReason | null;
+  note?: string | null;
+}
+
+/** One screen's status within an ad, with the owner's reason and note when it was rejected or stopped. */
+export interface AdScreenStatusView {
+  status: AdScreenStatus;
+  newFilePending: boolean;
+  reasonCode: ReviewReason | null;
+  note: string | null;
 }
 
 /**
@@ -133,40 +156,54 @@ export interface AdTiming {
 
 /**
  * One screen's status within an ad, from its placement rows. Returns null when every row was
- * withdrawn (the screen was removed from the ad). `newFilePending` is true when an approved file
- * plays while a newer file waits for approval.
+ * withdrawn (the screen was removed from the ad). An approved file plays (scheduled, on air, then
+ * finished); otherwise the most recent row decides: pending (or "no response" once the ad ended),
+ * rejected or stopped, with the owner's reason and note. `newFilePending` is true when an approved
+ * file plays while a newer file waits for approval.
  */
 export function adScreenStatus(
   ad: AdTiming,
   rows: readonly PlacementFacts[],
   now: Date
-): { status: AdScreenStatus; newFilePending: boolean } | null {
+): AdScreenStatusView | null {
   const active = rows.filter((row) => row.status !== "WITHDRAWN");
   if (active.length === 0) return null;
-  if (ad.state === "CANCELED") return { status: "CANCELED", newFilePending: false };
-  if (now >= ad.endsAt) return { status: "FINISHED", newFilePending: false };
+  const view = (status: AdScreenStatus, from?: PlacementFacts): AdScreenStatusView => ({
+    status,
+    newFilePending: false,
+    reasonCode: from?.reasonCode ?? null,
+    note: from?.note ?? null
+  });
+  if (ad.state === "CANCELED") return view("CANCELED");
+  const ended = now >= ad.endsAt;
   const effective = effectivePlacement(active);
   if (effective) {
+    if (ended) return view("FINISHED");
     return {
-      status: now < ad.startsAt ? "SCHEDULED" : "ON_AIR",
+      ...view(now < ad.startsAt ? "SCHEDULED" : "ON_AIR"),
       newFilePending: active.some(
         (row) => row.status === "PENDING" && row.createdAt > effective.createdAt
       )
     };
   }
-  if (active.some((row) => row.status === "PENDING")) {
-    return { status: "PENDING_APPROVAL", newFilePending: false };
-  }
-  return { status: "NOT_APPROVED", newFilePending: false };
+  const latest = active.reduce((a, b) => (b.createdAt > a.createdAt ? b : a));
+  if (latest.status === "PENDING") return view(ended ? "NO_RESPONSE" : "PENDING_APPROVAL");
+  return view(latest.status === "REVOKED" ? "REVOKED" : "REJECTED", latest);
 }
 
-/** An ad's single status: the first of cancelled, finished, on air, scheduled, pending, no screens. */
+/**
+ * An ad's single status: the first of cancelled, finished, on air, scheduled, pending, needs
+ * attention (some screen rejected, stopped or without response), no screens.
+ */
 export function adStatus(ad: AdTiming, screens: readonly AdScreenStatus[], now: Date): AdStatus {
   if (ad.state === "CANCELED") return "CANCELED";
   if (now >= ad.endsAt) return "FINISHED";
   if (screens.includes("ON_AIR")) return "ON_AIR";
   if (screens.includes("SCHEDULED")) return "SCHEDULED";
   if (screens.includes("PENDING_APPROVAL")) return "PENDING_APPROVAL";
+  if (screens.some((s) => s === "REJECTED" || s === "REVOKED" || s === "NO_RESPONSE")) {
+    return "NEEDS_ATTENTION";
+  }
   return "NO_SCREENS";
 }
 
@@ -224,6 +261,8 @@ export interface AdScreenView extends AdPlayStats {
   own: boolean;
   status: AdScreenStatus;
   newFilePending: boolean;
+  reasonCode: ReviewReason | null;
+  note: string | null;
   ratePerFiveSecondsCents: number | null;
 }
 

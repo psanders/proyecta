@@ -21,4 +21,5 @@ export * from "./schemas/workspaceSettings.schema.js";
 export * from "./schemas/userSettings.schema.js";
 export * from "./schemas/asset.schema.js";
 export * from "./schemas/ad.schema.js";
+export * from "./schemas/adReview.schema.js";
 export * from "./i18n/apiMessages.js";

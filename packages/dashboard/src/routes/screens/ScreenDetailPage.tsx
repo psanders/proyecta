@@ -26,6 +26,7 @@ import {
 import { trpc } from "../../lib/trpc.js";
 import { useWorkspace } from "../../lib/useWorkspace.js";
 import { useI18n } from "../../lib/useI18n.js";
+import { ScreenAdsCard } from "../../components/ScreenAdsCard.js";
 
 type Pending = "unlink" | "archive" | "delete" | null;
 
@@ -184,6 +185,8 @@ export function ScreenDetailPage() {
           }
         />
       </SectionCard>
+
+      {!s.archived ? <ScreenAdsCard screenId={s.id} screenName={s.name} /> : null}
 
       <SectionCard title={t("detail.activity")} icon="barChart">
         {earnings.data?.available ? (
