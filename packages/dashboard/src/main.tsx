@@ -5,6 +5,7 @@ import { StrictMode, useState, type ReactNode } from "react";
 import { createRoot } from "react-dom/client";
 import { Navigate, RouterProvider, createBrowserRouter, useLocation } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { theme } from "./lib/theme.js";
 import { createClient, trpc } from "./lib/trpc.js";
 import { useSession } from "./lib/useSession.js";
 import { AppLayout } from "./routes/AppLayout.js";
@@ -81,6 +82,8 @@ function Root() {
     </trpc.Provider>
   );
 }
+
+theme?.start();
 
 const root = document.getElementById("root");
 if (!root) throw new Error("#root not found");

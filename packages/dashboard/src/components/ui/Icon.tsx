@@ -12,13 +12,16 @@ import chevronRight from "@material-symbols/svg-400/sharp/chevron_right.svg?raw"
 import barChart from "@material-symbols/svg-400/sharp/bar_chart.svg?raw";
 import close from "@material-symbols/svg-400/sharp/close.svg?raw";
 import copy from "@material-symbols/svg-400/sharp/content_copy.svg?raw";
+import darkMode from "@material-symbols/svg-400/sharp/dark_mode.svg?raw";
 import deleteIcon from "@material-symbols/svg-400/sharp/delete.svg?raw";
+import desktop from "@material-symbols/svg-400/sharp/desktop_windows.svg?raw";
 import download from "@material-symbols/svg-400/sharp/download.svg?raw";
 import error from "@material-symbols/svg-400/sharp/error.svg?raw";
 import group from "@material-symbols/svg-400/sharp/group.svg?raw";
 import info from "@material-symbols/svg-400/sharp/info.svg?raw";
 import leftPanelClose from "@material-symbols/svg-400/sharp/left_panel_close.svg?raw";
 import leftPanelOpen from "@material-symbols/svg-400/sharp/left_panel_open.svg?raw";
+import lightMode from "@material-symbols/svg-400/sharp/light_mode.svg?raw";
 import link from "@material-symbols/svg-400/sharp/link.svg?raw";
 import linkOff from "@material-symbols/svg-400/sharp/link_off.svg?raw";
 import location from "@material-symbols/svg-400/sharp/location_on.svg?raw";
@@ -48,13 +51,16 @@ const ICONS = {
   chevronRight,
   close,
   copy,
+  darkMode,
   delete: deleteIcon,
+  desktop,
   download,
   error,
   group,
   info,
   leftPanelClose,
   leftPanelOpen,
+  lightMode,
   link,
   linkOff,
   location,

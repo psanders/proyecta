@@ -121,6 +121,41 @@ test.describe("owner dashboard", () => {
     await expect(nav).toHaveAttribute("data-collapsed", "false");
   });
 
+  test("switches the theme from Mi perfil and remembers it", async ({ page }) => {
+    const html = page.locator("html");
+    const background = () => page.evaluate(() => getComputedStyle(document.body).backgroundColor);
+    await page.emulateMedia({ colorScheme: "dark" });
+    await signUp(page, Date.now());
+    await page.goto(APP);
+    await expect(html).toHaveAttribute("data-theme", "dark");
+
+    await page.emulateMedia({ colorScheme: "light" });
+    await expect(html).toHaveAttribute("data-theme", "light");
+    expect(await background()).toBe("rgb(242, 243, 240)");
+
+    await page.getByRole("button", { name: "Negocio y cuenta" }).click();
+    await expect(page.getByRole("radio")).toHaveCount(0);
+    await page.getByRole("menuitem", { name: "Mi perfil" }).click();
+    const appearance = page.getByRole("radiogroup", { name: "Apariencia" });
+    await expect(appearance.getByRole("radio", { name: "Sistema" })).toBeChecked();
+    await appearance.getByRole("radio", { name: "Oscuro" }).click();
+    await expect(html).toHaveAttribute("data-theme", "dark");
+    await expect(appearance.getByRole("radio", { name: "Oscuro" })).toBeChecked();
+    expect(await background()).toBe("rgb(17, 17, 17)");
+    await shot(page, "13-theme-dark");
+
+    await page.reload();
+    await expect(html).toHaveAttribute("data-theme", "dark");
+    await expect(appearance.getByRole("radio", { name: "Oscuro" })).toBeChecked();
+
+    await appearance.getByRole("radio", { name: "Claro" }).click();
+    await page.emulateMedia({ colorScheme: "dark" });
+    await page.getByRole("button", { name: "Negocio y cuenta" }).click();
+    await page.getByRole("menuitem", { name: "Cerrar sesión" }).click();
+    await expect(page.getByRole("heading", { name: "Bienvenido de nuevo" })).toBeVisible();
+    await expect(html).toHaveAttribute("data-theme", "light");
+  });
+
   test("invite a teammate who accepts from the email and appears as active", async ({
     page,
     request
