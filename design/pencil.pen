@@ -27101,6 +27101,340 @@
           ]
         }
       ]
+    },
+    {
+      "type": "frame",
+      "id": "fP4do",
+      "x": 12704,
+      "y": 4320,
+      "name": "web-og-banner",
+      "clip": true,
+      "width": 1200,
+      "height": 630,
+      "fill": "#0B0B0B",
+      "layout": "none",
+      "children": [
+        {
+          "type": "frame",
+          "id": "CGzN4",
+          "x": 240,
+          "y": -40,
+          "name": "Hero Image",
+          "width": 1152,
+          "height": 720,
+          "fill": {
+            "type": "image",
+            "enabled": true,
+            "url": "assets/web-hero.png",
+            "mode": "fill"
+          }
+        },
+        {
+          "type": "frame",
+          "id": "w31Ox",
+          "x": 0,
+          "y": 0,
+          "name": "Scrim",
+          "width": 1200,
+          "height": 630,
+          "fill": [
+            {
+              "type": "gradient",
+              "gradientType": "linear",
+              "enabled": true,
+              "rotation": 270,
+              "size": {
+                "height": 1
+              },
+              "colors": [
+                {
+                  "color": "#0B0B0BFF",
+                  "position": 0
+                },
+                {
+                  "color": "#0B0B0BF2",
+                  "position": 0.3
+                },
+                {
+                  "color": "#0B0B0B99",
+                  "position": 0.62
+                },
+                {
+                  "color": "#0B0B0B26",
+                  "position": 1
+                }
+              ]
+            },
+            {
+              "type": "gradient",
+              "gradientType": "linear",
+              "enabled": true,
+              "rotation": 180,
+              "size": {
+                "height": 1
+              },
+              "colors": [
+                {
+                  "color": "#0B0B0B00",
+                  "position": 0.55
+                },
+                {
+                  "color": "#0B0B0BFF",
+                  "position": 1
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "Ji0B0",
+          "x": 72,
+          "y": 64,
+          "name": "Logo",
+          "gap": 12,
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "icon",
+              "id": "GRQzf",
+              "name": "Mark",
+              "width": 30,
+              "height": 30,
+              "icon": "tv",
+              "library": "Material Symbols Sharp",
+              "fill": "$--primary"
+            },
+            {
+              "type": "text",
+              "id": "hdJxb",
+              "name": "Wordmark",
+              "fill": "#FFFFFF",
+              "content": "PROYECTA",
+              "fontFamily": "$--font-primary",
+              "fontSize": 22,
+              "fontWeight": "700",
+              "letterSpacing": 1.5
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "tuDLw",
+          "x": 72,
+          "y": 168,
+          "name": "Copy",
+          "width": 640,
+          "layout": "vertical",
+          "gap": 24,
+          "children": [
+            {
+              "id": "rkKaj",
+              "type": "ref",
+              "ref": "QXzMv",
+              "name": "Eyebrow",
+              "descendants": {
+                "aeD65": {
+                  "content": "EN VIVO · SANTO DOMINGO"
+                }
+              }
+            },
+            {
+              "type": "text",
+              "id": "LY3rs",
+              "name": "H1",
+              "fill": "#FFFFFF",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "Tu anuncio, en las pantallas de todo el país.",
+              "lineHeight": 1.05,
+              "fontFamily": "$--font-primary",
+              "fontSize": 58,
+              "fontWeight": "600",
+              "letterSpacing": -1.5
+            },
+            {
+              "type": "text",
+              "id": "AYDlh",
+              "name": "Sub",
+              "fill": "#C9CAC7",
+              "textGrowth": "fixed-width",
+              "width": 600,
+              "content": "Proyecta conecta a los dueños de pantallas con las marcas que quieren estar ahí.",
+              "lineHeight": 1.45,
+              "fontFamily": "$--font-secondary",
+              "fontSize": 22,
+              "fontWeight": "normal"
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "id": "W2WHA",
+          "x": 72,
+          "y": 540,
+          "name": "Domain",
+          "fill": "#9A9B98",
+          "content": "proyecta.do",
+          "fontFamily": "$--font-primary",
+          "fontSize": 20,
+          "fontWeight": "500",
+          "letterSpacing": 0.5
+        },
+        {
+          "type": "frame",
+          "id": "LQOlV",
+          "layoutPosition": "absolute",
+          "x": 788,
+          "y": 372,
+          "name": "Now Playing Card",
+          "width": 340,
+          "fill": "#0B0B0BB3",
+          "cornerRadius": 16,
+          "stroke": "#FFFFFF1F",
+          "strokeWidth": 1,
+          "strokeAlignment": "inner",
+          "effect": {
+            "type": "background_blur",
+            "radius": 24
+          },
+          "layout": "vertical",
+          "gap": 18,
+          "padding": 24,
+          "children": [
+            {
+              "type": "frame",
+              "id": "qBMAS",
+              "name": "Top",
+              "width": "fill_container",
+              "justifyContent": "space_between",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "t9Bhbm",
+                  "name": "Live",
+                  "gap": 8,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "ellipse",
+                      "id": "V4npD",
+                      "name": "Dot",
+                      "fill": "$web-signal",
+                      "width": 8,
+                      "height": 8
+                    },
+                    {
+                      "type": "text",
+                      "id": "g0EVv",
+                      "name": "Label",
+                      "fill": "$web-signal",
+                      "content": "REPRODUCIENDO",
+                      "fontFamily": "$--font-primary",
+                      "fontSize": 11,
+                      "fontWeight": "600",
+                      "letterSpacing": 2
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "u41vQ",
+                  "name": "Time",
+                  "fill": "#9A9B98",
+                  "content": "8:42 PM",
+                  "fontFamily": "$--font-primary",
+                  "fontSize": 11,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "UvEke",
+              "name": "Info",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 6,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "S2cjJJ",
+                  "name": "Ad",
+                  "fill": "#FFFFFF",
+                  "content": "Tu anuncio aquí",
+                  "fontFamily": "$--font-primary",
+                  "fontSize": 20,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "text",
+                  "id": "aiLU8",
+                  "name": "Place",
+                  "fill": "#9A9B98",
+                  "content": "Valla LED · Av. 27 de Febrero",
+                  "fontFamily": "$--font-secondary",
+                  "fontSize": 14,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "XONYU",
+              "name": "Progress",
+              "width": "fill_container",
+              "height": 3,
+              "fill": "#FFFFFF26",
+              "cornerRadius": 2,
+              "layout": "none",
+              "children": [
+                {
+                  "type": "rectangle",
+                  "cornerRadius": 2,
+                  "id": "LqsRK",
+                  "x": 0,
+                  "y": 0,
+                  "name": "Fill",
+                  "fill": "$web-signal",
+                  "width": 176,
+                  "height": 3
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "MCxEq",
+              "name": "Meta",
+              "width": "fill_container",
+              "justifyContent": "space_between",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "G6WiJ",
+                  "name": "Slot",
+                  "fill": "#C9CAC7",
+                  "content": "Espacio 03 de 12",
+                  "fontFamily": "$--font-primary",
+                  "fontSize": 12,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "text",
+                  "id": "U3Qfqf",
+                  "name": "Dur",
+                  "fill": "#C9CAC7",
+                  "content": "0:06 / 0:10",
+                  "fontFamily": "$--font-primary",
+                  "fontSize": 12,
+                  "fontWeight": "normal"
+                }
+              ]
+            }
+          ]
+        }
+      ]
     }
   ],
   "themes": {
