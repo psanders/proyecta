@@ -8,19 +8,19 @@ charging (invoicing, payouts) is out of scope — this capability only turns pla
 
 ### Requirement: Pay-per-display rate
 
-A screen MAY carry a pay-per-display rate: a price in Dominican pesos (RD$), with centavo precision, charged for
+A screen MAY carry a pay-per-display rate: a price in Dominican dollars (US$), with cent precision, charged for
 every 5 seconds an ad displays on it. A screen without a rate SHALL be reported incomplete. Every ad's duration
 SHALL be a whole multiple of 5 seconds (5, 10, 15, …); the platform SHALL reject an ad rotation containing an item
 whose duration is not a multiple of 5000 ms, so every play divides evenly into billable 5-second units.
 
 #### Scenario: Set a fractional rate
 
-- **WHEN** an admin sets a screen's rate to RD$ 2.50 per 5 seconds
-- **THEN** the rate is saved and shown back as exactly RD$ 2.50, with no rounding drift
+- **WHEN** an admin sets a screen's rate to US$ 2.50 per 5 seconds
+- **THEN** the rate is saved and shown back as exactly US$ 2.50, with no rounding drift
 
-#### Scenario: Rate below a centavo
+#### Scenario: Rate below a cent
 
-- **WHEN** an admin enters a rate with more than two decimal places (e.g. RD$ 2.505)
+- **WHEN** an admin enters a rate with more than two decimal places (e.g. US$ 2.505)
 - **THEN** the request fails with a Spanish validation error asking for at most two decimals
 
 #### Scenario: Non-multiple ad duration
@@ -61,8 +61,8 @@ diagnostics but SHALL NOT be billable. Charge = (planned duration in seconds ÷ 
 #### Scenario: Completed play is billed by the duration the device reports
 
 - **WHEN** a device reports a completed play of a 15-second ad, together with that 15000 ms duration, on a screen
-  billed at RD$ 2 per 5 seconds
-- **THEN** the play earns RD$ 6 (3 units × RD$ 2), regardless of the exact measured playback time
+  billed at US$ 2 per 5 seconds
+- **THEN** the play earns US$ 6 (3 units × US$ 2), regardless of the exact measured playback time
 
 #### Scenario: Rotation changed while the TV was offline
 
@@ -90,7 +90,7 @@ diagnostics but SHALL NOT be billable. Charge = (planned duration in seconds ÷ 
 
 The platform SHALL provide, for each screen, a summary of billable plays, billable seconds, and earnings for
 today and for the last 7 days (America/Santo_Domingo calendar days), computed from billable plays. The owner-facing
-view SHALL lead with the number of billable plays and the earnings in RD$ (e.g. "12 reproducciones · RD$ 30.00",
+view SHALL lead with the number of billable plays and the earnings in US$ (e.g. "12 reproducciones · US$ 30.00",
 singular "1 reproducción" for exactly one); billable seconds MAY be omitted from that view but SHALL remain part of
 the underlying data. A screen with no rate SHALL show the summary as unavailable rather than computing earnings of
 zero from an undefined rate.
@@ -98,8 +98,8 @@ zero from an undefined rate.
 #### Scenario: Owner views recent activity
 
 - **WHEN** an owner opens a screen that has played 12 billable ads today and 180 in the last 7 days, billed at
-  RD$ 2.50 per 5 seconds
-- **THEN** they see "Hoy · 12 reproducciones · RD$ 30.00" and "Últimos 7 días · 180 reproducciones · RD$ 450.00"
+  US$ 2.50 per 5 seconds
+- **THEN** they see "Hoy · 12 reproducciones · US$ 30.00" and "Últimos 7 días · 180 reproducciones · US$ 450.00"
 
 #### Scenario: Exactly one billable play
 
@@ -109,4 +109,4 @@ zero from an undefined rate.
 #### Scenario: Screen without a rate
 
 - **WHEN** an owner opens a screen that has never had a rate set
-- **THEN** the summary explains that no rate is set instead of showing RD$ 0
+- **THEN** the summary explains that no rate is set instead of showing US$ 0

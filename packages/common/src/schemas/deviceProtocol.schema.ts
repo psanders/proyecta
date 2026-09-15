@@ -36,6 +36,8 @@ export const heartbeatSchema = z.object({
     .regex(/^\d{2,5}x\d{2,5}$/)
     .optional(),
   chromiumVersion: z.string().max(32).optional(),
+  /** CPU load 0–100, when the shell can measure it (browsers can't). */
+  cpuPercent: z.number().min(0).max(100).optional(),
   memoryUsedMb: z.number().min(0).optional(),
   memoryTotalMb: z.number().min(0).optional(),
   storageUsedMb: z.number().min(0).optional(),

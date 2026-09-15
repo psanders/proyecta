@@ -84,32 +84,32 @@ const optionalText = (max: number, label: string) =>
     .transform((v) => (v === "" ? undefined : v))
     .optional();
 
-const CENTS_PER_PESO = 100;
+const CENTS_PER_DOLLAR = 100;
 
 /**
- * Converts a validated pay-per-display rate from RD$ pesos into integer RD$ centavos, e.g.
+ * Converts a validated pay-per-display rate from US dollars into integer US$ cents, e.g.
  * `2.5 -> 250`. A plain function, not a schema `.transform()`: this codebase re-validates
  * mutation input against the same schema both at the tRPC boundary and again inside the
  * validated function (see `withErrorHandlingAndValidation`), so a schema-level transform would
  * run twice and double-convert. Callers apply this exactly once, at the point of writing to the
  * database.
  */
-export function ratePesosToCents(pesos: number): number {
-  return Math.round(pesos * CENTS_PER_PESO);
+export function rateDollarsToCents(dollars: number): number {
+  return Math.round(dollars * CENTS_PER_DOLLAR);
 }
 
 /**
- * Pay-per-display rate, in RD$ pesos with centavo precision (converted to centavos with
- * {@link ratePesosToCents} before it's persisted). Comparing `pesos * 100` to its rounded value
+ * Pay-per-display rate, in US dollars with cent precision (converted to cents with
+ * {@link rateDollarsToCents} before it's persisted). Comparing `dollars * 100` to its rounded value
  * (with a small float tolerance) rather than `% 0.01` avoids float-precision false rejections for
- * an exact centavo amount like 2.50.
+ * an exact cent amount like 2.50.
  */
-const ratePerFiveSecondsPesos = z
+const ratePerFiveSecondsDollars = z
   .number({ error: "La tarifa es obligatoria" })
   .min(0, "La tarifa no puede ser negativa")
   .max(1_000_000, "La tarifa es demasiado alta")
-  .refine((pesos) => {
-    const cents = pesos * CENTS_PER_PESO;
+  .refine((dollars) => {
+    const cents = dollars * CENTS_PER_DOLLAR;
     return Math.abs(cents - Math.round(cents)) < 1e-6;
   }, "Usa como máximo dos decimales")
   .optional();
@@ -153,7 +153,7 @@ const screenFieldsSchema = z.object({
     .transform((days) => [...new Set(days)].sort((a, b) => a - b)),
   startTime: time.optional(),
   endTime: time.optional(),
-  ratePerFiveSecondsPesos
+  ratePerFiveSecondsDollars
 });
 
 function checkHours(

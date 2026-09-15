@@ -117,15 +117,15 @@ describe("dashboard session", () => {
     expect(refresh.called).to.equal(false);
   });
 
-  it("should summarize availability and format pay-per-display centavos like the design", () => {
+  it("should summarize availability and format pay-per-display cents like the design", () => {
     expect(availabilitySummary([1, 2, 3, 4, 5], "08:00", "20:00")).to.equal("Lun–Vie · 8:00–20:00");
     expect(availabilitySummary([1, 2, 3, 4, 5, 6, 7], "09:00", "22:00")).to.equal(
       "Todos los días · 9:00–22:00"
     );
     expect(availabilitySummary([6, 7], "10:00", "18:00")).to.equal("Sáb, Dom · 10:00–18:00");
     expect(availabilitySummary([], "08:00", "20:00")).to.equal(null);
-    expect(formatCents(250)).to.equal("RD$ 2.50");
-    expect(formatCents(45000)).to.equal("RD$ 450.00");
+    expect(formatCents(250)).to.equal("US$ 2.50");
+    expect(formatCents(45000)).to.equal("US$ 450.00");
     expect(formatPlays(1)).to.equal("1 reproducción");
     expect(formatPlays(12)).to.equal("12 reproducciones");
   });

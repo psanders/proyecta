@@ -3,6 +3,7 @@
  */
 import type { ReactNode } from "react";
 import { cn } from "../../lib/cn.js";
+import { Icon, type IconName } from "./Icon.js";
 
 /** Pencil Card (Lunaris): white, 1 px border, subtle shadow, square corners. */
 export function Card({ children, className }: { children: ReactNode; className?: string }) {
@@ -16,12 +17,14 @@ export function Card({ children, className }: { children: ReactNode; className?:
 /** Dashboard/Section Card: header (title + hint) and content, as in the screen detail and forms. */
 export function SectionCard({
   title,
+  icon,
   hint,
   actions,
   children,
   className
 }: {
   title: string;
+  icon?: IconName;
   hint?: string;
   actions?: ReactNode;
   children: ReactNode;
@@ -31,7 +34,10 @@ export function SectionCard({
     <Card className={className}>
       <div className="flex items-start justify-between gap-4 px-6 pt-6 pb-2">
         <div className="flex flex-col gap-0.5">
-          <h2 className="text-[15px] font-semibold text-foreground">{title}</h2>
+          <h2 className="flex items-center gap-2 text-[15px] font-semibold text-foreground">
+            {icon ? <Icon name={icon} className="size-4 text-muted-foreground" /> : null}
+            {title}
+          </h2>
           {hint ? <p className="text-[13px] text-muted-foreground">{hint}</p> : null}
         </div>
         {actions}

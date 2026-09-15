@@ -27,7 +27,7 @@ export function ScreensPage() {
 
   if (list.isSuccess && !archived && totals?.all === 0) {
     return (
-      <div className="flex max-w-[1080px] flex-col gap-8">
+      <div className="mx-auto flex w-full max-w-[1080px] flex-col gap-8">
         <PageHeader
           title={strings.screens.title}
           subtitle={strings.screens.subtitle}
@@ -38,9 +38,7 @@ export function ScreensPage() {
           body={strings.screens.emptyBody}
           action={
             canManage ? (
-              <Button icon="add" onClick={() => navigate("/bienvenida")}>
-                {strings.screens.add}
-              </Button>
+              <Button onClick={() => navigate("/bienvenida")}>{strings.screens.add}</Button>
             ) : null
           }
         />
@@ -49,7 +47,7 @@ export function ScreensPage() {
   }
 
   return (
-    <div className="flex max-w-[1080px] flex-col gap-8">
+    <div className="mx-auto flex w-full max-w-[1080px] flex-col gap-8">
       <PageHeader title={strings.screens.title} subtitle={strings.screens.subtitle} actions={add} />
       <div className="flex gap-4">
         <StatCard label={strings.screens.total} value={totals?.all ?? "–"} />
@@ -58,8 +56,8 @@ export function ScreensPage() {
       </div>
       <section className="flex flex-col gap-4">
         <div className="flex items-center justify-between">
-          <h2 className="text-base font-medium">{strings.screens.yours}</h2>
-          <div className="flex rounded-full bg-secondary p-1 text-sm" role="tablist">
+          <h2 className="font-mono text-base font-medium">{strings.screens.yours}</h2>
+          <div className="flex gap-0.5 rounded-full bg-secondary p-1 text-[13px]" role="tablist">
             {[
               { value: false, label: strings.screens.active },
               { value: true, label: strings.screens.archived }

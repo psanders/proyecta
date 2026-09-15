@@ -4,7 +4,7 @@
 
 Admins and owners SHALL create and edit screens in their workspace. A screen SHALL require a name and city.
 It MAY carry place type, indoor/outdoor, address, physical width and height in centimeters, orientation,
-resolution, available weekdays, daily start and end time, and a pay-per-display rate in Dominican pesos (RD$)
+resolution, available weekdays, daily start and end time, and a pay-per-display rate in Dominican dollars (US$)
 per every 5 seconds displayed. End time SHALL be after start time. A screen missing availability (days and
 hours) or a pay-per-display rate SHALL be reported as incomplete.
 

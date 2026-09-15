@@ -19,7 +19,7 @@ import { SectionCard } from "../../components/ui/Card.js";
 import { ConfirmDialog } from "../../components/ui/Dialog.js";
 import { Icon } from "../../components/ui/Icon.js";
 import { errorMessage } from "../../lib/errors.js";
-import { formatCents, formatPlays } from "../../lib/format.js";
+import { formatCents, formatPlays, formatTime12 } from "../../lib/format.js";
 import { trpc } from "../../lib/trpc.js";
 import { useWorkspace } from "../../lib/useWorkspace.js";
 import { strings } from "../../strings.js";
@@ -77,12 +77,17 @@ export function ScreenDetailPage() {
   const active = pending ? dialogs[pending] : null;
 
   return (
-    <div className="flex max-w-[760px] flex-col gap-6">
+    <div className="mx-auto flex w-full max-w-[760px] flex-col gap-6">
       <BackLink to="/" label={strings.detail.back} />
       <PageHeader
         title={s.name}
         badge={<StatusBadge status={s.status} />}
-        subtitle={[place, s.city].filter(Boolean).join(" · ")}
+        subtitle={
+          <>
+            <Icon name="location" className="size-4" />
+            {[s.address ?? place, s.city].filter(Boolean).join(" · ")}
+          </>
+        }
         actions={
           canManage && !s.archived ? (
             <Button onClick={() => navigate(`/pantallas/${id}/editar`)}>
@@ -114,18 +119,17 @@ export function ScreenDetailPage() {
               : na
           }
         />
-        <KeyValueRow label={strings.form.address} value={s.address ?? na} />
         <KeyValueRow
           label="Tamaño"
           value={
             s.widthCm && s.heightCm
-              ? `${s.widthCm} × ${s.heightCm} cm${s.orientation ? ` · ${ORIENTATION_LABELS[s.orientation as keyof typeof ORIENTATION_LABELS]}` : ""}`
+              ? `${s.widthCm} x ${s.heightCm} cm${s.orientation ? ` · ${ORIENTATION_LABELS[s.orientation as keyof typeof ORIENTATION_LABELS]}` : ""}`
               : na
           }
         />
         <KeyValueRow
           label={strings.form.resolution}
-          value={s.resolution ? s.resolution.replace("x", " × ") : na}
+          value={s.resolution ? s.resolution.replace("x", " x ") : na}
         />
       </SectionCard>
 
@@ -133,7 +137,11 @@ export function ScreenDetailPage() {
         <DayPicker value={s.availableDays} />
         <KeyValueRow
           label={strings.detail.schedule}
-          value={s.startTime && s.endTime ? `${s.startTime} – ${s.endTime}` : na}
+          value={
+            s.startTime && s.endTime
+              ? `${formatTime12(s.startTime)} – ${formatTime12(s.endTime)}`
+              : na
+          }
         />
       </SectionCard>
 
@@ -144,7 +152,7 @@ export function ScreenDetailPage() {
         />
       </SectionCard>
 
-      <SectionCard title={strings.detail.activity}>
+      <SectionCard title={strings.detail.activity} icon="barChart">
         {earnings.data?.available ? (
           <>
             <p className="text-sm text-foreground">

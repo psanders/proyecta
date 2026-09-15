@@ -33,7 +33,7 @@ export function ProfilePage() {
   });
 
   return (
-    <div className="flex max-w-[760px] flex-col gap-6">
+    <div className="mx-auto flex w-full max-w-[760px] flex-col gap-6">
       <PageHeader title={strings.profile.title} subtitle={strings.profile.subtitle} />
       <SectionCard title={strings.profile.personal}>
         {updateName.isSuccess ? <Alert tone="success">{strings.profile.saved}</Alert> : null}

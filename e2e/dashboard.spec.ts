@@ -48,7 +48,7 @@ test.describe("owner dashboard", () => {
     await shot(page, "00-sign-in");
     await signUp(page, stamp);
     await page.getByLabel("Ingresa el código de vinculación").fill(code.toLowerCase());
-    await expect(page.getByText("Pantalla encontrada")).toBeVisible();
+    await expect(page.getByText("Pantalla encontrada · lista para vincular")).toBeVisible();
     await shot(page, "02-onboarding-found");
     await page.getByRole("button", { name: "Vincular y continuar" }).click();
 
@@ -60,16 +60,20 @@ test.describe("owner dashboard", () => {
       await page.getByRole("button", { name: day, exact: true }).click();
     await page.getByLabel("Hora de inicio").fill("08:00");
     await page.getByLabel("Hora de fin").fill("22:00");
-    await page.getByLabel("Tarifa por 5 segundos (RD$)").fill("2.50");
+    await page.getByLabel("Tarifa por 5 segundos (US$)").fill("2.50");
     await shot(page, "03-add-screen");
     await page.getByRole("button", { name: "Guardar y publicar pantalla" }).click();
 
     await expect(page.getByRole("heading", { name: "Valla Av. 27 de Febrero" })).toBeVisible();
     await expect(page.getByTestId("status-badge").first()).toHaveText("En línea");
-    await expect(page.getByText(code)).toBeVisible();
+    await expect(page.getByTestId("pairing-code")).toHaveText(code);
+    await context.grantPermissions(["clipboard-read", "clipboard-write"]);
+    await page.getByRole("button", { name: "Copiar código" }).click();
+    await expect(page.getByRole("button", { name: "Código copiado" })).toBeVisible();
+    expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(code);
     await expect(player.locator(".code-box")).toBeHidden();
     // Pay-per-display: the rate saved above, and an earnings summary instead of "Próximamente".
-    await expect(page.getByText("RD$ 2.50")).toBeVisible();
+    await expect(page.getByText("US$ 2.50")).toBeVisible();
     await expect(page.getByText(/^Hoy · \d+ reproducci/)).toBeVisible();
     await expect(page.getByText(/^Últimos 7 días · \d+ reproducci/)).toBeVisible();
     await shot(page, "04-screen-detail-linked");

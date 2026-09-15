@@ -28,7 +28,7 @@ describe("unitsForDurationMs", () => {
 describe("centsForPlay", () => {
   it("should multiply billed units by the snapshotted rate", () => {
     // Act + Assert
-    // 3 units (15s) at RD$ 2.50/unit (250 centavos) = RD$ 7.50 (750 centavos)
+    // 3 units (15s) at US$ 2.50/unit (250 cents) = US$ 7.50 (750 cents)
     expect(centsForPlay(3, 250)).to.equal(750);
   });
 

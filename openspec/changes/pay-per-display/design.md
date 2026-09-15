@@ -1,6 +1,6 @@
 ## Context
 
-`Screen.priceReference` (Int, whole pesos) + `Screen.priceModel` (`PriceModel` enum: PER_HOUR/DAY/WEEK/MONTH) exist
+`Screen.priceReference` (Int, whole dollars) + `Screen.priceModel` (`PriceModel` enum: PER_HOUR/DAY/WEEK/MONTH) exist
 today but nothing computes a price from them — they were a placeholder pending a real pricing unit (see
 proposal.md). `PlayLog` already records `deviceId`, `screenId` (attributed by `DeviceBinding` history), `itemId`,
 `codec`, `result` (COMPLETED/STALLED/FAILED), `startedAt`, `endedAt`, idempotent per `(deviceId, itemId,
@@ -19,16 +19,16 @@ later change); backfilling earnings for plays recorded before this change ships.
 
 ## Decisions
 
-- **Rate storage: integer centavos, converted outside the schema.** `Screen.ratePerFiveSecondsCents Int?`, e.g.
-  RD$ 2.50 → `250`. Whole pesos in a float or decimal-as-float would risk rounding drift once multiplied by billed
-  units across many plays; centavos as an integer make every calculation exact integer arithmetic. The dashboard
-  form takes pesos with up to two decimals; `screen.schema.ts` validates that (rejecting anything finer than a
-  centavo, e.g. `2.505`, as a Spanish validation error — mirrors the existing `screenFieldsSchema` pattern of
-  Spanish `ctx.addIssue` messages) via `ratePerFiveSecondsPesos`, but does **not** transform it to cents in the
+- **Rate storage: integer cents, converted outside the schema.** `Screen.ratePerFiveSecondsCents Int?`, e.g.
+  US$ 2.50 → `250`. Whole dollars in a float or decimal-as-float would risk rounding drift once multiplied by billed
+  units across many plays; cents as an integer make every calculation exact integer arithmetic. The dashboard
+  form takes dollars with up to two decimals; `screen.schema.ts` validates that (rejecting anything finer than a
+  cent, e.g. `2.505`, as a Spanish validation error — mirrors the existing `screenFieldsSchema` pattern of
+  Spanish `ctx.addIssue` messages) via `ratePerFiveSecondsDollars`, but does **not** transform it to cents in the
   schema. This codebase validates mutation input twice — once at the tRPC boundary (`validate(schema)`) and again
   inside the validated function (`withErrorHandlingAndValidation(fn, schema)`) — so a `.transform()` here would
   run twice and double-convert (2.5 → 250 → 25000), which is exactly what happened until the integration test
-  caught it. The fix: the schema only validates; an exported `ratePesosToCents()` function does the ×100
+  caught it. The fix: the schema only validates; an exported `rateDollarsToCents()` function does the ×100
   conversion exactly once, called by `createCreateScreen`/`createUpdateScreen` right before the Prisma write.
 - **Snapshot on `PlayLog`, not a join to `Screen` at read time.** Add `PlayLog.billedUnits Int?` (planned duration
   ÷ 5000, only set for completed plays) and `PlayLog.rateCentsAtPlay Int?` (the screen's rate at the moment the
@@ -37,7 +37,7 @@ later change); backfilling earnings for plays recorded before this change ships.
   This is what makes "changing a screen's rate doesn't rewrite history" true by construction rather than by
   convention: even if `Screen.ratePerFiveSecondsCents` changes or is cleared, every already-recorded play keeps the
   numbers it was priced with. Alternative considered: store only a computed `earnedCents` and drop the rate/units
-  split — rejected because keeping both makes the number auditable ("3 units × RD$2 = RD$6") in the UI and in
+  split — rejected because keeping both makes the number auditable ("3 units × US$2 = US$6") in the UI and in
   support conversations, at the cost of two extra nullable int columns.
 - **Planned duration travels with the play report; the rotation lookup is only a fallback.** `playLogBatchSchema`
   (frozen, additive-only under `/device/v1`) gains an **optional** `durationMs` on each play — additive, so old
@@ -67,7 +67,7 @@ later change); backfilling earnings for plays recorded before this change ships.
   wholesale (falls back to `null`, i.e. no rotation) — no new rejection path needed, just a stricter item schema.
   Any future ad-upload endpoint inherits the same constraint for free by reusing the schema.
 - **Owner view leads with plays and money, not seconds.** The screen detail's "Actividad publicitaria" card reads
-  "Hoy · 12 reproducciones · RD$ 30.00" / "Últimos 7 días · 180 reproducciones · RD$ 450.00" (singular "1
+  "Hoy · 12 reproducciones · US$ 30.00" / "Últimos 7 días · 180 reproducciones · US$ 450.00" (singular "1
   reproducción"), matching how a vallero actually thinks about it ("cuántas veces se vio, cuánto gané"). Billable
   seconds stay in the `screens.earnings` API response (useful for future reporting/debugging) but aren't rendered.
 - **Earnings summary: two windows, computed on read, no new persisted aggregate table.** "Today" and "last 7 days"

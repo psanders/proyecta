@@ -4,7 +4,7 @@
       rate field with a helper example, removing the "Modelo de precio" select entirely; verified with
       TakeScreenshot
 - [x] 1.2 Update `screen-detail` "Precio" (GVMr9) and "Actividad publicitaria" (qpw6k) cards to show the rate and
-      a plays+earnings summary ("Hoy · 12 reproducciones · RD$ 30.00"); verified with TakeScreenshot and confirmed
+      a plays+earnings summary ("Hoy · 12 reproducciones · US$ 30.00"); verified with TakeScreenshot and confirmed
       no overlap with the concurrently-edited "Estado del dispositivo" card, header actions or
       `screen-detail-more-menu` (now merged to main)
 
@@ -19,15 +19,15 @@
 ## 3. Contracts (`@proyecta/common`)
 
 - [x] 3.1 `screen.schema.ts`: replace `priceReference`/`priceModel` with a validation-only
-      `ratePerFiveSecondsPesos` field (RD$ pesos, up to 2 decimals, no schema-level transform) plus an exported
-      `ratePesosToCents()` conversion function. **Deviation from the original plan:** a schema `.transform()`
-      (pesos ×100 → cents) is unsafe here because this codebase validates mutation input twice — once at the tRPC
+      `ratePerFiveSecondsDollars` field (US dollars, up to 2 decimals, no schema-level transform) plus an exported
+      `rateDollarsToCents()` conversion function. **Deviation from the original plan:** a schema `.transform()`
+      (dollars ×100 → cents) is unsafe here because this codebase validates mutation input twice — once at the tRPC
       boundary (`validate(schema)`) and again inside the validated function
       (`withErrorHandlingAndValidation(fn, schema)`) — so a non-idempotent transform silently double-converts
       (2.5 → 250 → 25000), caught by the integration test (5.4). Fixed by keeping the schema pure validation and
-      calling `ratePesosToCents()` exactly once, in `createCreateScreen`/`createUpdateScreen`, at the point of
+      calling `rateDollarsToCents()` exactly once, in `createCreateScreen`/`createUpdateScreen`, at the point of
       writing to the database. Updated `isScreenComplete` to check `ratePerFiveSecondsCents` (the stored, already-
-      converted field) instead of the old price fields; verified unit tests including the sub-centavo rejection
+      converted field) instead of the old price fields; verified unit tests including the sub-cent rejection
       case
 - [x] 3.2 `manifest.schema.ts`: refine `durationMs` to require a multiple of 5000 (replacing the `min(1000)`-only
       check) with a Spanish-friendly error; verified unit tests for both a valid multiple and a rejected non-multiple
@@ -62,7 +62,7 @@
       duration (no fallback), absent duration with rotation fallback, no screen rate, unattributed play, stalled
       play, empty batch
 - [x] 5.2 New validated function `createGetScreenEarnings`: aggregates billable `PlayLog` rows for a screen into
-      today's and last-7-days' billable plays, billable seconds and earnings (RD$, `America/Santo_Domingo`
+      today's and last-7-days' billable plays, billable seconds and earnings (US$, `America/Santo_Domingo`
       calendar days), returning "unavailable" when the screen has no rate; verified unit tests for both windows,
       the calendar-day boundary, and the no-rate/not-found cases
 - [x] 5.3 tRPC `screens` router: expose `screens.earnings`, scoped to the workspace like `get`; screen views
@@ -76,11 +76,11 @@
 
 ## 6. Dashboard
 
-- [x] 6.1 `ScreenFormPage`: replaced the two commercial fields with a single `rate` field (RD$ pesos input,
-      `hint` helper text); `toInput()` sends `ratePerFiveSecondsPesos`; pre-fill converts the stored centavos back
-      to a 2-decimal pesos string; verified typecheck + the Playwright flow (6.2) saving and redisplaying the rate
+- [x] 6.1 `ScreenFormPage`: replaced the two commercial fields with a single `rate` field (US dollars input,
+      `hint` helper text); `toInput()` sends `ratePerFiveSecondsDollars`; pre-fill converts the stored cents back
+      to a 2-decimal dollars string; verified typecheck + the Playwright flow (6.2) saving and redisplaying the rate
 - [x] 6.2 `ScreenDetailPage`: "Precio" card shows the rate (`formatCents`); "Actividad publicitaria" card renders
-      "Hoy · N reproducciones · RD$X" / "Últimos 7 días · N reproducciones · RD$X" as single lines (`formatPlays`
+      "Hoy · N reproducciones · US$X" / "Últimos 7 días · N reproducciones · US$X" as single lines (`formatPlays`
       singularizes "1 reproducción"), or the no-rate message when `screens.earnings` reports unavailable; verified
       by `e2e/dashboard.spec.ts`, which now asserts the rate and both activity lines are visible after saving a
       screen with a rate

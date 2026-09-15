@@ -9,7 +9,9 @@ import check from "@material-symbols/svg-400/sharp/check.svg?raw";
 import checkCircle from "@material-symbols/svg-400/sharp/check_circle.svg?raw";
 import chevronDown from "@material-symbols/svg-400/sharp/keyboard_arrow_down.svg?raw";
 import chevronRight from "@material-symbols/svg-400/sharp/chevron_right.svg?raw";
+import barChart from "@material-symbols/svg-400/sharp/bar_chart.svg?raw";
 import close from "@material-symbols/svg-400/sharp/close.svg?raw";
+import copy from "@material-symbols/svg-400/sharp/content_copy.svg?raw";
 import deleteIcon from "@material-symbols/svg-400/sharp/delete.svg?raw";
 import download from "@material-symbols/svg-400/sharp/download.svg?raw";
 import error from "@material-symbols/svg-400/sharp/error.svg?raw";
@@ -29,6 +31,7 @@ import refresh from "@material-symbols/svg-400/sharp/refresh.svg?raw";
 import schedule from "@material-symbols/svg-400/sharp/schedule.svg?raw";
 import settings from "@material-symbols/svg-400/sharp/settings.svg?raw";
 import spinner from "@material-symbols/svg-400/sharp/progress_activity.svg?raw";
+import storefront from "@material-symbols/svg-400/sharp/storefront.svg?raw";
 import swap from "@material-symbols/svg-400/sharp/swap_horiz.svg?raw";
 import tv from "@material-symbols/svg-400/sharp/tv.svg?raw";
 import unarchive from "@material-symbols/svg-400/sharp/unarchive.svg?raw";
@@ -37,12 +40,14 @@ import warning from "@material-symbols/svg-400/sharp/warning.svg?raw";
 const ICONS = {
   add,
   archive,
+  barChart,
   arrowBack,
   check,
   checkCircle,
   chevronDown,
   chevronRight,
   close,
+  copy,
   delete: deleteIcon,
   download,
   error,
@@ -62,6 +67,7 @@ const ICONS = {
   schedule,
   settings,
   spinner,
+  storefront,
   swap,
   tv,
   unarchive,

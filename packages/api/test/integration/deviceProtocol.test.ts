@@ -292,7 +292,7 @@ describe("device-protocol (integration: HTTP + Postgres)", function () {
       id: screen.id,
       name: "Pantalla Tarifa",
       city: "La Vega",
-      ratePerFiveSecondsPesos: 2.5
+      ratePerFiveSecondsDollars: 2.5
     });
 
     await post({
@@ -347,7 +347,7 @@ describe("device-protocol (integration: HTTP + Postgres)", function () {
       id: screen.id,
       name: "Pantalla Tarifa",
       city: "La Vega",
-      ratePerFiveSecondsPesos: 3
+      ratePerFiveSecondsDollars: 3
     });
     await post({
       plays: [

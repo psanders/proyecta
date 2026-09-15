@@ -50,7 +50,7 @@ When the event stream cannot be kept open (3 consecutive failures), the player S
 ### Requirement: Heartbeat and health
 
 A device SHALL send a heartbeat about every 60 seconds with its player version, shell, Chromium version, resolution,
-current item, chosen codec, uptime and, when available, memory and storage figures. The last heartbeat SHALL be shown
+current item, chosen codec, uptime and, when available, CPU load, memory and storage figures. The last heartbeat SHALL be shown
 on the screen's detail.
 
 #### Scenario: Health visible

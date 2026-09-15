@@ -117,7 +117,7 @@ describe("screen functions", () => {
     }
   });
 
-  it("should convert a fractional pay-per-display rate into exact centavos", async () => {
+  it("should convert a fractional pay-per-display rate into exact cents", async () => {
     // Arrange
     const client = db();
     client.screen.create.resolves(row({ ratePerFiveSecondsCents: 250 }));
@@ -127,7 +127,7 @@ describe("screen functions", () => {
       workspaceAccessKeyId: "WO1",
       name: "A",
       city: "Santiago",
-      ratePerFiveSecondsPesos: 2.5
+      ratePerFiveSecondsDollars: 2.5
     });
 
     // Assert
@@ -147,13 +147,13 @@ describe("screen functions", () => {
         workspaceAccessKeyId: "WO1",
         name: "A",
         city: "Santiago",
-        ratePerFiveSecondsPesos: 2.505
+        ratePerFiveSecondsDollars: 2.505
       });
       expect.fail("expected ValidationError");
     } catch (err) {
       expect(err).to.be.instanceOf(ValidationError);
       expect((err as ValidationError).fieldErrors[0]).to.include({
-        field: "ratePerFiveSecondsPesos",
+        field: "ratePerFiveSecondsDollars",
         message: "Usa como máximo dos decimales"
       });
       expect(client.screen.create.called).to.equal(false);

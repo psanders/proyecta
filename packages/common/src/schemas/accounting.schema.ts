@@ -19,7 +19,7 @@ export function unitsForDurationMs(durationMs: number | null | undefined): numbe
 }
 
 /**
- * Charge for a play, in RD$ centavos: `units * rateCentsAtPlay`. Either input being absent means
+ * Charge for a play, in US$ cents: `units * rateCentsAtPlay`. Either input being absent means
  * the play isn't billable (no rate snapshot, or a duration that couldn't be billed), so the charge
  * is 0.
  */
@@ -44,13 +44,13 @@ export interface EarningsWindow {
   plays: number;
   /** Sum of billed seconds in the window (billedUnits * 5). */
   billableSeconds: number;
-  /** Sum of earnings in the window, in RD$ centavos. */
+  /** Sum of earnings in the window, in US$ cents. */
   earningsCents: number;
 }
 
 /**
  * A screen's pay-per-display earnings summary. `available: false` means the screen has never had
- * a rate, so there is no meaningful "RD$ 0" to show — the UI should explain that instead.
+ * a rate, so there is no meaningful "US$ 0" to show — the UI should explain that instead.
  */
 export type ScreenEarnings =
   { available: false } | { available: true; today: EarningsWindow; last7Days: EarningsWindow };

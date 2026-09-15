@@ -17,15 +17,15 @@ under a 5-second unit. Ad durations become a hard multiple of 5 seconds.
   `durationMs` MUST be a multiple of 5000. Non-conforming manifests are rejected at load; the demo rotation
   generator is updated so every ad (image and video) lasts a multiple of 5 s.
 - Screen pricing: `Screen.priceReference` + `Screen.priceModel` (por hora/día/semana/mes) are replaced by a single
-  `Screen.ratePerFiveSecondsCents` (integer centavos of RD$). A screen is "incomplete" when this rate is missing,
+  `Screen.ratePerFiveSecondsCents` (integer cents of US$). A screen is "incomplete" when this rate is missing,
   in place of the old price fields.
 - New `accounting` capability: every billable play is priced at the screen's rate **snapshotted at play time**
   (a rate change never rewrites past earnings), in units of 5 seconds of the play's billed duration. Only
   `COMPLETED` plays are billable; `STALLED`/`FAILED` plays earn nothing. Billing uses the **planned** duration
   (the manifest item's `durationMs` at play time), not measured wall-clock duration, since a completed play is
   defined as reaching that planned end.
-- Dashboard: add/edit screen's "Información comercial" section becomes one field, "Tarifa por 5 segundos (RD$)"
-  (decimals allowed, e.g. RD$ 2.50). Screen detail's "Precio" card shows the rate; "Actividad publicitaria —
+- Dashboard: add/edit screen's "Información comercial" section becomes one field, "Tarifa por 5 segundos (US$)"
+  (decimals allowed, e.g. US$ 2.50). Screen detail's "Precio" card shows the rate; "Actividad publicitaria —
   Próximamente" becomes a real summary: billable seconds and earnings for today and the last 7 days.
 - Migration: existing `priceReference`/`priceModel` data has no defined conversion (the pricing unit was never
   real), so it is dropped; screens revert to incomplete until an owner sets the new rate.
@@ -55,7 +55,7 @@ under a 5-second unit. Ad durations become a hard multiple of 5 seconds.
 - `packages/common/src/schemas/screen.schema.ts`: replace price fields with the rate field and Spanish labels;
   update `isScreenComplete`.
 - `packages/common/src/schemas/manifest.schema.ts`: `durationMs` must be a multiple of 5000.
-- New `packages/common/src/schemas/accounting.schema.ts` (or similar): billing math (seconds → units → centavos)
+- New `packages/common/src/schemas/accounting.schema.ts` (or similar): billing math (seconds → units → cents)
   and the earnings summary shape shared by API and dashboard.
 - `packages/common/src/schemas/deviceProtocol.schema.ts`: `playLogBatchSchema` gains an optional `durationMs` per
   play (additive, frozen-contract-safe) — the player reports the ad's actual planned duration instead of the

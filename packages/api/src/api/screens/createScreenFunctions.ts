@@ -5,7 +5,7 @@ import { z } from "zod/v4";
 import {
   createScreenSchema,
   listScreensSchema,
-  ratePesosToCents,
+  rateDollarsToCents,
   screenIdSchema,
   updateScreenSchema,
   withErrorHandlingAndValidation
@@ -38,14 +38,14 @@ export function createCreateScreen(deps: ScreenDeps) {
 
   const fn = async (params: z.infer<typeof schema>): Promise<ScreenView> => {
     logger.verbose("creating screen", { workspace: params.workspaceAccessKeyId });
-    const { ratePerFiveSecondsPesos, ...fields } = params;
+    const { ratePerFiveSecondsDollars, ...fields } = params;
     const row = await deps.db.screen.create({
       data: {
         ...fields,
         ratePerFiveSecondsCents:
-          ratePerFiveSecondsPesos === undefined
+          ratePerFiveSecondsDollars === undefined
             ? undefined
-            : ratePesosToCents(ratePerFiveSecondsPesos)
+            : rateDollarsToCents(ratePerFiveSecondsDollars)
       },
       include: screenWithDevice
     });
@@ -91,9 +91,9 @@ export function createUpdateScreen(deps: ScreenDeps) {
       data: {
         ...unset,
         ratePerFiveSecondsCents:
-          fields.ratePerFiveSecondsPesos === undefined
+          fields.ratePerFiveSecondsDollars === undefined
             ? null
-            : ratePesosToCents(fields.ratePerFiveSecondsPesos),
+            : rateDollarsToCents(fields.ratePerFiveSecondsDollars),
         name: fields.name,
         city: fields.city,
         availableDays: fields.availableDays

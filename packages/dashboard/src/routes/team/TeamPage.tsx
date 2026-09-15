@@ -38,7 +38,7 @@ export function TeamPage() {
   });
 
   return (
-    <div className="flex max-w-[1080px] flex-col gap-8">
+    <div className="mx-auto flex w-full max-w-[1080px] flex-col gap-8">
       <PageHeader
         title={strings.team.title}
         subtitle={strings.team.subtitle}

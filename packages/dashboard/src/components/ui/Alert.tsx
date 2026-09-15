@@ -15,10 +15,12 @@ const TONES = {
 /** Pencil Alert/* (Lunaris). */
 export function Alert({
   tone,
+  title,
   children,
   className
 }: {
   tone: keyof typeof TONES;
+  title?: string;
   children: ReactNode;
   className?: string;
 }) {
@@ -28,7 +30,10 @@ export function Alert({
       className={cn("flex items-start gap-2 px-4 py-3 text-sm", TONES[tone].box, className)}
     >
       <Icon name={TONES[tone].icon} className="mt-px size-4" />
-      <div>{children}</div>
+      <div className="flex flex-col gap-0.5">
+        {title ? <p className="font-medium">{title}</p> : null}
+        <div>{children}</div>
+      </div>
     </div>
   );
 }

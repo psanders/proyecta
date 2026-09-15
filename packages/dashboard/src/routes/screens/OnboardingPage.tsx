@@ -4,12 +4,12 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { CODE_UNAVAILABLE_MESSAGES } from "@proyecta/common";
-import { Brand } from "../../components/AuthLayout.js";
 import { CodeInput } from "../../components/CodeInput.js";
 import { Card } from "../../components/ui/Card.js";
 import { Alert } from "../../components/ui/Alert.js";
 import { Button } from "../../components/ui/Button.js";
 import { Icon } from "../../components/ui/Icon.js";
+import { cn } from "../../lib/cn.js";
 import { errorMessage } from "../../lib/errors.js";
 import { trpc } from "../../lib/trpc.js";
 import { strings } from "../../strings.js";
@@ -38,22 +38,29 @@ export function OnboardingPage() {
   return (
     <div className="flex min-h-full flex-col bg-background">
       <header className="flex items-center justify-between px-10 py-6">
-        <Brand dark />
+        <div className="flex items-center gap-2">
+          <Icon name="tv" className="size-6 text-primary" />
+          <span className="font-mono text-base font-bold text-foreground">{strings.brand}</span>
+        </div>
         <Link to="/" className="text-sm text-muted-foreground hover:text-foreground">
           {strings.onboarding.exit}
         </Link>
       </header>
-      <div className="mx-auto flex w-[640px] max-w-full flex-col items-center gap-6 px-6 pt-10 pb-16 text-center">
-        <span className="rounded-full border border-border bg-card px-3 py-1 font-mono text-xs">
+      <div className="mx-auto flex w-[640px] max-w-full flex-col items-center gap-10 px-6 pt-10 pb-16 text-center">
+        <span className="rounded-full bg-secondary px-2 py-2 font-mono text-sm leading-none text-foreground">
           {strings.onboarding.pill}
         </span>
-        <h1 className="font-mono text-[40px] leading-tight font-medium">
-          {strings.onboarding.title}
-        </h1>
-        <p className="text-[15px] text-muted-foreground">{strings.onboarding.body}</p>
-        <Card className="mt-4 w-full text-left">
+        <div className="flex w-[560px] max-w-full flex-col gap-4">
+          <h1 className="font-mono text-4xl leading-[1.2] font-medium">
+            {strings.onboarding.title}
+          </h1>
+          <p className="text-base leading-normal text-muted-foreground">
+            {strings.onboarding.body}
+          </p>
+        </div>
+        <Card className="w-full text-left">
           <div className="flex flex-col gap-1 px-6 pt-6">
-            <h2 className="text-[15px] font-semibold">{strings.onboarding.cardTitle}</h2>
+            <h2 className="text-base font-semibold">{strings.onboarding.cardTitle}</h2>
             <p className="text-[13px] text-muted-foreground">{strings.onboarding.cardBody}</p>
           </div>
           <ol className="flex flex-col gap-5 p-6">
@@ -61,9 +68,8 @@ export function OnboardingPage() {
               <Step n={1} title={strings.onboarding.step1} body={strings.onboarding.step1Body} />
               <a
                 href="/descargas/reproductor"
-                className="inline-flex h-10 items-center gap-1.5 rounded-full border border-border bg-card px-4 font-mono text-sm font-medium"
+                className="inline-flex h-10 items-center rounded-full border border-border bg-background px-4 font-mono text-sm font-medium hover:bg-secondary"
               >
-                <Icon name="download" />
                 {strings.onboarding.download}
               </a>
             </li>
@@ -74,18 +80,30 @@ export function OnboardingPage() {
                 value={code}
                 onChange={setCode}
                 error={unavailable ?? undefined}
+                success={!!availability?.available}
               />
             </li>
-          </ol>
-          <div className="px-6">
-            {availability?.available ? (
-              <Alert tone="success">{strings.onboarding.found}</Alert>
-            ) : unavailable ? (
-              <Alert tone="warning">{unavailable}</Alert>
-            ) : check.error ? (
-              <Alert tone="error">{errorMessage(check.error)}</Alert>
+            {availability?.available || unavailable ? (
+              <li
+                className={cn(
+                  "-mt-2 flex items-center gap-1.5 pl-10 text-[13px]",
+                  availability?.available ? "text-success-foreground" : "text-warning-foreground"
+                )}
+                role="status"
+              >
+                <Icon
+                  name={availability?.available ? "checkCircle" : "warning"}
+                  className="size-4"
+                />
+                {availability?.available ? strings.onboarding.found : unavailable}
+              </li>
             ) : null}
-          </div>
+          </ol>
+          {check.error ? (
+            <div className="px-6">
+              <Alert tone="error">{errorMessage(check.error)}</Alert>
+            </div>
+          ) : null}
           <div className="flex items-center justify-between gap-4 p-6">
             <Link
               to="/pantallas/nueva"

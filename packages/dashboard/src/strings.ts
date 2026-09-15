@@ -72,7 +72,7 @@ export const strings = {
     subtitle: "Administra tus pantallas y su disponibilidad publicitaria",
     add: "Agregar pantalla",
     total: "Pantallas",
-    online: "En línea",
+    online: "Activas",
     incomplete: "Información incompleta",
     yours: "Tus pantallas",
     archived: "Archivadas",
@@ -88,7 +88,7 @@ export const strings = {
     exit: "Salir",
     pill: "Paso único · 2 minutos",
     title: "Publiquemos tu primera pantalla",
-    body: "Proyecta conecta tus pantallas digitales con anunciantes que buscan espacios comerciales. Conecta el reproductor y completa la información de tu pantalla.",
+    body: "Proyecta conecta tus pantallas digitales con anunciantes que buscan espacios como el tuyo. Cuéntanos sobre tu pantalla y hazla parte de la red.",
     cardTitle: "Conecta tu pantalla física",
     cardBody: "Antes de publicarla, confirmemos que tu pantalla está encendida y lista.",
     step1: "Descarga el reproductor Proyecta",
@@ -98,7 +98,7 @@ export const strings = {
     step2Body: "Aparece en tu pantalla luego de instalar el reproductor.",
     skip: "Prefiero configurarlo más tarde",
     submit: "Vincular y continuar",
-    found: "Pantalla encontrada"
+    found: "Pantalla encontrada · lista para vincular"
   },
   form: {
     newTitle: "Agregar pantalla",
@@ -129,15 +129,22 @@ export const strings = {
     end: "Hora de fin",
     commercial: "Información comercial",
     commercialHint: "Se cobra por cada 5 segundos que se muestra un anuncio",
-    rate: "Tarifa por 5 segundos (RD$)",
-    ratePlaceholder: "Ej. 2.50",
+    rate: "Tarifa por 5 segundos (US$)",
+    ratePlaceholder: "Ej. 0.25",
     rateHelper: "Ej.: un anuncio de 15 s = 3 × tarifa",
     select: "Selecciona una opción",
+    placeTypePlaceholder: "Selecciona un tipo",
+    environmentPlaceholder: "Interior / Exterior",
+    widthPlaceholder: "Ej. 120",
+    heightPlaceholder: "Ej. 70",
+    startPlaceholder: "08:00",
+    endPlaceholder: "20:00",
+    pairingNoticeTitle: (code: string) => `Reproductor ${code} listo`,
+    pairingNoticeBody:
+      "Al guardar, vincularemos este reproductor a la pantalla y empezará a reproducir anuncios.",
     cancel: "Cancelar",
     create: "Guardar y publicar pantalla",
-    save: "Guardar cambios",
-    pairingNotice: (code: string) =>
-      `Al guardar, vincularemos el reproductor ${code} a esta pantalla.`
+    save: "Guardar cambios"
   },
   detail: {
     back: "Volver a Mis pantallas",
@@ -157,6 +164,10 @@ export const strings = {
     link: "Vincular",
     unlink: "Desvincular reproductor",
     moreActions: "Más acciones",
+    copyCode: "Copiar código",
+    copied: "Código copiado",
+    cpu: "CPU",
+    notReported: "—",
     pause: "Pausar pantalla",
     comingSoon: "Próximamente",
     info: "Información",
