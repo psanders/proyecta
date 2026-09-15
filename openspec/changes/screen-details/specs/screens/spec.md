@@ -35,6 +35,12 @@ pay-per-display rate or coordinates SHALL be reported as incomplete.
 - **WHEN** an owner enters `18.4861, 69.9312` as coordinates
 - **THEN** the form tells them the longitude is missing its minus sign
 
+#### Scenario: Screen details are shown
+
+- **WHEN** an owner opens a screen that has a description, coordinates, tags and resolution `1920x1080`
+- **THEN** its detail shows the description, the tag labels, `Full HD · 16:9` and the coordinates with a link that
+  opens them in Google Maps
+
 #### Scenario: Unknown tag
 
 - **WHEN** a screen is saved with a tag that is not in the catalog

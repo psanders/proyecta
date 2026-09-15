@@ -27,6 +27,7 @@ import linkOff from "@material-symbols/svg-400/sharp/link_off.svg?raw";
 import location from "@material-symbols/svg-400/sharp/location_on.svg?raw";
 import logout from "@material-symbols/svg-400/sharp/logout.svg?raw";
 import mail from "@material-symbols/svg-400/sharp/mail.svg?raw";
+import openInNew from "@material-symbols/svg-400/sharp/open_in_new.svg?raw";
 import moreVert from "@material-symbols/svg-400/sharp/more_vert.svg?raw";
 import pause from "@material-symbols/svg-400/sharp/pause.svg?raw";
 import person from "@material-symbols/svg-400/sharp/person.svg?raw";
@@ -78,6 +79,7 @@ const ICONS = {
   leftPanelOpen,
   lightMode,
   link,
+  openInNew,
   linkOff,
   location,
   logout,

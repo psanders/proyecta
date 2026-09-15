@@ -139,6 +139,8 @@ describe("advertiser ads (integration: HTTP + Postgres + ffmpeg)", function () {
     return owner.screens.create({
       name,
       city: "Santo Domingo",
+      latitude: 18.4861,
+      longitude: -69.9312,
       orientation: "LANDSCAPE",
       availableDays: [1, 2, 3, 4, 5, 6, 7],
       startTime: "06:00",

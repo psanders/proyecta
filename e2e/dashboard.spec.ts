@@ -65,6 +65,23 @@ test.describe("owner dashboard", () => {
     await page.getByLabel("Nombre de la pantalla").fill("Valla Av. 27 de Febrero");
     await page.getByLabel("Ciudad").fill("Santo Domingo");
     await page.getByLabel("Tipo de lugar").selectOption("BILLBOARD");
+    await page.getByLabel("Descripción").fill("Frente al semáforo, vista por conductores.");
+    // A longitude without its minus sign gets a specific hint before anything is saved.
+    const coordinates = page.getByLabel("Coordenadas");
+    await coordinates.fill("18.4861, 69.9312");
+    await coordinates.blur();
+    await expect(page.getByText("A la longitud le falta el signo menos")).toBeVisible();
+    await coordinates.fill("https://www.google.com/maps/@18.4861,-69.9312,17z");
+    await expect(page.getByText("A la longitud le falta el signo menos")).toBeHidden();
+    await page.getByLabel("Resolución").selectOption("1920x1080");
+    await expect(
+      page.getByText("Full HD · 16:9 — elige «Otra» para escribir ancho × alto")
+    ).toBeVisible();
+    for (const tag of ["Conductores", "Alto tráfico vehicular"])
+      await page.getByRole("button", { name: tag, exact: true }).click();
+    await expect(
+      page.getByText("Ayudan a los anunciantes a encontrar tu pantalla · 2 de 10")
+    ).toBeVisible();
     for (const day of ["Lun", "Mar", "Mié", "Jue", "Vie"])
       await page.getByRole("button", { name: day, exact: true }).click();
     await page.getByLabel("Hora de inicio").fill("08:00");
@@ -83,6 +100,15 @@ test.describe("owner dashboard", () => {
     await expect(player.locator(".code-box")).toBeHidden();
     // Pay-per-display: the rate saved above, and an earnings summary instead of "Próximamente".
     await expect(page.getByText("US$ 2.50")).toBeVisible();
+    // Screen details: description, derived resolution facets, coordinates with a map link, tags.
+    await expect(page.getByText("Frente al semáforo, vista por conductores.")).toBeVisible();
+    await expect(page.getByText("1920 × 1080 · Full HD · 16:9")).toBeVisible();
+    await expect(page.getByText("18.4861, -69.9312")).toBeVisible();
+    await expect(page.getByRole("link", { name: "Ver en mapa" })).toHaveAttribute(
+      "href",
+      "https://www.google.com/maps/search/?api=1&query=18.4861,-69.9312"
+    );
+    await expect(page.getByText("Alto tráfico vehicular")).toBeVisible();
     await expect(page.getByText(/^Hoy · \d+ reproducci/)).toBeVisible();
     await expect(page.getByText(/^Últimos 7 días · \d+ reproducci/)).toBeVisible();
     await shot(page, "04-screen-detail-linked");
@@ -90,6 +116,8 @@ test.describe("owner dashboard", () => {
     await page.getByRole("link", { name: "Volver a Mis pantallas" }).click();
     await expect(page.getByTestId("screen-row")).toHaveCount(1);
     await expect(page.getByTestId("screen-row")).toContainText("Lun–Vie · 8:00–22:00");
+    // Coordinates, days, hours and a rate: nothing left to complete.
+    await expect(page.getByText("Información incompleta").locator("..")).toContainText("0");
     await shot(page, "05-screens");
 
     await page.getByTestId("screen-row").click();

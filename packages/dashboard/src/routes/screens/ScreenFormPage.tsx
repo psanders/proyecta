@@ -6,18 +6,28 @@ import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import {
   DR_CITIES,
   ENVIRONMENTS,
+  MAX_SCREEN_TAGS,
   ORIENTATIONS,
   PLACE_TYPES,
+  RESOLUTION_PRESETS,
   formatPairingCode,
-  type CreateScreenInput
+  normalizeResolution,
+  parseCoordinates,
+  resolveApiMessage,
+  resolutionTier,
+  type CreateScreenInput,
+  type ScreenTag
 } from "@proyecta/common";
 import { DayPicker } from "../../components/DayPicker.js";
+import { MapLink } from "../../components/MapLink.js";
 import { BackLink, PageHeader } from "../../components/PageHeader.js";
 import { Alert } from "../../components/ui/Alert.js";
 import { Button } from "../../components/ui/Button.js";
 import { SectionCard } from "../../components/ui/Card.js";
-import { SelectField, TextField } from "../../components/ui/Field.js";
+import { SelectField, TextAreaField, TextField } from "../../components/ui/Field.js";
+import { TagPicker } from "../../components/TagPicker.js";
 import { errorMessage, fieldErrors } from "../../lib/errors.js";
+import { formatResolution, resolutionFacets } from "../../lib/format.js";
 import { trpc } from "../../lib/trpc.js";
 import { useI18n } from "../../lib/useI18n.js";
 
@@ -27,6 +37,8 @@ interface FormState {
   environment: string;
   city: string;
   address: string;
+  description: string;
+  coordinates: string;
   widthCm: string;
   heightCm: string;
   orientation: string;
@@ -35,11 +47,7 @@ interface FormState {
   startTime: string;
   endTime: string;
   rate: string;
-  // Not editable yet (screen-details design pending); kept so saving doesn't clear them.
-  description?: string;
-  latitude?: number;
-  longitude?: number;
-  tags: CreateScreenInput["tags"];
+  tags: ScreenTag[];
 }
 
 const EMPTY: FormState = {
@@ -48,6 +56,8 @@ const EMPTY: FormState = {
   environment: "",
   city: "",
   address: "",
+  description: "",
+  coordinates: "",
   widthCm: "",
   heightCm: "",
   orientation: "",
@@ -61,14 +71,21 @@ const EMPTY: FormState = {
 
 const text = (v: string) => (v.trim() === "" ? undefined : v.trim());
 const num = (v: string) => (v.trim() === "" ? undefined : Number(v.replace(/[,\s]/g, "")));
+const CUSTOM_RESOLUTION = "custom";
 
 function toInput(form: FormState): CreateScreenInput {
+  const coordinates = parseCoordinates(form.coordinates);
+  const location = coordinates && "latitude" in coordinates ? coordinates : undefined;
   return {
     name: form.name,
     city: form.city,
     placeType: text(form.placeType) as CreateScreenInput["placeType"],
     environment: text(form.environment) as CreateScreenInput["environment"],
     address: text(form.address),
+    description: text(form.description),
+    latitude: location?.latitude,
+    longitude: location?.longitude,
+    tags: form.tags,
     widthCm: num(form.widthCm),
     heightCm: num(form.heightCm),
     orientation: text(form.orientation) as CreateScreenInput["orientation"],
@@ -76,17 +93,13 @@ function toInput(form: FormState): CreateScreenInput {
     availableDays: form.availableDays,
     startTime: text(form.startTime),
     endTime: text(form.endTime),
-    ratePerFiveSecondsDollars: num(form.rate),
-    description: form.description,
-    latitude: form.latitude,
-    longitude: form.longitude,
-    tags: form.tags
+    ratePerFiveSecondsDollars: num(form.rate)
   };
 }
 
 /** Pencil frames add-screen / edit-screen: four form sections, create (and link) or save. */
 export function ScreenFormPage() {
-  const { t } = useI18n();
+  const { t, language } = useI18n();
   const { id } = useParams();
   const [params] = useSearchParams();
   const navigate = useNavigate();
@@ -97,8 +110,11 @@ export function ScreenFormPage() {
     ...EMPTY,
     // New screens default to landscape, as in Pencil.
     orientation: "LANDSCAPE",
-    resolution: params.get("resolution") ?? ""
+    // The player reports what its box outputs; stored landscape like every resolution.
+    resolution: normalizeResolution(params.get("resolution") ?? "")
   });
+  const [customResolution, setCustomResolution] = useState(false);
+  const [coordinatesTouched, setCoordinatesTouched] = useState(false);
 
   useEffect(() => {
     const s = existing.data;
@@ -109,6 +125,9 @@ export function ScreenFormPage() {
       environment: s.environment ?? "",
       city: s.city,
       address: s.address ?? "",
+      description: s.description ?? "",
+      coordinates:
+        s.latitude !== null && s.longitude !== null ? `${s.latitude}, ${s.longitude}` : "",
       widthCm: s.widthCm?.toString() ?? "",
       heightCm: s.heightCm?.toString() ?? "",
       orientation: s.orientation ?? "",
@@ -117,9 +136,6 @@ export function ScreenFormPage() {
       startTime: s.startTime ?? "",
       endTime: s.endTime ?? "",
       rate: s.ratePerFiveSecondsCents !== null ? (s.ratePerFiveSecondsCents / 100).toFixed(2) : "",
-      description: s.description ?? undefined,
-      latitude: s.latitude ?? undefined,
-      longitude: s.longitude ?? undefined,
       tags: s.tags
     });
   }, [existing.data]);
@@ -131,8 +147,32 @@ export function ScreenFormPage() {
   const errors = fieldErrors(mutation.error);
   const failure = errorMessage(mutation.error, t) ?? errorMessage(link.error, t);
 
+  const coordinates = parseCoordinates(form.coordinates);
+  const location = coordinates && "latitude" in coordinates ? coordinates : null;
+  const coordinatesError =
+    (coordinatesTouched && coordinates && "error" in coordinates
+      ? resolveApiMessage(coordinates.error, language)
+      : undefined) ??
+    errors.latitude ??
+    errors.longitude;
+
+  const presetResolution = (RESOLUTION_PRESETS as readonly string[]).includes(form.resolution);
+  const resolutionChoice =
+    customResolution || (form.resolution !== "" && !presetResolution)
+      ? CUSTOM_RESOLUTION
+      : form.resolution;
+  const facets = resolutionFacets(form.resolution, form.orientation, t);
+  const resolutionHint =
+    resolutionChoice === CUSTOM_RESOLUTION
+      ? (facets ?? undefined)
+      : [facets, t("form.resolutionOtherHint")].filter(Boolean).join(" — ");
+
   const submit = async (event: FormEvent) => {
     event.preventDefault();
+    if (coordinates && "error" in coordinates) {
+      setCoordinatesTouched(true);
+      return;
+    }
     try {
       const input = toInput(form);
       const saved = id
@@ -149,9 +189,7 @@ export function ScreenFormPage() {
     }
   };
 
-  const bind = (
-    key: keyof Omit<FormState, "availableDays" | "description" | "latitude" | "longitude" | "tags">
-  ) => ({
+  const bind = (key: keyof Omit<FormState, "availableDays" | "tags">) => ({
     value: form[key],
     onChange: (e: { target: { value: string } }) => setForm({ ...form, [key]: e.target.value }),
     error: errors[key]
@@ -180,6 +218,13 @@ export function ScreenFormPage() {
           placeholder={t("form.namePlaceholder")}
           {...bind("name")}
         />
+        <TextAreaField
+          label={t("form.description")}
+          placeholder={t("form.descriptionPlaceholder")}
+          rows={2}
+          maxLength={500}
+          {...bind("description")}
+        />
         <div className="grid grid-cols-2 gap-4">
           <SelectField
             label={t("form.placeType")}
@@ -205,6 +250,15 @@ export function ScreenFormPage() {
             {...bind("address")}
           />
         </div>
+        <TextField
+          label={t("form.coordinates")}
+          placeholder={t("form.coordinatesPlaceholder")}
+          hint={t("form.coordinatesHint")}
+          action={<MapLink label={t("form.openMaps")} coordinates={location} />}
+          {...bind("coordinates")}
+          onBlur={() => setCoordinatesTouched(true)}
+          error={coordinatesError}
+        />
         <datalist id="dr-cities">
           {DR_CITIES.map((city) => (
             <option key={city} value={city} />
@@ -232,12 +286,47 @@ export function ScreenFormPage() {
             options={ORIENTATIONS.map((o) => ({ value: o, label: t(`orientation.${o}`) }))}
             {...bind("orientation")}
           />
-          <TextField
+          <SelectField
             label={t("form.resolution")}
-            placeholder={t("form.resolutionPlaceholder")}
-            {...bind("resolution")}
+            placeholder={t("form.select")}
+            options={[
+              ...RESOLUTION_PRESETS.map((r) => ({
+                value: r,
+                label: `${formatResolution(r)} (${t(`resolutionTier.${resolutionTier(r)!}`)})`
+              })),
+              { value: CUSTOM_RESOLUTION, label: t("form.resolutionOther") }
+            ]}
+            value={resolutionChoice}
+            onChange={(e) => {
+              const custom = e.target.value === CUSTOM_RESOLUTION;
+              setCustomResolution(custom);
+              if (!custom) setForm({ ...form, resolution: e.target.value });
+            }}
+            error={resolutionChoice === CUSTOM_RESOLUTION ? undefined : errors.resolution}
           />
         </div>
+        {resolutionChoice === CUSTOM_RESOLUTION ? (
+          <TextField
+            label={t("form.resolutionCustom")}
+            placeholder={t("form.resolutionPlaceholder")}
+            {...bind("resolution")}
+            onBlur={() => setForm({ ...form, resolution: normalizeResolution(form.resolution) })}
+            hint={resolutionHint}
+          />
+        ) : resolutionHint ? (
+          <p className="-mt-2 text-xs text-muted-foreground">{resolutionHint}</p>
+        ) : null}
+      </SectionCard>
+
+      <SectionCard
+        title={t("form.tags")}
+        hint={t("form.tagsHint", { n: form.tags.length, max: MAX_SCREEN_TAGS })}
+      >
+        <TagPicker
+          value={form.tags}
+          onChange={(tags) => setForm({ ...form, tags })}
+          error={errors.tags}
+        />
       </SectionCard>
 
       <SectionCard title={t("form.availability")} hint={t("form.availabilityHint")}>

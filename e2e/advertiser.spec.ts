@@ -66,6 +66,7 @@ test.describe("advertiser ads", () => {
     await page.getByRole("button", { name: "Vincular y continuar" }).click();
     await page.getByLabel("Nombre de la pantalla").fill(screenName);
     await page.getByLabel("Ciudad").fill("Santo Domingo");
+    await page.getByLabel("Coordenadas").fill("18.4719, -69.9406");
     for (const day of ["Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom"])
       await page.getByRole("button", { name: day, exact: true }).click();
     await page.getByLabel("Hora de inicio").fill("00:00");
