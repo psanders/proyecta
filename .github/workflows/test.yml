@@ -1,0 +1,65 @@
+name: CI
+
+# Lint, typecheck, build and run unit tests on every PR and on pushes to main.
+# Modeled on QCobro's test.yml, extended with a unit-test step (QCobro's own
+# workflow skips that — only e2e runs there, in a separate workflow). Neither
+# integration tests (need Postgres) nor e2e (needs a running stack + Chromium)
+# run here; both are documented in CLAUDE.md as separate `npm run` commands.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "packages/common/**"
+      - "packages/api/**"
+      - "packages/dashboard/**"
+      - "packages/player/**"
+      - "package.json"
+      - "package-lock.json"
+      - "tsconfig.base.json"
+      - ".github/workflows/test.yml"
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build:
+    # Skip lerna's own version-bump commits.
+    if: "!startsWith(github.event.head_commit.message, 'chore(release):')"
+    runs-on: ubuntu-latest
+    env:
+      # Only needed to satisfy prisma.config.ts while generating the client —
+      # `prisma generate` never connects to a database.
+      DATABASE_URL: "postgresql://proyecta:proyecta@localhost:5432/proyecta"
+      IDENTITY_ENDPOINT: "localhost:50052"
+      IDENTITY_BRIDGE_URL: "http://localhost:9111"
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - run: npm ci
+
+      # Generates packages/api/src/generated/prisma, which the api package's
+      # own build needs and which the dashboard's typecheck also reaches
+      # transitively (it imports the AppRouter type from apiserver's source).
+      - name: Generate Prisma client
+        run: npm run db:generate --workspace=@proyecta/api
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Build
+        run: npm run build
+
+      - name: Unit tests
+        run: npm test
+
+      - name: Format check
+        run: npx prettier --check .

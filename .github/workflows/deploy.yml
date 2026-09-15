@@ -1,0 +1,179 @@
+name: Deploy
+
+# Deploys a published proyecta image trio to the DigitalOcean droplet.
+#
+# Triggers automatically after "Publish Docker Images" succeeds (workflow_run),
+# or manually via "Run workflow" for rollbacks or forced re-deploys.
+#
+# Flow:
+#   1. resolve — determine the version from the triggering tag or manual input.
+#   2. deploy  — pauses for a human approval in the "production" environment,
+#                syncs the version-pinned compose/config/scripts to the
+#                droplet over rsync, then SSHes in to pin PROYECTA_VERSION,
+#                pull and restart. Rolls back automatically if containers
+#                don't come up.
+#
+# Differs from QCobro's deploy.yml in how config reaches the droplet: QCobro's
+# repo is public, so its remote script curls files straight from
+# raw.githubusercontent.com. This repo is private, so the checked-out runner
+# rsyncs the same handful of files over SSH instead — no token needed on the
+# droplet just to read repo content.
+#
+# Required repo configuration:
+#   secrets.RELEASE_TOKEN     PAT with read:packages, used on the droplet to pull from GHCR
+#   secrets.DEPLOY_SSH_HOST   droplet IP or hostname
+#   secrets.DEPLOY_SSH_USER   SSH user
+#   secrets.DEPLOY_SSH_KEY    SSH private key (PEM, no passphrase)
+#   vars.DEPLOY_COMPOSE_DIR   directory on the droplet with compose.prod.yaml + .env (e.g. /opt/proyecta)
+#
+# Environment: add a required reviewer on the "production" environment in
+# Settings -> Environments so the deploy job pauses for approval before
+# touching the server.
+
+on:
+  workflow_run:
+    workflows: ["Publish Docker Images"]
+    types: [completed]
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version tag to deploy (e.g. v1.2.0; empty = current package.json version)"
+        required: false
+
+concurrency:
+  group: deploy
+  cancel-in-progress: false
+
+jobs:
+  resolve:
+    if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v7
+
+      - name: Resolve version
+        id: version
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            v="${{ inputs.version }}"
+            [ -n "$v" ] || v="v$(node -p "require('./package.json').version")"
+          else
+            # docker-publish runs on vX.Y.Z tags; head_branch carries the tag name.
+            v="${{ github.event.workflow_run.head_branch }}"
+          fi
+          [[ "$v" == v* ]] || v="v$v"
+          if ! echo "$v" | grep -Eq '^v[0-9]+\.[0-9]+\.[0-9]+$'; then
+            echo "Could not resolve a semver version from '$v'" >&2
+            exit 1
+          fi
+          echo "version=$v" >> "$GITHUB_OUTPUT"
+          echo "Deploying **$v**" >> "$GITHUB_STEP_SUMMARY"
+
+  deploy:
+    needs: resolve
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - name: Checkout code at the deployed tag
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ needs.resolve.outputs.version }}
+
+      - name: Configure SSH
+        run: |
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "${{ secrets.DEPLOY_SSH_KEY }}" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          ssh-keyscan -H "${{ secrets.DEPLOY_SSH_HOST }}" >> ~/.ssh/known_hosts 2>/dev/null
+
+      # Only these files are ever overwritten on the droplet. The Proyecta
+      # config/identity/identity.json, config/identity/keys/*, and the
+      # top-level .env are install-once, hand-generated secrets and must
+      # never be touched by a deploy — see docs/deploy/README.md.
+      - name: Sync version-pinned files to the droplet
+        env:
+          COMPOSE_DIR: ${{ vars.DEPLOY_COMPOSE_DIR }}
+        run: |
+          rsync -avz --relative -e "ssh -i ~/.ssh/deploy_key -o IdentitiesOnly=yes" \
+            compose.prod.yaml \
+            config/nginx/proxy.conf.template \
+            docker/postgres-init.prod.sql \
+            scripts/deploy/tls.sh \
+            scripts/deploy/refresh-proxy-certs.sh \
+            scripts/deploy/backup-db.sh \
+            "${{ secrets.DEPLOY_SSH_USER }}@${{ secrets.DEPLOY_SSH_HOST }}:${COMPOSE_DIR}/"
+          ssh -i ~/.ssh/deploy_key -o IdentitiesOnly=yes \
+            "${{ secrets.DEPLOY_SSH_USER }}@${{ secrets.DEPLOY_SSH_HOST }}" \
+            "chmod +x ${COMPOSE_DIR}/scripts/deploy/*.sh"
+
+      - name: Deploy over SSH
+        uses: appleboy/ssh-action@v1.2.2
+        env:
+          VERSION: ${{ needs.resolve.outputs.version }}
+          COMPOSE_DIR: ${{ vars.DEPLOY_COMPOSE_DIR }}
+          GHCR_TOKEN: ${{ secrets.RELEASE_TOKEN }}
+          GHCR_OWNER: ${{ github.repository_owner }}
+        with:
+          host: ${{ secrets.DEPLOY_SSH_HOST }}
+          username: ${{ secrets.DEPLOY_SSH_USER }}
+          key: ${{ secrets.DEPLOY_SSH_KEY }}
+          envs: VERSION,COMPOSE_DIR,GHCR_TOKEN,GHCR_OWNER
+          script: |
+            set -e
+            cd "$COMPOSE_DIR"
+
+            echo "$GHCR_TOKEN" | docker login ghcr.io -u "$GHCR_OWNER" --password-stdin
+
+            # Pin PROYECTA_VERSION in .env, remembering the previous value for rollback.
+            touch .env
+            prev=$(grep '^PROYECTA_VERSION=' .env | cut -d= -f2- || true)
+            grep -v '^PROYECTA_VERSION=' .env > .env.next || true
+            echo "PROYECTA_VERSION=${VERSION}" >> .env.next
+            mv .env.next .env
+
+            docker compose -f compose.prod.yaml pull apiserver dashboard player
+            docker compose -f compose.prod.yaml up -d
+
+            # Wait up to 60s for every service to be running/healthy.
+            ok=""
+            for i in $(seq 1 30); do
+              stopped=$(docker compose -f compose.prod.yaml ps --status exited --quiet 2>/dev/null | wc -l)
+              starting=$(docker compose -f compose.prod.yaml ps --status starting --quiet 2>/dev/null | wc -l)
+              if [ "$stopped" = "0" ] && [ "$starting" = "0" ]; then
+                ok=1
+                break
+              fi
+              sleep 2
+            done
+
+            if [ -z "$ok" ]; then
+              echo "Deploy of ${VERSION} failed — containers did not come up cleanly." >&2
+              docker compose -f compose.prod.yaml ps
+              docker compose -f compose.prod.yaml logs --tail 50
+              if [ -n "$prev" ]; then
+                echo "Rolling back to ${prev}." >&2
+                grep -v '^PROYECTA_VERSION=' .env > .env.next || true
+                echo "PROYECTA_VERSION=${prev}" >> .env.next
+                mv .env.next .env
+                docker compose -f compose.prod.yaml pull apiserver dashboard player
+                docker compose -f compose.prod.yaml up -d
+              fi
+              exit 1
+            fi
+
+            # Issue the TLS cert on first deploy and renew it when inside the
+            # expiry window. Non-fatal — a cert hiccup must not fail an
+            # otherwise-good app deploy.
+            if [ -x scripts/deploy/tls.sh ]; then
+              scripts/deploy/tls.sh || echo "WARNING: TLS sync failed — check certs/proxy."
+            fi
+
+            # Reclaim disk: drop images from superseded releases.
+            docker image prune -af || true
+            docker builder prune -af || true
+
+            echo "Deployed ${VERSION} successfully."
+            docker compose -f compose.prod.yaml ps

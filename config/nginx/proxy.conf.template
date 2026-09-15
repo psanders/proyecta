@@ -1,0 +1,87 @@
+# Copyright (C) 2026 by Proyecta. All rights reserved.
+#
+# TLS-terminating reverse proxy for the Proyecta production stack. Routes by
+# Host header to the dashboard, player and apiserver containers on the
+# internal Docker network. Runs in the official nginx image, which expands
+# ${APP_HOST}/${PLAY_HOST}/${API_HOST} from the container environment via its
+# built-in envsubst-on-templates entrypoint (see compose.prod.yaml) before
+# nginx starts — nginx's own "$host"-style variables are untouched because
+# envsubst is restricted to names that exist as real environment variables.
+#
+# Unlike QCobro's Envoy proxy, this stack has no gRPC/WebSocket to pass
+# through (the device protocol and tRPC subscriptions both ride plain SSE
+# over HTTP/1.1), so a plain nginx TLS terminator is enough.
+#
+# This proxy listens on 443 ONLY (like QCobro's Envoy) — never on 80 — so
+# port 80 stays free at all times for `certbot certonly --standalone`, on
+# both first issuance and every renewal. See scripts/deploy/tls.sh.
+
+# app.proyecta.do — owner dashboard
+server {
+    listen 443 ssl;
+    http2 on;
+    server_name ${APP_HOST};
+
+    ssl_certificate     /etc/nginx/certs/fullchain.pem;
+    ssl_certificate_key /etc/nginx/certs/privkey.pem;
+
+    location / {
+        proxy_pass http://dashboard:80;
+        proxy_http_version 1.1;
+        proxy_set_header Connection "";
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        # Off stack-wide (not just /trpc) so the tRPC SSE subscription
+        # transport streams end to end; the dashboard/player containers are
+        # otherwise small static bundles, so the cost is negligible.
+        proxy_buffering off;
+        proxy_read_timeout 1h;
+    }
+}
+
+# play.proyecta.do — player (paired screens)
+server {
+    listen 443 ssl;
+    http2 on;
+    server_name ${PLAY_HOST};
+
+    ssl_certificate     /etc/nginx/certs/fullchain.pem;
+    ssl_certificate_key /etc/nginx/certs/privkey.pem;
+
+    location / {
+        proxy_pass http://player:80;
+        proxy_http_version 1.1;
+        proxy_set_header Connection "";
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_buffering off;
+        proxy_read_timeout 1h;
+    }
+}
+
+# api.proyecta.do — direct device-protocol endpoint for shells (Android/kiosk)
+# that talk to the API without loading the player SPA.
+server {
+    listen 443 ssl;
+    http2 on;
+    server_name ${API_HOST};
+
+    ssl_certificate     /etc/nginx/certs/fullchain.pem;
+    ssl_certificate_key /etc/nginx/certs/privkey.pem;
+
+    location / {
+        proxy_pass http://apiserver:3000;
+        proxy_http_version 1.1;
+        proxy_set_header Connection "";
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_buffering off;
+        proxy_read_timeout 1h;
+    }
+}

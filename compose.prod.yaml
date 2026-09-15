@@ -1,0 +1,142 @@
+# Production stack for a single DigitalOcean Droplet, structured like
+# QCobro's compose.yaml. Differences from QCobro (see docs/deploy/README.md):
+#   - Postgres runs as a container here (QCobro uses a DO Managed Database).
+#   - nginx terminates TLS instead of Envoy: the device protocol and tRPC
+#     subscriptions both ride plain SSE over HTTP/1.1, so there is no
+#     gRPC/WebSocket to pass through.
+#   - The player ships as its own image/host (play.proyecta.do) instead of
+#     being folded into the dashboard's nginx.
+#
+# Image versions are pinned via PROYECTA_VERSION (set it in a .env file next
+# to this compose file, e.g. `PROYECTA_VERSION=v1.0.0`). To deploy/upgrade,
+# change that one value and run `docker compose -f compose.prod.yaml pull &&
+# docker compose -f compose.prod.yaml up -d` — never re-tag images locally.
+#
+# Required .env values: PROYECTA_VERSION, APP_HOST, PLAY_HOST, API_HOST,
+# POSTGRES_PASSWORD, IDENTITY_ISSUER, IDENTITY_AUDIENCE. See
+# docs/deploy/README.md for the full list and how to generate them.
+
+services:
+  postgres:
+    image: postgres:17
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: proyecta
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}
+      POSTGRES_DB: proyecta
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./docker/postgres-init.prod.sql:/docker-entrypoint-initdb.d/10-init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U proyecta -d proyecta"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+
+  # Fonoster Identity: users, workspaces, roles, invites, tokens. Configured
+  # only by the mounted files (config/identity/identity.json + keys — see
+  # docs/deploy/README.md for how to generate them on the droplet). Not
+  # published on any host port: reached only over the internal network, by
+  # the apiserver (gRPC) and by nginx's api.proyecta.do host (invite bridge).
+  identity:
+    image: fonoster/identity:0.25.2
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ./config/identity/identity.json:/service/config/identity.json:ro
+      - ./config/identity/keys:/service/config/keys:ro
+      # Proyecta-branded Spanish emails over Identity's stock templates.
+      - ./config/identity/templates/inviteNewUser.hbs:/service/mods/identity/dist/templates/inviteNewUser.hbs:ro
+      - ./config/identity/templates/inviteExistingUser.hbs:/service/mods/identity/dist/templates/inviteExistingUser.hbs:ro
+      - ./config/identity/templates/resetPassword.hbs:/service/mods/identity/dist/templates/resetPassword.hbs:ro
+      - ./config/identity/templates/verifyEmail.hbs:/service/mods/identity/dist/templates/verifyEmail.hbs:ro
+      - ./config/identity/templates/verifyPhone.hbs:/service/mods/identity/dist/templates/verifyPhone.hbs:ro
+
+  apiserver:
+    image: ghcr.io/psanders/proyecta-apiserver:${PROYECTA_VERSION:?set PROYECTA_VERSION in .env}
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+      identity:
+        condition: service_started
+    environment:
+      NODE_ENV: production
+      PORT: "3000"
+      DATABASE_URL: postgresql://proyecta:${POSTGRES_PASSWORD}@postgres:5432/proyecta?schema=public
+      IDENTITY_ENDPOINT: identity:50051
+      IDENTITY_BRIDGE_URL: http://identity:9110
+      IDENTITY_ISSUER: ${IDENTITY_ISSUER:-proyecta}
+      IDENTITY_AUDIENCE: ${IDENTITY_AUDIENCE:-proyecta}
+      DASHBOARD_URL: https://${APP_HOST:?set APP_HOST in .env}
+    volumes:
+      # Demo rotation media (see scripts/generate-demo-ads.sh). Optional: the
+      # app runs fine with this empty, it just has no default rotation to
+      # serve until real advertisers exist. See docs/deploy/README.md.
+      - media-data:/app/packages/api/.data/media
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "node",
+          "-e",
+          "fetch('http://localhost:3000/healthz').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+
+  dashboard:
+    image: ghcr.io/psanders/proyecta-dashboard:${PROYECTA_VERSION:?set PROYECTA_VERSION in .env}
+    restart: unless-stopped
+    depends_on:
+      apiserver:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost/healthz"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  player:
+    image: ghcr.io/psanders/proyecta-player:${PROYECTA_VERSION:?set PROYECTA_VERSION in .env}
+    restart: unless-stopped
+    depends_on:
+      apiserver:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost/healthz"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  # TLS-terminating reverse proxy, routing by Host header to dashboard/player/
+  # apiserver. Listens on 443 ONLY (never 80), so port 80 stays free for
+  # certbot's standalone HTTP-01 challenge on every issuance/renewal — see
+  # scripts/deploy/tls.sh.
+  proxy:
+    image: nginx:alpine
+    restart: unless-stopped
+    depends_on:
+      dashboard:
+        condition: service_healthy
+      player:
+        condition: service_healthy
+      apiserver:
+        condition: service_healthy
+    environment:
+      APP_HOST: ${APP_HOST:?set APP_HOST in .env}
+      PLAY_HOST: ${PLAY_HOST:?set PLAY_HOST in .env}
+      API_HOST: ${API_HOST:?set API_HOST in .env}
+    volumes:
+      - ./config/nginx/proxy.conf.template:/etc/nginx/templates/default.conf.template:ro
+      - ./config/certs:/etc/nginx/certs:ro
+    ports:
+      - "443:443"
+
+volumes:
+  postgres-data:
+  media-data:
