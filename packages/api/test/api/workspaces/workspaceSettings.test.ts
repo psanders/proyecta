@@ -52,6 +52,7 @@ describe("workspace settings functions", () => {
     expect(view).to.deep.equal({
       name: "Vallas del Cibao",
       timezone: "America/Santo_Domingo",
+      dashboardView: "SCREEN_OWNER",
       currency: "USD",
       canEdit: false,
       isOwner: false

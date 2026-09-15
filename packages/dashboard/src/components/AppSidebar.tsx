@@ -4,19 +4,49 @@
 import { useEffect, useRef, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
-import type { WorkspaceRole } from "@proyecta/common";
+import type { DashboardView, WorkspaceRole } from "@proyecta/common";
 import { cn } from "../lib/cn.js";
 import { session } from "../lib/session.js";
 import { trpc } from "../lib/trpc.js";
+import { useDashboardView } from "../lib/useDashboardView.js";
 import { useWorkspace } from "../lib/useWorkspace.js";
 import type { MessageId } from "../lib/i18n.js";
 import { useI18n } from "../lib/useI18n.js";
 import { Icon, type IconName } from "./ui/Icon.js";
 
-const NAV: { to: string; label: MessageId; icon: IconName }[] = [
-  { to: "/", label: "nav.screens", icon: "tv" },
-  { to: "/settings", label: "nav.settings", icon: "settings" }
+interface NavItem {
+  to: string;
+  label: MessageId;
+  icon: IconName;
+  end?: boolean;
+}
+
+interface NavGroup {
+  heading: MessageId | null;
+  items: NavItem[];
+}
+
+const SCREENS: NavItem[] = [{ to: "/", label: "nav.screens", icon: "tv", end: true }];
+const ADS: NavItem[] = [
+  { to: "/explore", label: "nav.explore", icon: "search" },
+  { to: "/ads", label: "nav.ads", icon: "campaign" },
+  { to: "/assets", label: "nav.assets", icon: "permMedia" }
 ];
+const SETTINGS: NavGroup = {
+  heading: null,
+  items: [{ to: "/settings", label: "nav.settings", icon: "settings" }]
+};
+
+/** The menu for a dashboard view: one side without headings, or both sides as labeled groups. */
+export function navGroups(view: DashboardView): NavGroup[] {
+  if (view === "SCREEN_OWNER") return [{ heading: null, items: SCREENS }, SETTINGS];
+  if (view === "ADVERTISER") return [{ heading: null, items: ADS }, SETTINGS];
+  return [
+    { heading: "nav.groupScreens", items: SCREENS },
+    { heading: "nav.groupAds", items: ADS },
+    SETTINGS
+  ];
+}
 
 const COLLAPSED_KEY = "proyecta.dashboard.navCollapsed";
 
@@ -47,6 +77,8 @@ export function initials(name: string | undefined): string {
 export function AppSidebar() {
   const { t } = useI18n();
   const { workspaces, active } = useWorkspace();
+  const { view } = useDashboardView();
+  const groups = navGroups(view);
   const profile = trpc.profile.get.useQuery(undefined, { staleTime: 60_000 });
   const utils = trpc.useUtils();
   const queryClient = useQueryClient();
@@ -124,26 +156,48 @@ export function AppSidebar() {
       )}
 
       <nav className={cn("flex flex-1 flex-col gap-1", collapsed ? "items-center" : "px-4")}>
-        {NAV.map((item) => (
-          <NavLink
-            key={item.to}
-            to={item.to}
-            end={item.to === "/"}
-            title={collapsed ? t(item.label) : undefined}
-            aria-label={collapsed ? t(item.label) : undefined}
-            className={({ isActive }) =>
-              cn(
-                "flex items-center rounded-full text-base",
-                collapsed ? "size-12 justify-center" : "gap-4 px-4 py-3",
-                isActive
-                  ? "bg-sidebar-accent text-foreground"
-                  : "text-muted-foreground hover:bg-sidebar-accent/60"
-              )
-            }
+        {groups.map((group, index) => (
+          <div
+            key={group.heading ?? `group-${index}`}
+            role="group"
+            aria-label={group.heading ? t(group.heading) : undefined}
+            className={cn(
+              "flex flex-col gap-1",
+              collapsed && "items-center",
+              index > 0 && (group.heading || !collapsed) && "mt-2",
+              index > 0 && collapsed && "border-t border-sidebar-border pt-2"
+            )}
           >
-            <Icon name={item.icon} className="size-6" />
-            {collapsed ? null : t(item.label)}
-          </NavLink>
+            {group.heading && !collapsed ? (
+              <span className="px-4 pt-3 pb-1 font-mono text-[11px] font-medium tracking-wider text-muted-foreground">
+                {t(group.heading).toUpperCase()}
+              </span>
+            ) : null}
+            {!group.heading && index > 0 && !collapsed ? (
+              <span aria-hidden className="mx-4 mb-1 h-px bg-sidebar-border" />
+            ) : null}
+            {group.items.map((item) => (
+              <NavLink
+                key={item.to}
+                to={item.to}
+                end={item.end}
+                title={collapsed ? t(item.label) : undefined}
+                aria-label={collapsed ? t(item.label) : undefined}
+                className={({ isActive }) =>
+                  cn(
+                    "flex items-center rounded-full text-base",
+                    collapsed ? "size-12 justify-center" : "gap-4 px-4 py-3",
+                    isActive
+                      ? "bg-sidebar-accent text-foreground"
+                      : "text-muted-foreground hover:bg-sidebar-accent/60"
+                  )
+                }
+              >
+                <Icon name={item.icon} className="size-6" />
+                {collapsed ? null : t(item.label)}
+              </NavLink>
+            ))}
+          </div>
         ))}
       </nav>
 

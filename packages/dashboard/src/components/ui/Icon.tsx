@@ -39,12 +39,28 @@ import swap from "@material-symbols/svg-400/sharp/swap_horiz.svg?raw";
 import tv from "@material-symbols/svg-400/sharp/tv.svg?raw";
 import unarchive from "@material-symbols/svg-400/sharp/unarchive.svg?raw";
 import warning from "@material-symbols/svg-400/sharp/warning.svg?raw";
+import campaign from "@material-symbols/svg-400/sharp/campaign.svg?raw";
+import image from "@material-symbols/svg-400/sharp/image.svg?raw";
+import permMedia from "@material-symbols/svg-400/sharp/perm_media.svg?raw";
+import playCircle from "@material-symbols/svg-400/sharp/play_circle.svg?raw";
+import search from "@material-symbols/svg-400/sharp/search.svg?raw";
+import syncAlt from "@material-symbols/svg-400/sharp/sync_alt.svg?raw";
+import upload from "@material-symbols/svg-400/sharp/upload.svg?raw";
+import verifiedUser from "@material-symbols/svg-400/sharp/verified_user.svg?raw";
 
 const ICONS = {
   add,
   archive,
   barChart,
   arrowBack,
+  campaign,
+  image,
+  permMedia,
+  playCircle,
+  search,
+  syncAlt,
+  upload,
+  verifiedUser,
   check,
   checkCircle,
   chevronDown,

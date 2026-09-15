@@ -14,6 +14,7 @@ import {
   type DeviceState,
   type Manifest
 } from "@proyecta/common";
+import { createScreenRotationLoader } from "../../src/api/ads/createScreenRotationLoader.js";
 import { createApp } from "../../src/app.js";
 import { createDbClient } from "../../src/db.js";
 import { EventHub } from "../../src/events/hub.js";
@@ -52,8 +53,15 @@ const services: Services = {
   dashboardUrl: "http://app",
   identityBridgeUrl: "http://bridge",
   fetch,
-  sync: { db, hub, loadRotation: async () => rotation },
-  pairingLimiter: { take: () => true }
+  sync: {
+    db,
+    hub,
+    loadRotation: async () => rotation,
+    loadScreenRotation: createScreenRotationLoader(db)
+  },
+  pairingLimiter: { take: () => true },
+  media: {} as Services["media"],
+  notifyScreens: async () => undefined
 };
 const createCaller = createCallerFactory(appRouter);
 const dashboard = async (workspace: string) =>
@@ -124,6 +132,9 @@ describe("device-protocol (integration: HTTP + Postgres)", function () {
 
   before(async () => {
     await db.playLog.deleteMany();
+    await db.adPlacement.deleteMany();
+    await db.ad.deleteMany();
+    await db.asset.deleteMany();
     await db.deviceBinding.deleteMany();
     await db.screen.deleteMany();
     await db.device.deleteMany();
@@ -338,8 +349,8 @@ describe("device-protocol (integration: HTTP + Postgres)", function () {
     const afterFirstBatch = await owner.screens.earnings({ id: screen.id });
     expect(afterFirstBatch).to.deep.equal({
       available: true,
-      today: { plays: 2, billableSeconds: 25, earningsCents: 1250 },
-      last7Days: { plays: 2, billableSeconds: 25, earningsCents: 1250 }
+      today: { plays: 2, billableSeconds: 25, earningsCents: 1250, housePlays: 0 },
+      last7Days: { plays: 2, billableSeconds: 25, earningsCents: 1250, housePlays: 0 }
     });
 
     // Changing the rate doesn't rewrite the plays already recorded.
@@ -365,8 +376,8 @@ describe("device-protocol (integration: HTTP + Postgres)", function () {
     const afterRateChange = await owner.screens.earnings({ id: screen.id });
     expect(afterRateChange).to.deep.equal({
       available: true,
-      today: { plays: 3, billableSeconds: 45, earningsCents: 2450 },
-      last7Days: { plays: 3, billableSeconds: 45, earningsCents: 2450 }
+      today: { plays: 3, billableSeconds: 45, earningsCents: 2450, housePlays: 0 },
+      last7Days: { plays: 3, billableSeconds: 45, earningsCents: 2450, housePlays: 0 }
     });
 
     const rows = await db.playLog.findMany({

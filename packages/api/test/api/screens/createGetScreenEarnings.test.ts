@@ -13,7 +13,7 @@ const NOW = new Date("2026-09-14T18:00:00Z"); // 2026-09-14 14:00 America/Santo_
 function db() {
   return {
     screen: { findFirst: sinon.stub() },
-    playLog: { findMany: sinon.stub() },
+    playLog: { findMany: sinon.stub(), count: sinon.stub().resolves(0) },
     workspaceSettings: { findUnique: sinon.stub().resolves(null) }
   };
 }
@@ -55,6 +55,7 @@ describe("createGetScreenEarnings", () => {
         { billedUnits: 2, rateCentsAtPlay: 250 },
         { billedUnits: 1, rateCentsAtPlay: 200 }
       ]);
+    client.playLog.count.onFirstCall().resolves(4).onSecondCall().resolves(9);
 
     // Act
     const result = await createGetScreenEarnings(deps(client))({
@@ -65,8 +66,8 @@ describe("createGetScreenEarnings", () => {
     // Assert
     expect(result).to.deep.equal({
       available: true,
-      today: { plays: 2, billableSeconds: 25, earningsCents: 1250 },
-      last7Days: { plays: 3, billableSeconds: 30, earningsCents: 1450 }
+      today: { plays: 2, billableSeconds: 25, earningsCents: 1250, housePlays: 4 },
+      last7Days: { plays: 3, billableSeconds: 30, earningsCents: 1450, housePlays: 9 }
     });
   });
 
@@ -83,6 +84,25 @@ describe("createGetScreenEarnings", () => {
     const todayWhere = client.playLog.findMany.firstCall.args[0].where;
     expect(todayWhere.startedAt.gte.toISOString()).to.equal("2026-09-14T04:00:00.000Z");
     expect(todayWhere.startedAt.lt.toISOString()).to.equal("2026-09-15T04:00:00.000Z");
+  });
+
+  it("should count house plays apart and never add them to billable plays", async () => {
+    // Arrange
+    const client = db();
+    client.screen.findFirst.resolves({ ratePerFiveSecondsCents: 250 });
+    client.playLog.findMany.resolves([]);
+
+    // Act
+    await createGetScreenEarnings(deps(client))({ id: ID, workspaceAccessKeyId: "WO1" });
+
+    // Assert: billable rows need billed units; house plays are counted by the house flag.
+    expect(client.playLog.findMany.firstCall.args[0].where.billedUnits).to.deep.equal({
+      not: null
+    });
+    expect(client.playLog.count.firstCall.args[0].where).to.include({
+      house: true,
+      result: "COMPLETED"
+    });
   });
 
   it("should use the business time zone for the windows, including DST zones", async () => {

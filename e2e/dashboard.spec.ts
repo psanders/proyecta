@@ -23,6 +23,15 @@ async function signUp(page: Page, stamp: number, email = `owner-${stamp}@proyect
   await page.getByLabel("Contraseña").fill("supersecreta1");
   await shot(page, "01-sign-up");
   await page.getByRole("button", { name: "Crear cuenta" }).click();
+  // Welcome step: the dashboard view, left on "Publicar pantallas".
+  await expect(
+    page.getByRole("heading", { name: "¿Qué quieres hacer con Proyecta?" })
+  ).toBeVisible();
+  await expect(page.getByRole("radio", { name: /Publicar pantallas/ })).toHaveAttribute(
+    "aria-checked",
+    "true"
+  );
+  await page.getByRole("button", { name: "Continuar" }).click();
   await expect(
     page.getByRole("heading", { name: "Publiquemos tu primera pantalla" })
   ).toBeVisible();
@@ -217,6 +226,10 @@ test.describe("owner dashboard", () => {
     await visitor.getByLabel("Email").fill(`visitor-${stamp}@proyecta.local`);
     await visitor.getByLabel("Password").fill("supersecreta1");
     await visitor.getByRole("button", { name: "Create account" }).click();
+    await expect(
+      visitor.getByRole("heading", { name: "What do you want to do with Proyecta?" })
+    ).toBeVisible();
+    await visitor.getByRole("button", { name: "Continue" }).click();
     await expect(visitor.getByRole("heading", { name: "Publish your first screen" })).toBeVisible();
     await visitor.goto(APP);
     await expect(visitor.getByRole("heading", { name: "My screens" })).toBeVisible();

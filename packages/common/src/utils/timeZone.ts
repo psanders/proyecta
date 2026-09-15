@@ -83,3 +83,22 @@ export function timeZoneLabel(timeZone: string, at: Date = new Date()): string {
     : `${Math.floor(abs)}:${String(Math.round((abs % 1) * 60)).padStart(2, "0")}`;
   return `${timeZone} (GMT${sign}${formatted})`;
 }
+
+/** The calendar date ("YYYY-MM-DD") that `date` falls on in `timeZone`. */
+export function localDateString(date: Date, timeZone: string): string {
+  return new Intl.DateTimeFormat("en-CA", {
+    timeZone,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit"
+  }).format(date);
+}
+
+/**
+ * The UTC instant a "YYYY-MM-DD" calendar date starts in `timeZone`, `daysOffset` days later (e.g.
+ * `1` for the exclusive end of that date).
+ */
+export function startOfLocalDate(date: string, timeZone: string, daysOffset = 0): Date {
+  // Noon UTC falls on the same calendar date in every supported time zone (all within ±12 h).
+  return startOfLocalDay(new Date(`${date}T12:00:00Z`), timeZone, daysOffset);
+}
