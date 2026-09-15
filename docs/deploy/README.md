@@ -87,7 +87,7 @@ gh secret set DEPLOY_SSH_HOST --repo psanders/proyecta --body "165.227.88.180"
 gh secret set DEPLOY_SSH_USER --repo psanders/proyecta --body "<same user as qcobro>"
 gh secret set DEPLOY_SSH_KEY  --repo psanders/proyecta < /path/to/the/same/private/key/qcobro/uses
 
-# Where compose.prod.yaml + .env live on the Droplet:
+# Where compose.yaml + .env live on the Droplet:
 gh variable set DEPLOY_COMPOSE_DIR --repo psanders/proyecta --body "/opt/proyecta"
 
 # A PAT with `read:packages` so the Droplet can pull from GHCR (can be the
@@ -142,7 +142,7 @@ ssh "$DEPLOY_USER@$DEPLOY_HOST" 'sudo mkdir -p /opt/proyecta && sudo chown "$USE
 # 2. Copy the non-secret files the stack needs (the same ones the Deploy
 #    workflow will keep in sync on every future release).
 rsync -avz --relative \
-  compose.prod.yaml \
+  compose.yaml \
   config/nginx/proxy.conf.template \
   docker/postgres-init.prod.sql \
   scripts/deploy/tls.sh \
@@ -231,8 +231,8 @@ scripts/deploy/tls.sh
 #     run automatically (the apiserver entrypoint runs `prisma migrate
 #     deploy` before starting).
 echo "$CR_PAT" | docker login ghcr.io -u <your-github-username> --password-stdin
-docker compose -f compose.prod.yaml pull
-docker compose -f compose.prod.yaml up -d
+docker compose pull
+docker compose up -d
 ```
 
 > **Keys & secrets are never in the repo.** `config/identity/identity.json`
@@ -245,7 +245,7 @@ docker compose -f compose.prod.yaml up -d
 **Verify:**
 
 ```bash
-docker compose -f compose.prod.yaml ps          # every service Up (healthy)
+docker compose ps          # every service Up (healthy)
 curl -I https://app.proyecta.do/                # dashboard, 200
 curl https://api.proyecta.do/healthz            # {"ok":true}
 curl -I https://play.proyecta.do/               # player, 200
@@ -263,7 +263,7 @@ git tag v0.2.0 && git push origin v0.2.0
 
 which runs `docker-publish.yml` (builds and pushes the three images to
 GHCR) and then `deploy.yml` (pauses for the `production` environment's
-approval, rsyncs the version-pinned `compose.prod.yaml` / nginx template /
+approval, rsyncs the version-pinned `compose.yaml` / nginx template /
 deploy scripts, pins `PROYECTA_VERSION`, pulls, and restarts — rolling back
 automatically if a container doesn't come up healthy).
 
@@ -308,7 +308,7 @@ exist). To seed it:
 scripts/generate-demo-ads.sh
 
 # Copy the output into the Droplet's volume:
-docker compose -f compose.prod.yaml cp packages/api/.data/media/. apiserver:/app/packages/api/.data/media/
+docker compose cp packages/api/.data/media/. apiserver:/app/packages/api/.data/media/
 ```
 
 ## Backups
@@ -325,7 +325,7 @@ and `identity` databases (gzip, timestamped) and prunes anything older than
 Restore from a backup:
 
 ```bash
-gunzip -c backups/proyecta-20260101T030000Z.sql.gz | docker compose -f compose.prod.yaml exec -T postgres psql -U proyecta proyecta
+gunzip -c backups/proyecta-20260101T030000Z.sql.gz | docker compose exec -T postgres psql -U proyecta proyecta
 ```
 
 ## Updating
@@ -333,8 +333,8 @@ gunzip -c backups/proyecta-20260101T030000Z.sql.gz | docker compose -f compose.p
 ```bash
 cd /opt/proyecta
 sed -i "s/^PROYECTA_VERSION=.*/PROYECTA_VERSION=v0.2.0/" .env   # the new release
-docker compose -f compose.prod.yaml pull
-docker compose -f compose.prod.yaml up -d
+docker compose pull
+docker compose up -d
 ```
 
 The CI Deploy workflow does this for you on every tag push (see "First
@@ -345,8 +345,8 @@ deploy vs. later deploys" above).
 ```bash
 cd /opt/proyecta
 sed -i "s/^PROYECTA_VERSION=.*/PROYECTA_VERSION=<previous-good-tag>/" .env
-docker compose -f compose.prod.yaml pull
-docker compose -f compose.prod.yaml up -d
+docker compose pull
+docker compose up -d
 ```
 
 `deploy.yml` does this automatically if the new version's containers don't
@@ -368,10 +368,10 @@ come up healthy within 60 seconds of a CI-triggered deploy.
 
 ## Troubleshooting
 
-| Symptom                                                             | Check                                                                                                                                                             |
-| ------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `curl: (35) SSL handshake failed`                                   | Are `config/certs/{fullchain,privkey}.pem` present and non-empty? Re-run `scripts/deploy/tls.sh`.                                                                 |
-| SSE (`/device/v1/events`, tRPC subscriptions) never delivers events | Confirm `proxy_buffering off` survived in `config/nginx/proxy.conf.template` and the dashboard/player nginx configs — any hop that buffers breaks the stream.     |
-| Apiserver restarts in a loop                                        | Migrations failing — `docker compose -f compose.prod.yaml logs apiserver` and verify `DATABASE_URL`/`POSTGRES_PASSWORD` match between `.env` and `identity.json`. |
-| Proxy exits immediately                                             | `docker compose -f compose.prod.yaml logs proxy` — usually a missing cert file or an nginx template syntax error.                                                 |
-| Invite/reset emails never arrive                                    | Check `smtp` in `identity.json` and the provider's dashboard for bounces/blocks.                                                                                  |
+| Symptom                                                             | Check                                                                                                                                                         |
+| ------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `curl: (35) SSL handshake failed`                                   | Are `config/certs/{fullchain,privkey}.pem` present and non-empty? Re-run `scripts/deploy/tls.sh`.                                                             |
+| SSE (`/device/v1/events`, tRPC subscriptions) never delivers events | Confirm `proxy_buffering off` survived in `config/nginx/proxy.conf.template` and the dashboard/player nginx configs — any hop that buffers breaks the stream. |
+| Apiserver restarts in a loop                                        | Migrations failing — `docker compose logs apiserver` and verify `DATABASE_URL`/`POSTGRES_PASSWORD` match between `.env` and `identity.json`.                  |
+| Proxy exits immediately                                             | `docker compose logs proxy` — usually a missing cert file or an nginx template syntax error.                                                                  |
+| Invite/reset emails never arrive                                    | Check `smtp` in `identity.json` and the provider's dashboard for bounces/blocks.                                                                              |
