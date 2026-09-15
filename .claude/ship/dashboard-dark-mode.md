@@ -1,9 +1,9 @@
 # Ship checkpoint — dashboard-dark-mode
 
 Started: 2026-09-15
-Current stage: 5 — Sync (waiting on human gate)
+Current stage: done
 
-**Scope:** Owner dashboard dark mode. A Tema preference (Sistema/Claro/Oscuro) in the account menu, remembered per browser and applied before first paint, using the Pencil Lunaris `Mode` Dark values. In Pencil, dashboard screens and `Dashboard/*` components get rebound to `$--` variables, so flipping a frame's `Mode` theme previews dark.
+**Scope:** Owner dashboard dark mode. An Apariencia preference (Sistema/Claro/Oscuro) on Mi perfil, remembered per browser and applied before first paint, using the Pencil Lunaris `Mode` Dark values. In Pencil, dashboard screens and `Dashboard/*` components get rebound to `$--` variables, so flipping a frame's `Mode` theme previews dark.
 
 **Detected surfaces:** OpenSpec: yes · Pencil: yes · Storybook: no · E2E: yes (Playwright)
 
@@ -12,10 +12,10 @@ Current stage: 5 — Sync (waiting on human gate)
 | 0 | Frame | done | Change created and validated |
 | 1 | Design (Pencil) | done | Approved 2026-09-15. Edits live in the MAIN checkout's design/pencil.pen, not the worktree copy |
 | 2 | Spec reconcile | done | Design matched the proposed spec; no changes; `openspec validate` passes |
-| 3 | Build | done | lib/theme.ts store + useTheme hook, dark tokens in index.css, pre-paint script in index.html, ThemeSwitch in AppSidebar account menu, 3 icons, strings |
-| 4 | Test | done | 6 theme unit tests (incl. invalid stored value + invalid set); Playwright theme test; lint + typecheck + all unit suites green; full e2e 14/15, where the failing invite test is a pre-existing parallel flake (3/3 alone) |
-| 5 | Sync | pending | Human gate |
-| 6 | Archive | pending | Human gate |
+| 3 | Build | done | lib/theme.ts store + useTheme hook, dark tokens in index.css, pre-paint script in index.html, ThemeSwitch on ProfilePage (moved from the account menu after review), 3 icons, strings |
+| 4 | Test | done | 6 theme unit tests (incl. invalid stored value + invalid set); Playwright theme test; lint + typecheck + all unit suites green; final full e2e 15/15 |
+| 5 | Sync | done | Approved after PR #11 merged; created openspec/specs/dashboard-appearance |
+| 6 | Archive | done | Archived as 2026-09-15-dashboard-dark-mode |
 
 Status values: `pending` · `in-progress` · `done` · `skipped` (with reason).
 
@@ -23,6 +23,7 @@ Status values: `pending` · `in-progress` · `done` · `skipped` (with reason).
 
 Newest first. One line per meaningful decision or stage transition.
 
+- 2026-09-15 — PR #11 merged (a00b915). Product owner approved sync + archive: `openspec archive` created `openspec/specs/dashboard-appearance` (Purpose filled in) and archived as `2026-09-15-dashboard-dark-mode`, on branch chore/sync-archive-dashboard-dark-mode. Merged feat/dark-mode branch deleted.
 - 2026-09-15 — PR #11 opened (feat/dark-mode → main, rebased on origin/main 9d5150c). Per the product owner, it includes the whole saved pencil.pen (with the ad-v2 creatives) and design/images. Sync and archive still pending their gates.
 - 2026-09-15 — Product owner reviewed the live dashboard: control moved out of the account menu into Mi perfil. Pencil: removed Tema from `Dashboard/Account Menu`; new `profile` frame (z7nmZp, copied from workspace-settings) with Datos personales, Contraseña and an Apariencia card (applies on click, no save button). Spec/proposal/design/tasks updated and valid. Code: `components/ThemeSwitch.tsx` (radiogroup "Apariencia") on ProfilePage, removed from AppSidebar, profile subtitle updated. The product owner had flipped several Pencil screens to Dark meanwhile; those were left as they were. Re-verified: lint, typecheck, unit (11), full e2e 15/15. Waiting on the design/sync gate again.
 - 2026-09-15 — Tests: full e2e run 1 had 13/15, with the player pairing tests failing because the fresh worktree lacked gitignored `packages/api/.data/media` (copied from main). Run 2 had 14/15, with the invite test (Mailpit) failing only under parallel workers; it passes 3/3 alone and passed in run 1, so it's a pre-existing flake. Worktree setup also needed `packages/api/.env` copied and `npm run db:generate`.
