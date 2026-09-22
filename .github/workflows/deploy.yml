@@ -54,7 +54,7 @@ concurrency:
 jobs:
   resolve:
     if: inputs.version != '' || github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
-    runs-on: ubuntu-26.04
+    runs-on: ubuntu-latest
     outputs:
       version: ${{ steps.version.outputs.version }}
     steps:
@@ -85,7 +85,7 @@ jobs:
 
   deploy:
     needs: resolve
-    runs-on: ubuntu-26.04
+    runs-on: ubuntu-latest
     environment: production
     steps:
       - name: Checkout code at the deployed tag

@@ -22,7 +22,7 @@ concurrency:
 
 jobs:
   release-please:
-    runs-on: ubuntu-26.04
+    runs-on: ubuntu-latest
     permissions:
       contents: write
       pull-requests: write
