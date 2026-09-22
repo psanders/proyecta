@@ -1,0 +1,94 @@
+name: Verify
+
+# Integration and end-to-end tests against the real stack. test.yml is the fast gate (lint,
+# typecheck, build, unit); this is the slow one, and the only thing that proves Postgres, Fonoster
+# Identity, Mailpit, the device protocol and the browsers still work together.
+#
+# The stack comes up from compose.dev.yaml — the same file developers run locally — rather than
+# from `services:` containers or a Testcontainers setup written in TypeScript. Identity needs
+# generated RSA keys, an identity.json and Proyecta's own Spanish email templates mounted over its
+# stock ones; expressing that twice would let CI and local drift apart in the auth layer, which is
+# the worst place to have a difference.
+#
+# Costs real Actions minutes: a compose bring-up plus a full Playwright run. If that becomes a
+# problem, narrow `pull_request` to `main`-only pushes plus workflow_dispatch — the jobs are
+# unchanged either way.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: verify-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    # Skip release-please's version-bump commits.
+    if: "!startsWith(github.event.head_commit.message, 'chore(release):')"
+    runs-on: ubuntu-26.04
+    timeout-minutes: 30
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - run: npm ci
+
+      # Two e2e specs synthesize a test image with ffmpeg, as does generate-demo-ads.sh.
+      - name: Install ffmpeg
+        run: sudo apt-get update && sudo apt-get install -y --no-install-recommends ffmpeg fonts-dejavu-core
+
+      - name: Install Chromium for Playwright
+        run: npx playwright install --with-deps chromium
+
+      # Writes config/identity/* and config/proyecta.json, then starts Postgres, Identity and
+      # Mailpit. `--wait` blocks until all three report healthy.
+      - name: Start the stack
+        run: npm run db:up
+
+      # `migrate deploy`, not the `db:migrate` script: that one is `migrate dev`, which exists to
+      # author migrations interactively. deploy only applies what is already committed.
+      - name: Migrate
+        run: |
+          npm run db:generate
+          npx prisma migrate deploy
+        working-directory: packages/api
+
+      # The integration suite talks to proyecta_test, which docker/postgres-init.sql creates
+      # alongside the main database; it needs the same migrations applied.
+      - name: Migrate the test database
+        run: npx prisma migrate deploy
+        working-directory: packages/api
+        env:
+          DATABASE_URL: "postgresql://proyecta:proyecta@localhost:5433/proyecta_test"
+
+      - name: Demo ad rotation
+        run: scripts/generate-demo-ads.sh
+
+      - name: Integration tests
+        run: npm run test:integration
+
+      # Playwright's webServer block starts dev:api, dev:dashboard, dev:player and dev:web itself.
+      - name: End-to-end tests
+        run: npm run test:e2e
+
+      - name: Stack logs on failure
+        if: failure()
+        run: docker compose -f compose.dev.yaml logs --tail 200
+
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: playwright-report
+          path: |
+            playwright-report/
+            test-results/
+          retention-days: 7
