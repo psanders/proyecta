@@ -1,6 +1,11 @@
 # Changelog
 
-## [0.6.1](https://github.com/psanders/proyecta/compare/v0.6.0...v0.6.1) (2026-09-22)
+## [0.7.0](https://github.com/psanders/proyecta/compare/v0.6.0...v0.7.0) (2026-09-22)
+
+
+### Features
+
+* **common,api,dashboard:** bound screen resolution to a playable range ([#47](https://github.com/psanders/proyecta/issues/47)) ([e788311](https://github.com/psanders/proyecta/commit/e78831177a416370679970ee3090f74facfca268))
 
 
 ### Bug Fixes
