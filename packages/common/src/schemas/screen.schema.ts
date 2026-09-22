@@ -3,7 +3,13 @@
  */
 import { z } from "zod/v4";
 import { isInDominicanRepublic } from "../utils/coordinates.js";
-import { normalizeResolution, RESOLUTION_PATTERN } from "../utils/resolution.js";
+import {
+  isResolutionInBounds,
+  MIN_SCREEN_SHORT_SIDE_PX,
+  normalizeResolution,
+  parseResolution,
+  RESOLUTION_PATTERN
+} from "../utils/resolution.js";
 import { pairingCodeSchema } from "./device.schema.js";
 import { MAX_SCREEN_TAGS, SCREEN_TAGS } from "./screenTags.schema.js";
 
@@ -133,10 +139,13 @@ const screenFieldsSchema = z.object({
     .optional(),
   orientation: z.enum(ORIENTATIONS, { error: "validation.orientation.invalid" }).optional(),
   // Normalizing is idempotent, so re-validating inside the validated function is harmless.
+  // `null` clears a saved resolution; omitting it leaves the stored value alone (see
+  // createUpdateScreen). The two must stay distinguishable, or clearing silently does nothing.
   resolution: z
     .string()
     .transform(normalizeResolution)
     .pipe(z.string().regex(RESOLUTION_PATTERN, "validation.resolution.format"))
+    .nullable()
     .optional(),
   availableDays: z
     .array(z.number().int().min(1).max(7))
@@ -188,10 +197,30 @@ function checkCoordinates(
   }
 }
 
-type RefinableFields = Parameters<typeof checkHours>[0] & Parameters<typeof checkCoordinates>[0];
+function checkResolution(
+  value: { resolution?: string | null },
+  ctx: z.core.$RefinementCtx<unknown>
+) {
+  if (!value.resolution || isResolutionInBounds(value.resolution)) return;
+  const parsed = parseResolution(value.resolution);
+  if (!parsed) return; // Shape is already flagged by the field-level format check.
+  ctx.addIssue({
+    code: "custom",
+    path: ["resolution"],
+    message:
+      Math.min(parsed.width, parsed.height) < MIN_SCREEN_SHORT_SIDE_PX
+        ? "validation.resolution.tooSmall"
+        : "validation.resolution.tooLarge"
+  });
+}
+
+type RefinableFields = Parameters<typeof checkHours>[0] &
+  Parameters<typeof checkCoordinates>[0] &
+  Parameters<typeof checkResolution>[0];
 function checkScreen(value: RefinableFields, ctx: z.core.$RefinementCtx<unknown>) {
   checkHours(value, ctx);
   checkCoordinates(value, ctx);
+  checkResolution(value, ctx);
 }
 
 export const createScreenSchema = screenFieldsSchema.superRefine(checkScreen);

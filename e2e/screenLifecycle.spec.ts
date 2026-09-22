@@ -91,4 +91,39 @@ test.describe("screen lifecycle", () => {
     const body = (await archived.json()) as { result: { data: { screens: { name: string }[] } } };
     expect(body.result.data.screens.map((s) => s.name)).not.toContain(renamed);
   });
+
+  test("keeps a free-form tiled resolution through an unrelated edit, and rejects a new out-of-bounds one inline", async ({
+    page
+  }) => {
+    const stamp = Date.now();
+    const name = `Valla LED ${stamp}`;
+    const renamed = `Valla LED Renovada ${stamp}`;
+
+    await signUp(page, `screens-res-${stamp}@proyecta.local`);
+    await addScreen(page, name);
+
+    // A tiled LED panel's resolution: free-form, not one of the presets, but within the new bounds
+    // (screen-resolution-bounds change). "Otra" must accept it without forcing a preset.
+    await page.getByRole("button", { name: "Editar" }).click();
+    await page.getByLabel("Resolución").selectOption({ label: "Otra" });
+    await page.getByLabel("Ancho × alto").fill("2048x512");
+    await page.getByRole("button", { name: "Guardar cambios" }).click();
+    await expect(page.getByText("2048 × 512")).toBeVisible();
+
+    // Renaming only, without touching resolution, must not be blocked by the bounds check, and the
+    // resolution must survive exactly as it was (ScreenFormPage.toInput's guard).
+    await page.getByRole("button", { name: "Editar" }).click();
+    await page.getByLabel("Nombre de la pantalla").fill(renamed);
+    await page.getByRole("button", { name: "Guardar cambios" }).click();
+    await expect(page.getByRole("heading", { name: renamed })).toBeVisible();
+    await expect(page.getByText("2048 × 512")).toBeVisible();
+
+    // Actually typing a new, out-of-bounds resolution is rejected inline, not silently accepted.
+    await page.getByRole("button", { name: "Editar" }).click();
+    await page.getByLabel("Ancho × alto").fill("300x200");
+    await page.getByRole("button", { name: "Guardar cambios" }).click();
+    await expect(
+      page.getByText("El lado más corto debe ser de al menos 480 píxeles")
+    ).toBeVisible();
+  });
 });

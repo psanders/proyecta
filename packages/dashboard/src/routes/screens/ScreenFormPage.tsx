@@ -73,9 +73,18 @@ const text = (v: string) => (v.trim() === "" ? undefined : v.trim());
 const num = (v: string) => (v.trim() === "" ? undefined : Number(v.replace(/[,\s]/g, "")));
 const CUSTOM_RESOLUTION = "custom";
 
-function toInput(form: FormState): CreateScreenInput {
+/**
+ * `resolution`, omitted when it wasn't touched from what loaded. `updateScreenSchema` now bounds
+ * resolution (short side >= 480px, long side <= 20,000px); a screen saved before that rule existed
+ * can carry a value outside it. Resending that value unchanged would fail the new check on every
+ * save, blocking unrelated edits like a rename. Omitting it instead leaves the stored value exactly
+ * as it is — `createUpdateScreen` only writes `resolution` when the field is present. Clearing it
+ * on purpose sends `null` rather than omitting it, so "leave alone" and "remove" stay distinct.
+ */
+function toInput(form: FormState, initialResolution: string): CreateScreenInput {
   const coordinates = parseCoordinates(form.coordinates);
   const location = coordinates && "latitude" in coordinates ? coordinates : undefined;
+  const resolutionChanged = normalizeResolution(form.resolution) !== initialResolution;
   return {
     name: form.name,
     city: form.city,
@@ -89,7 +98,7 @@ function toInput(form: FormState): CreateScreenInput {
     widthCm: num(form.widthCm),
     heightCm: num(form.heightCm),
     orientation: text(form.orientation) as CreateScreenInput["orientation"],
-    resolution: text(form.resolution),
+    resolution: resolutionChanged ? (text(form.resolution) ?? null) : undefined,
     availableDays: form.availableDays,
     startTime: text(form.startTime),
     endTime: text(form.endTime),
@@ -115,6 +124,10 @@ export function ScreenFormPage() {
   });
   const [customResolution, setCustomResolution] = useState(false);
   const [coordinatesTouched, setCoordinatesTouched] = useState(false);
+  // The resolution a saved screen loaded with, so a save that never touched it can leave it alone
+  // (see toInput) instead of resending it and tripping the new bounds on an out-of-bounds legacy
+  // value. Empty for a new screen: any resolution entered there counts as touched.
+  const [initialResolution, setInitialResolution] = useState("");
 
   useEffect(() => {
     const s = existing.data;
@@ -138,6 +151,7 @@ export function ScreenFormPage() {
       rate: s.ratePerFiveSecondsCents !== null ? (s.ratePerFiveSecondsCents / 100).toFixed(2) : "",
       tags: s.tags
     });
+    setInitialResolution(s.resolution ?? "");
   }, [existing.data]);
 
   const create = trpc.screens.create.useMutation();
@@ -174,7 +188,7 @@ export function ScreenFormPage() {
       return;
     }
     try {
-      const input = toInput(form);
+      const input = toInput(form, initialResolution);
       const saved = id
         ? await update.mutateAsync({ ...input, id })
         : await create.mutateAsync(input);

@@ -132,6 +132,11 @@ export const es = {
   "form.resolutionOther": "Otra",
   "form.resolutionCustom": "Ancho × alto",
   "form.resolutionOtherHint": "elige «Otra» para escribir ancho × alto",
+  // The API already returns these localized on validation.resolution.tooSmall/tooLarge field
+  // errors (see lib/errors.ts); kept here too so the copy is easy to find alongside the rest of
+  // the resolution field's messages.
+  "validation.resolution.tooSmall": "El lado más corto debe ser de al menos 480 píxeles",
+  "validation.resolution.tooLarge": "El lado más largo no puede superar los 20,000 píxeles",
   "form.tags": "Etiquetas",
   "form.tagsHint": "Ayudan a los anunciantes a encontrar tu pantalla · {n} de {max}",
   "form.availability": "Disponibilidad",

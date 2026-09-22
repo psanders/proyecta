@@ -2,7 +2,16 @@
  * Copyright (C) 2026 by Proyecta. All rights reserved.
  */
 import { expect } from "chai";
-import { aspectRatio, normalizeResolution, parseResolution, resolutionTier } from "../src/index.js";
+import {
+  aspectRatio,
+  isResolutionInBounds,
+  MAX_SCREEN_LONG_SIDE_PX,
+  MIN_SCREEN_SHORT_SIDE_PX,
+  MIN_SHORT_SIDE_PX,
+  normalizeResolution,
+  parseResolution,
+  resolutionTier
+} from "../src/index.js";
 
 describe("resolution", () => {
   it("should parse WxH, tolerating case, spaces and ×", () => {
@@ -50,5 +59,30 @@ describe("resolution", () => {
     expect(aspectRatio("960x320")).to.equal("3:1");
     expect(aspectRatio("1400x500")).to.equal("2.80:1");
     expect(aspectRatio("")).to.equal(null);
+  });
+
+  it("should pin the screen floor to the asset upload floor", () => {
+    // Act + Assert
+    expect(MIN_SCREEN_SHORT_SIDE_PX).to.equal(MIN_SHORT_SIDE_PX);
+  });
+
+  it("should bound a resolution by its shorter and longer side, inclusive at both ends", () => {
+    // Act + Assert
+    expect(
+      isResolutionInBounds(`${MIN_SCREEN_SHORT_SIDE_PX}x${MIN_SCREEN_SHORT_SIDE_PX}`)
+    ).to.equal(true);
+    expect(isResolutionInBounds(`${MIN_SCREEN_SHORT_SIDE_PX - 1}x1000`)).to.equal(false);
+    expect(isResolutionInBounds(`1000x${MAX_SCREEN_LONG_SIDE_PX}`)).to.equal(true);
+    expect(isResolutionInBounds(`1000x${MAX_SCREEN_LONG_SIDE_PX + 1}`)).to.equal(false);
+    // Free-form width x height stays free-form: a tiled LED panel isn't a preset.
+    expect(isResolutionInBounds("1152x648")).to.equal(true);
+    expect(isResolutionInBounds("2048x512")).to.equal(true);
+  });
+
+  it("should treat unparseable, null or undefined resolutions as in bounds", () => {
+    // Act + Assert
+    expect(isResolutionInBounds("full hd")).to.equal(true);
+    expect(isResolutionInBounds(null)).to.equal(true);
+    expect(isResolutionInBounds(undefined)).to.equal(true);
   });
 });

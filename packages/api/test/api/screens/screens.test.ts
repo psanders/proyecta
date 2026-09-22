@@ -235,6 +235,93 @@ describe("screen functions", () => {
     }
   });
 
+  it("should null out optional fields left off an update, but leave resolution untouched", async () => {
+    // Arrange
+    const client = db();
+    client.screen.findFirst.resolves(row({ resolution: "50000x2000" }));
+    client.screen.update.resolves(row({ resolution: "50000x2000" }));
+
+    // Act
+    await createUpdateScreen(deps(client))({
+      id: ID,
+      workspaceAccessKeyId: "WO1",
+      name: "Renamed",
+      city: "Santo Domingo"
+      // No `resolution` in the input, as the dashboard sends when the field wasn't touched.
+    });
+
+    // Assert: every other optional field is nulled when absent, but resolution is left out of the
+    // write entirely — a screen already carrying a resolution outside the new bounds (from before
+    // they existed) keeps it instead of being nulled by an unrelated edit.
+    const data = client.screen.update.firstCall.args[0].data;
+    expect(data).to.include({ address: null, description: null, orientation: null });
+    expect(data).to.not.have.property("resolution");
+  });
+
+  it("should clear the resolution when the caller explicitly sends null", async () => {
+    // Arrange
+    const client = db();
+    client.screen.findFirst.resolves(row({ resolution: "1920x1080" }));
+    client.screen.update.resolves(row({ resolution: null }));
+
+    // Act: the dashboard sends null when the owner picks the empty option, which must stay
+    // distinguishable from omitting the field — otherwise clearing silently does nothing.
+    await createUpdateScreen(deps(client))({
+      id: ID,
+      workspaceAccessKeyId: "WO1",
+      name: "Renamed",
+      city: "Santo Domingo",
+      resolution: null
+    });
+
+    // Assert
+    expect(client.screen.update.firstCall.args[0].data).to.include({ resolution: null });
+  });
+
+  it("should write a resolution the caller actually sent, in bounds", async () => {
+    // Arrange
+    const client = db();
+    client.screen.findFirst.resolves(row());
+    client.screen.update.resolves(row({ resolution: "1920x1080" }));
+
+    // Act
+    await createUpdateScreen(deps(client))({
+      id: ID,
+      workspaceAccessKeyId: "WO1",
+      name: "Renamed",
+      city: "Santo Domingo",
+      resolution: "1920x1080"
+    });
+
+    // Assert
+    expect(client.screen.update.firstCall.args[0].data).to.include({ resolution: "1920x1080" });
+  });
+
+  it("should reject a newly-submitted out-of-bounds resolution on update", async () => {
+    // Arrange
+    const client = db();
+    client.screen.findFirst.resolves(row());
+
+    // Act + Assert
+    try {
+      await createUpdateScreen(deps(client))({
+        id: ID,
+        workspaceAccessKeyId: "WO1",
+        name: "Renamed",
+        city: "Santo Domingo",
+        resolution: "640x360"
+      });
+      expect.fail("expected ValidationError");
+    } catch (err) {
+      expect(err).to.be.instanceOf(ValidationError);
+      expect((err as ValidationError).fieldErrors[0]).to.include({
+        field: "resolution",
+        message: "El lado más corto debe ser de al menos 480 píxeles"
+      });
+      expect(client.screen.update.called).to.equal(false);
+    }
+  });
+
   it("should not find screens of another workspace", async () => {
     // Arrange
     const client = db();
