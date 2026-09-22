@@ -10,9 +10,9 @@ name: Verify
 # stock ones; expressing that twice would let CI and local drift apart in the auth layer, which is
 # the worst place to have a difference.
 #
-# Costs real Actions minutes: a compose bring-up plus a full Playwright run. If that becomes a
-# problem, narrow `pull_request` to `main`-only pushes plus workflow_dispatch — the jobs are
-# unchanged either way.
+# Costs real Actions minutes: a compose bring-up plus a full Playwright run (~7 min). If that
+# becomes a problem, narrow `pull_request` to `main`-only pushes plus workflow_dispatch — the jobs
+# are unchanged either way.
 
 on:
   push:
@@ -29,7 +29,7 @@ jobs:
   verify:
     # Skip release-please's version-bump commits.
     if: "!startsWith(github.event.head_commit.message, 'chore(release):')"
-    runs-on: ubuntu-26.04
+    runs-on: ubuntu-latest
     timeout-minutes: 30
 
     steps:
