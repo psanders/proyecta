@@ -12,9 +12,9 @@
 # through (the device protocol and tRPC subscriptions both ride plain SSE
 # over HTTP/1.1), so a plain nginx TLS terminator is enough.
 #
-# This proxy listens on 443 ONLY (like QCobro's Envoy) — never on 80 — so
-# port 80 stays free at all times for `certbot certonly --standalone`, on
-# both first issuance and every renewal. See scripts/deploy/tls.sh.
+# Port 80 only redirects to HTTPS, except for ACME HTTP-01 challenges, which
+# are served from the webroot certbot writes into (--webroot, see
+# scripts/deploy/tls.sh). That lets renewals run with the proxy up.
 
 # Resolve container names through Docker's embedded DNS on every request (cached 10s) instead of
 # once at startup. With a literal `proxy_pass http://dashboard:80`, nginx keeps the IPs it saw when
@@ -22,6 +22,22 @@
 # app.proyecta.do then serves the player (happened with v0.2.0). A variable in proxy_pass forces
 # the lookup through this resolver.
 resolver 127.0.0.11 valid=10s ipv6=off;
+
+# Plain HTTP on every host: ACME challenges, otherwise a permanent redirect to HTTPS. 308 (not 301)
+# so a device or script that POSTs to http:// keeps its method and body instead of turning into GET.
+server {
+    listen 80 default_server;
+    server_name ${APP_HOST} ${PLAY_HOST} ${API_HOST};
+
+    location /.well-known/acme-challenge/ {
+        root /var/www/acme;
+        default_type text/plain;
+    }
+
+    location / {
+        return 308 https://$host$request_uri;
+    }
+}
 
 # app.proyecta.do — owner dashboard
 server {
@@ -31,6 +47,7 @@ server {
 
     ssl_certificate     /etc/nginx/certs/fullchain.pem;
     ssl_certificate_key /etc/nginx/certs/privkey.pem;
+    add_header Strict-Transport-Security "max-age=31536000" always;
 
     # Advertiser uploads (POST /uploads/assets) are up to 200 MB of video; the API enforces the
     # per-type limits itself. Stream the body through instead of spooling it here first.
@@ -62,6 +79,7 @@ server {
 
     ssl_certificate     /etc/nginx/certs/fullchain.pem;
     ssl_certificate_key /etc/nginx/certs/privkey.pem;
+    add_header Strict-Transport-Security "max-age=31536000" always;
 
     location / {
         set $upstream_player http://player:80;
@@ -86,6 +104,7 @@ server {
 
     ssl_certificate     /etc/nginx/certs/fullchain.pem;
     ssl_certificate_key /etc/nginx/certs/privkey.pem;
+    add_header Strict-Transport-Security "max-age=31536000" always;
 
     location / {
         set $upstream_apiserver http://apiserver:3000;

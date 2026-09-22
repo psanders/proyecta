@@ -15,9 +15,12 @@
 #     --expand issuance adds them as SANs. After that, normal renewals keep
 #     the full SAN list automatically.
 #
-# The proxy container listens on 443 only (see config/nginx/proxy.conf.template),
-# so port 80 is always free for certbot's standalone HTTP-01 challenge — no
-# need to stop the stack for a renewal.
+# The proxy owns port 80 (redirecting to HTTPS) and serves HTTP-01 challenges
+# from .data/acme, so while it runs certbot uses --webroot and renewals need no
+# downtime. Only when the proxy is down (first issuance on a fresh Droplet,
+# before any cert exists for nginx to start with) does it fall back to
+# --standalone. A cert still stored as standalone is re-issued once through the
+# webroot, so certbot's systemd renew timer never needs port 80 itself.
 #
 # Usage:
 #   scripts/deploy/tls.sh [--domain <d>] [--extra-domains <d1,d2>] [--email <e>] [--days <n>] [--force]
@@ -56,7 +59,7 @@ while [ $# -gt 0 ]; do
     --days)          RENEW_DAYS="$2";    shift 2 ;;
     --force)         FORCE=1;            shift ;;
     -h|--help)
-      sed -n '2,32p' "$0"; exit 0 ;;
+      sed -n '2,36p' "$0"; exit 0 ;;
     *) echo "Unknown arg: $1" >&2; exit 1 ;;
   esac
 done
@@ -68,6 +71,9 @@ SUDO=""
 [ "$(id -u)" -eq 0 ] || SUDO="sudo"
 
 LIVE_DIR="/etc/letsencrypt/live/$DOMAIN"
+RENEWAL_CONF="/etc/letsencrypt/renewal/$DOMAIN.conf"
+WEBROOT="$REPO_DIR/.data/acme"
+mkdir -p "$WEBROOT"
 HOOK="$REPO_DIR/scripts/deploy/refresh-proxy-certs.sh"
 chmod +x "$HOOK" "$SCRIPT_DIR/tls.sh" 2>/dev/null || true
 
@@ -80,11 +86,18 @@ if [ -n "$EXTRA_DOMAINS" ]; then
   done
 fi
 
+# Webroot when the proxy is serving port 80, standalone when nothing is.
+if [ -n "$(docker compose ps --status running -q proxy 2>/dev/null)" ]; then
+  AUTH_FLAGS="--webroot -w $WEBROOT"
+else
+  AUTH_FLAGS="--standalone"
+fi
+
 # ── First issuance ───────────────────────────────────────────────────────────
 if [ ! -f "$LIVE_DIR/privkey.pem" ]; then
-  echo "tls.sh: no certificate for $DOMAIN yet — issuing (standalone, port 80)…"
+  echo "tls.sh: no certificate for $DOMAIN yet — issuing ($AUTH_FLAGS)…"
   # shellcheck disable=SC2086
-  $SUDO certbot certonly --standalone $DOMAIN_FLAGS \
+  $SUDO certbot certonly $AUTH_FLAGS $DOMAIN_FLAGS \
     --agree-tos -m "$EMAIL" --non-interactive \
     --deploy-hook "$HOOK"
   echo "tls.sh: issued and installed into the proxy."
@@ -107,12 +120,27 @@ if [ -n "$EXTRA_DOMAINS" ]; then
     # when new SANs are being added. One forced issuance per new domain set
     # is well within Let's Encrypt's rate limits.
     # shellcheck disable=SC2086
-    $SUDO certbot certonly --standalone --expand --force-renewal $DOMAIN_FLAGS \
+    $SUDO certbot certonly $AUTH_FLAGS --expand --force-renewal $DOMAIN_FLAGS \
       --agree-tos -m "$EMAIL" --non-interactive \
       --deploy-hook "$HOOK"
     echo "tls.sh: expanded and installed into the proxy."
     exit 0
   fi
+fi
+
+# ── Standalone → webroot (one-time) ──────────────────────────────────────────
+# certbot renews with the authenticator stored at issuance; a standalone one
+# can't bind port 80 while the proxy holds it. Re-issue once through the
+# webroot so the stored config (and the systemd timer) use it from now on.
+if [ "$AUTH_FLAGS" != "--standalone" ] \
+   && $SUDO grep -q '^authenticator = standalone' "$RENEWAL_CONF" 2>/dev/null; then
+  echo "tls.sh: cert is stored as standalone — re-issuing through the webroot (one-time)…"
+  # shellcheck disable=SC2086
+  $SUDO certbot certonly $AUTH_FLAGS --cert-name "$DOMAIN" --force-renewal $DOMAIN_FLAGS \
+    --agree-tos -m "$EMAIL" --non-interactive \
+    --deploy-hook "$HOOK"
+  echo "tls.sh: switched to webroot and installed into the proxy."
+  exit 0
 fi
 
 # ── Renewal window check (rate-limit-safe) ───────────────────────────────────
@@ -131,9 +159,11 @@ fi
 # ── Renew ────────────────────────────────────────────────────────────────────
 if [ "$FORCE" -eq 1 ]; then
   echo "tls.sh: --force given — forcing renewal (counts against Let's Encrypt rate limits)."
-  $SUDO certbot renew --cert-name "$DOMAIN" --force-renewal --deploy-hook "$HOOK"
+  # shellcheck disable=SC2086
+  $SUDO certbot renew --cert-name "$DOMAIN" $AUTH_FLAGS --force-renewal --deploy-hook "$HOOK"
 else
   echo "tls.sh: inside renewal window — running certbot renew…"
-  $SUDO certbot renew --cert-name "$DOMAIN" --deploy-hook "$HOOK"
+  # shellcheck disable=SC2086
+  $SUDO certbot renew --cert-name "$DOMAIN" $AUTH_FLAGS --deploy-hook "$HOOK"
 fi
 echo "tls.sh: done."

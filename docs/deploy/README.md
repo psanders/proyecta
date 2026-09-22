@@ -57,11 +57,15 @@ the default naming, not a hardcoded requirement.
   straight to the Droplet instead of requiring a token there just to read
   repo content.
 - Like QCobro: images are pinned by one `.env` variable
-  (`PROYECTA_VERSION`), TLS is `certbot --standalone` (the proxy listens on
-  443 only, so port 80 is always free), and the proxy reads certs from
+  (`PROYECTA_VERSION`), and the proxy reads certs from
   `config/certs/` (world-readable copies) rather than mounting
   `/etc/letsencrypt` directly, for the same userns-remap reason documented in
   QCobro's `docs/deploy.md`.
+- **Unlike QCobro, the proxy also owns port 80.** It redirects every HTTP
+  request to HTTPS (`308`, so a POST stays a POST) and sends HSTS, so TLS is
+  renewed with `certbot --webroot` (challenges served from `.data/acme`) instead
+  of `--standalone`. `tls.sh` falls back to standalone only while the proxy is
+  down, i.e. first issuance on a fresh Droplet.
 
 ---
 
@@ -239,9 +243,10 @@ ENV
 # all three must match.
 openssl rand -base64 24
 
-# 3c. Issue the TLS certificate. The proxy container listens on 443 only, so
-#     port 80 is free for certbot's standalone challenge — no need to stop
-#     anything first.
+# 3c. Issue the TLS certificate. The proxy isn't running yet, so this first
+#     issuance uses certbot's standalone challenge on port 80; after 3d, run
+#     tls.sh once more (or let the next deploy do it) to switch it to the
+#     proxy's webroot, which renewals need once the proxy holds port 80.
 sudo apt update && sudo apt install -y certbot
 scripts/deploy/tls.sh
 
