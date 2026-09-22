@@ -33,6 +33,7 @@
     "db:push": "npm run db:push -w @proyecta/api",
     "db:studio": "npm run db:studio -w @proyecta/api",
     "db:seed": "npm run db:seed -w @proyecta/api",
+    "seed:demo": "tsx scripts/seed-demo.ts",
     "db:reset": "npm run db:reset -w @proyecta/api",
     "prepare": "husky"
   },

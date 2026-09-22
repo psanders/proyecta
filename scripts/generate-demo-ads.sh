@@ -15,8 +15,23 @@ h="${size#*x}"
 out="$root/packages/api/.data/media"
 work="$(mktemp -d)"
 trap 'rm -rf "$work"' EXIT
-bold="/System/Library/Fonts/Supplemental/Arial Bold.ttf"
-regular="/System/Library/Fonts/Supplemental/Arial.ttf"
+# First font that exists wins: macOS ships Arial, Linux (and CI) usually only DejaVu or Liberation.
+# ffmpeg's drawtext fails outright on a missing fontfile, so resolve it rather than hardcode one.
+pick_font() {
+  for candidate in "$@"; do
+    [ -f "$candidate" ] && { echo "$candidate"; return 0; }
+  done
+  echo "No usable font found; tried: $*" >&2
+  return 1
+}
+bold="$(pick_font \
+  "/System/Library/Fonts/Supplemental/Arial Bold.ttf" \
+  "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf" \
+  "/usr/share/fonts/truetype/liberation/LiberationSans-Bold.ttf")"
+regular="$(pick_font \
+  "/System/Library/Fonts/Supplemental/Arial.ttf" \
+  "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf" \
+  "/usr/share/fonts/truetype/liberation/LiberationSans-Regular.ttf")"
 photos="$root/design/assets"
 
 rm -rf "$out" && mkdir -p "$out"

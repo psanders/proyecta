@@ -28,3 +28,4 @@ config/identity/keys/
 # database backups (scripts/deploy/backup-db.sh) — never part of the repo.
 config/certs/
 backups/
+
