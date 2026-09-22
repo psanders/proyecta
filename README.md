@@ -29,6 +29,10 @@ npm run dev:dashboard    # http://localhost:5175
 npm run dev:player       # http://localhost:5174
 ```
 
+`npm run seed:demo` fills a local database with the whole scenario — an owner business with
+screens, a paired player, a separate advertiser and an ad request waiting for a decision. See
+[docs/demo.md](docs/demo.md) to drive it end to end.
+
 ## Check
 
 ```bash
