@@ -17,8 +17,33 @@ name: Verify
 on:
   push:
     branches: [main]
+    # Duplicated under pull_request below: GitHub Actions does not support YAML anchors.
+    paths:
+      - "packages/**"
+      - "e2e/**"
+      - "scripts/**"
+      - "config/identity/**"
+      - "docker/**"
+      - "compose.dev.yaml"
+      - "playwright.config.ts"
+      - "package.json"
+      - "package-lock.json"
+      - "tsconfig.base.json"
+      - ".github/workflows/verify.yml"
   pull_request:
     branches: [main]
+    paths:
+      - "packages/**"
+      - "e2e/**"
+      - "scripts/**"
+      - "config/identity/**"
+      - "docker/**"
+      - "compose.dev.yaml"
+      - "playwright.config.ts"
+      - "package.json"
+      - "package-lock.json"
+      - "tsconfig.base.json"
+      - ".github/workflows/verify.yml"
   workflow_dispatch:
 
 concurrency:
