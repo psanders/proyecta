@@ -54,6 +54,9 @@ export function navGroups(view: DashboardView): NavGroup[] {
   ];
 }
 
+/** DOM id of a menu group's heading, which names the group. */
+const headingId = (heading: MessageId) => `nav-${heading.replace(".", "-")}`;
+
 const COLLAPSED_KEY = "proyecta.dashboard.navCollapsed";
 
 function readCollapsed(): boolean {
@@ -167,7 +170,8 @@ export function AppSidebar() {
           <div
             key={group.heading ?? `group-${index}`}
             role="group"
-            aria-label={group.heading ? t(group.heading) : undefined}
+            // Named by its heading, not aria-label: ad blockers hide div[aria-label="Ads"] (EasyList).
+            aria-labelledby={group.heading ? headingId(group.heading) : undefined}
             className={cn(
               "flex flex-col gap-1",
               collapsed && "items-center",
@@ -175,9 +179,16 @@ export function AppSidebar() {
               index > 0 && collapsed && "border-t border-sidebar-border pt-2"
             )}
           >
-            {group.heading && !collapsed ? (
-              <span className="px-4 pt-3 pb-1 font-mono text-[11px] font-medium tracking-wider text-muted-foreground">
-                {t(group.heading).toUpperCase()}
+            {group.heading ? (
+              <span
+                id={headingId(group.heading)}
+                className={
+                  collapsed
+                    ? "sr-only"
+                    : "px-4 pt-3 pb-1 font-mono text-[11px] font-medium tracking-wider text-muted-foreground uppercase"
+                }
+              >
+                {t(group.heading)}
               </span>
             ) : null}
             {!group.heading && index > 0 && !collapsed ? (
