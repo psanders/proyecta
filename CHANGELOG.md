@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.6.0](https://github.com/psanders/proyecta/compare/v0.5.0...v0.6.0) (2026-09-22)
+
+
+### Features
+
+* **deploy:** redirect HTTP to HTTPS and renew certs via webroot ([#37](https://github.com/psanders/proyecta/issues/37)) ([ee8a4ea](https://github.com/psanders/proyecta/commit/ee8a4ead904be003dd0ef4c54cec37e3281ed29b))
+* **web:** add the Meta pixel with PageView and CTA Leads ([#34](https://github.com/psanders/proyecta/issues/34)) ([cba5265](https://github.com/psanders/proyecta/commit/cba52651824f45e433d64037d30130661fd7b0b5))
+
 ## [0.5.0](https://github.com/psanders/proyecta/compare/v0.4.0...v0.5.0) (2026-09-15)
 
 
