@@ -78,7 +78,8 @@ const CUSTOM_RESOLUTION = "custom";
  * resolution (short side >= 480px, long side <= 20,000px); a screen saved before that rule existed
  * can carry a value outside it. Resending that value unchanged would fail the new check on every
  * save, blocking unrelated edits like a rename. Omitting it instead leaves the stored value exactly
- * as it is — `createUpdateScreen` only writes `resolution` when the field is present.
+ * as it is — `createUpdateScreen` only writes `resolution` when the field is present. Clearing it
+ * on purpose sends `null` rather than omitting it, so "leave alone" and "remove" stay distinct.
  */
 function toInput(form: FormState, initialResolution: string): CreateScreenInput {
   const coordinates = parseCoordinates(form.coordinates);
@@ -97,7 +98,7 @@ function toInput(form: FormState, initialResolution: string): CreateScreenInput 
     widthCm: num(form.widthCm),
     heightCm: num(form.heightCm),
     orientation: text(form.orientation) as CreateScreenInput["orientation"],
-    resolution: resolutionChanged ? text(form.resolution) : undefined,
+    resolution: resolutionChanged ? (text(form.resolution) ?? null) : undefined,
     availableDays: form.availableDays,
     startTime: text(form.startTime),
     endTime: text(form.endTime),

@@ -258,6 +258,26 @@ describe("screen functions", () => {
     expect(data).to.not.have.property("resolution");
   });
 
+  it("should clear the resolution when the caller explicitly sends null", async () => {
+    // Arrange
+    const client = db();
+    client.screen.findFirst.resolves(row({ resolution: "1920x1080" }));
+    client.screen.update.resolves(row({ resolution: null }));
+
+    // Act: the dashboard sends null when the owner picks the empty option, which must stay
+    // distinguishable from omitting the field — otherwise clearing silently does nothing.
+    await createUpdateScreen(deps(client))({
+      id: ID,
+      workspaceAccessKeyId: "WO1",
+      name: "Renamed",
+      city: "Santo Domingo",
+      resolution: null
+    });
+
+    // Assert
+    expect(client.screen.update.firstCall.args[0].data).to.include({ resolution: null });
+  });
+
   it("should write a resolution the caller actually sent, in bounds", async () => {
     // Arrange
     const client = db();

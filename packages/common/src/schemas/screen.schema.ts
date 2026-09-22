@@ -139,10 +139,13 @@ const screenFieldsSchema = z.object({
     .optional(),
   orientation: z.enum(ORIENTATIONS, { error: "validation.orientation.invalid" }).optional(),
   // Normalizing is idempotent, so re-validating inside the validated function is harmless.
+  // `null` clears a saved resolution; omitting it leaves the stored value alone (see
+  // createUpdateScreen). The two must stay distinguishable, or clearing silently does nothing.
   resolution: z
     .string()
     .transform(normalizeResolution)
     .pipe(z.string().regex(RESOLUTION_PATTERN, "validation.resolution.format"))
+    .nullable()
     .optional(),
   availableDays: z
     .array(z.number().int().min(1).max(7))
@@ -194,7 +197,10 @@ function checkCoordinates(
   }
 }
 
-function checkResolution(value: { resolution?: string }, ctx: z.core.$RefinementCtx<unknown>) {
+function checkResolution(
+  value: { resolution?: string | null },
+  ctx: z.core.$RefinementCtx<unknown>
+) {
   if (!value.resolution || isResolutionInBounds(value.resolution)) return;
   const parsed = parseResolution(value.resolution);
   if (!parsed) return; // Shape is already flagged by the field-level format check.
