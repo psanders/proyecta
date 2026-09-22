@@ -37,6 +37,9 @@
     "db:reset": "npm run db:reset -w @proyecta/api",
     "prepare": "husky"
   },
+  "overrides": {
+    "mysql2": "^3.23.1"
+  },
   "lint-staged": {
     "*.{ts,tsx}": [
       "eslint --fix",
