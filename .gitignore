@@ -28,3 +28,6 @@ config/identity/keys/
 # database backups (scripts/deploy/backup-db.sh) — never part of the repo.
 config/certs/
 backups/
+
+# Generated house ads for manual testing (scripts/generate-test-ads.sh)
+/test-ads/
