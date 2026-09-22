@@ -26,7 +26,7 @@ jobs:
   build:
     # Skip release-please's version-bump commits.
     if: "!startsWith(github.event.head_commit.message, 'chore(release):')"
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     env:
       # Placeholder so prisma.config.ts resolves without a config/proyecta.json —
       # `prisma generate` never connects to a database.
