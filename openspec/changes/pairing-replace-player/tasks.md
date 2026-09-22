@@ -1,6 +1,6 @@
 ## 1. Design (Pencil)
 
-- [ ] 1.1 Design a `screen-replace-player-dialog` frame: the screen being changed, the current player (its code
+- [x] 1.1 Design a `screen-replace-player-dialog` frame: the screen being changed, the current player (its code
       and how long since it was last seen), the incoming code, and Cancelar / Reemplazar; verify with screenshots
 - [ ] 1.2 Decide how the pairing form shows the conflict before the dialog opens (inline message vs. straight to
       the dialog) and reflect it in the `add-screen` / `screen-detail` frames; verify with screenshots
