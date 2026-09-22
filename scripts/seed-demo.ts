@@ -7,13 +7,11 @@
  * Idempotent — re-running signs the same accounts back in and skips whatever already exists, so it
  * is safe to run repeatedly against the same database.
  *
- * Needs the local stack (npm run db:up; npm run db:migrate) and ffmpeg on PATH.
+ * Needs the local stack (npm run db:up; npm run db:migrate).
  * Run with: npm run seed:demo
  */
-import { execFileSync } from "node:child_process";
-import { readFileSync, rmSync } from "node:fs";
-import { tmpdir } from "node:os";
-import { join } from "node:path";
+import { readFileSync } from "node:fs";
+import { fileURLToPath } from "node:url";
 import { formatPairingCode } from "@proyecta/common";
 
 const API = process.env.PROYECTA_API ?? "http://localhost:3000";
@@ -113,44 +111,26 @@ async function screen(
   return trpc<Screen>("screens.create", input, auth);
 }
 
-async function uploadImage(auth: Auth, name: string): Promise<{ id: string; status: string }> {
-  const file = join(tmpdir(), `proyecta-demo-${Date.now()}.png`);
-  execFileSync("ffmpeg", [
-    "-y",
-    "-loglevel",
-    "error",
-    "-f",
-    "lavfi",
-    "-i",
-    "color=c=0x2B6CEC:s=1920x1080",
-    "-frames:v",
-    "1",
-    file
-  ]);
-  try {
-    const body = readFileSync(file);
-    const params = new URLSearchParams({
-      fileName: `${name}.png`,
-      name,
-      durationMs: "10000"
-    });
-    const response = await fetch(`${API}/uploads/assets?${params}`, {
-      method: "POST",
-      headers: {
-        "content-type": "image/png",
-        authorization: `Bearer ${auth.token}`,
-        "x-workspace": auth.workspace
-      },
-      body: new Uint8Array(body)
-    });
-    const payload = (await response.json()) as { asset?: { id: string; status: string } };
-    if (!response.ok || !payload.asset) {
-      throw new Error(`asset upload failed: ${JSON.stringify(payload)}`);
-    }
-    return payload.asset;
-  } finally {
-    rmSync(file, { force: true });
+/** One of the committed house ads (design/assets/house-ads), so the demo ad looks like a real ad. */
+async function uploadHouseAd(auth: Auth, name: string): Promise<{ id: string; status: string }> {
+  const file = fileURLToPath(
+    new URL("../design/assets/house-ads/anunciate-aqui-1920x1080.webp", import.meta.url)
+  );
+  const params = new URLSearchParams({ fileName: `${name}.webp`, name, durationMs: "10000" });
+  const response = await fetch(`${API}/uploads/assets?${params}`, {
+    method: "POST",
+    headers: {
+      "content-type": "image/webp",
+      authorization: `Bearer ${auth.token}`,
+      "x-workspace": auth.workspace
+    },
+    body: new Uint8Array(readFileSync(file))
+  });
+  const payload = (await response.json()) as { asset?: { id: string; status: string } };
+  if (!response.ok || !payload.asset) {
+    throw new Error(`asset upload failed: ${JSON.stringify(payload)}`);
   }
+  return payload.asset;
 }
 
 /** Renditions are prepared in the background; an ad can only use a READY asset. */
@@ -224,7 +204,7 @@ async function main(): Promise<void> {
   const advertiser = await account("Ana Peralta", "Café Aroma", advertiserEmail);
   const ads = await query<{ id: string; name: string }[]>("ads.list", {}, advertiser);
   if (!ads.some((a) => a.name === "Promo Café Aroma")) {
-    const asset = await uploadImage(advertiser, "Promo Café Aroma");
+    const asset = await uploadHouseAd(advertiser, "Promo Café Aroma");
     await waitForReady(advertiser, asset.id);
     await trpc<{ id: string; name: string }>(
       "ads.create",

@@ -29,5 +29,3 @@ config/identity/keys/
 config/certs/
 backups/
 
-# Generated house ads for manual testing (scripts/generate-test-ads.sh)
-/test-ads/
