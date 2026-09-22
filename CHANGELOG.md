@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.6.1](https://github.com/psanders/proyecta/compare/v0.6.0...v0.6.1) (2026-09-22)
+
+
+### Bug Fixes
+
+* **deps:** pin mysql2 to a patched version via npm overrides ([#46](https://github.com/psanders/proyecta/issues/46)) ([10f2518](https://github.com/psanders/proyecta/commit/10f25185894dd302e0b393fefd3f9891bfab518a))
+
 ## [0.6.0](https://github.com/psanders/proyecta/compare/v0.5.0...v0.6.0) (2026-09-22)
 
 
