@@ -172,8 +172,8 @@ function isoDate(offsetDays: number): string {
 }
 
 async function main(): Promise<void> {
-  const ownerEmail = "owner@proyecta.test";
-  const advertiserEmail = "advertiser@proyecta.test";
+  const ownerEmail = "owner@proyecta.local";
+  const advertiserEmail = "advertiser@proyecta.local";
 
   const owner = await account("Rosa Almonte", "Vallas del Caribe", ownerEmail);
   const { screens: ownerScreens } = await query<{ screens: Screen[] }>(

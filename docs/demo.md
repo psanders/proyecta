@@ -26,8 +26,8 @@ to a known state, including after a run that failed halfway.
 
 |            |                                                                                       |
 | :--------- | :------------------------------------------------------------------------------------ |
-| Owner      | `owner@proyecta.test` / `proyecta123` — business **Vallas del Caribe**                |
-| Advertiser | `advertiser@proyecta.test` / `proyecta123` — business **Café Aroma**                  |
+| Owner      | `owner@proyecta.local` / `proyecta123` — business **Vallas del Caribe**               |
+| Advertiser | `advertiser@proyecta.local` / `proyecta123` — business **Café Aroma**                 |
 | Player     | `http://localhost:5174/?hw=demo-player-1` — already linked to _Malecón Santo Domingo_ |
 
 The two businesses are deliberately separate. A play of an ad belonging to the business that owns
