@@ -9,16 +9,4 @@ it from this file in the release PR.
 
 <!-- Add steps as: - [ ] **<PR #>** what to change, and why. -->
 
-- [ ] **#16** Dashboard routes are now English. In `config/identity/identity.json` set `appUrl` to
-      `https://app.proyecta.do/sign-in`, `invite.url` to `https://app.proyecta.do/invitation` and
-      `invite.failUrl` to `https://app.proyecta.do/invitation-invalid`, then
-      `docker compose restart identity`. Otherwise invite emails link to a page that no longer exists.
-
-- [ ] **deploy-env-cleanup** Once a release with this change is deployed, remove `TLS_DOMAIN` and
-      `TLS_EXTRA_DOMAINS` from `/opt/proyecta/.env`: `tls.sh` now derives them from `APP_HOST`,
-      `PLAY_HOST` and `API_HOST`. Not before: the running release's `tls.sh` still needs them.
-
-- [ ] **https-redirect** The proxy now listens on port 80 to redirect to HTTPS. Make sure port 80
-      is open in the Droplet firewall (`ufw` and/or the DigitalOcean cloud firewall). Nothing else
-      to do by hand: the deploy's `tls.sh` run sees the cert is stored as `--standalone` and
-      re-issues it once through the webroot. Afterwards check with `sudo certbot renew --dry-run`.
+_Nothing pending._
