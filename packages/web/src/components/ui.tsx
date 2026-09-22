@@ -6,6 +6,8 @@
 import type { ReactNode } from "react";
 import clsx from "clsx";
 import { Icon } from "./Icon.js";
+import { APP_URL, CONTACT_URL } from "../links.js";
+import { trackLead } from "../lib/metaPixel.js";
 import { strings } from "../strings.js";
 
 type Tone = "stage" | "paper";
@@ -64,9 +66,14 @@ export function ButtonLink({
   size?: "md" | "lg";
   className?: string;
 }) {
+  // Every CTA on the page is one of these two outbound links, so reporting the
+  // click here covers the funnel without touching each section.
+  const lead = href === APP_URL ? "app-cta" : href === CONTACT_URL ? "contact" : null;
+
   return (
     <a
       href={href}
+      onClick={lead ? () => trackLead(lead) : undefined}
       className={clsx(
         "inline-flex h-12 items-center justify-center rounded-full px-6 font-mono text-[15px] font-medium whitespace-nowrap transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-signal",
         size === "lg" && "lg:h-14 lg:px-7",

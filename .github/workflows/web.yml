@@ -49,6 +49,7 @@ jobs:
       - name: Build site
         env:
           VITE_BASE: /
+          VITE_META_PIXEL_ID: ${{ secrets.VITE_META_PIXEL_ID }}
         run: npm run build -w @proyecta/web
 
       - name: Publish to the site repo
