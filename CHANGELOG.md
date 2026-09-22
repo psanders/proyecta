@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.8.1](https://github.com/psanders/proyecta/compare/v0.8.0...v0.8.1) (2026-09-22)
+
+
+### Bug Fixes
+
+* **deploy:** route /content and /media images past the static-asset regex ([#52](https://github.com/psanders/proyecta/issues/52)) ([47b27b7](https://github.com/psanders/proyecta/commit/47b27b77c4c166a86bf0bcc5cd83de6accfca696))
+
 ## [0.8.0](https://github.com/psanders/proyecta/compare/v0.7.0...v0.8.0) (2026-09-22)
 
 
