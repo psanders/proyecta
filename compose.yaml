@@ -114,9 +114,9 @@ services:
       retries: 10
 
   # TLS-terminating reverse proxy, routing by Host header to dashboard/player/
-  # apiserver. Listens on 443 ONLY (never 80), so port 80 stays free for
-  # certbot's standalone HTTP-01 challenge on every issuance/renewal — see
-  # scripts/deploy/tls.sh.
+  # apiserver. Port 80 redirects to HTTPS and serves certbot's HTTP-01
+  # challenges from .data/acme (the --webroot tls.sh passes).
+  # See scripts/deploy/tls.sh.
   proxy:
     image: nginx:alpine
     restart: unless-stopped
@@ -134,7 +134,9 @@ services:
     volumes:
       - ./config/nginx/proxy.conf.template:/etc/nginx/templates/default.conf.template:ro
       - ./config/certs:/etc/nginx/certs:ro
+      - ./.data/acme:/var/www/acme:ro
     ports:
+      - "80:80"
       - "443:443"
 
 volumes:

@@ -17,3 +17,8 @@ it from this file in the release PR.
 - [ ] **deploy-env-cleanup** Once a release with this change is deployed, remove `TLS_DOMAIN` and
       `TLS_EXTRA_DOMAINS` from `/opt/proyecta/.env`: `tls.sh` now derives them from `APP_HOST`,
       `PLAY_HOST` and `API_HOST`. Not before: the running release's `tls.sh` still needs them.
+
+- [ ] **https-redirect** The proxy now listens on port 80 to redirect to HTTPS. Make sure port 80
+      is open in the Droplet firewall (`ufw` and/or the DigitalOcean cloud firewall). Nothing else
+      to do by hand: the deploy's `tls.sh` run sees the cert is stored as `--standalone` and
+      re-issues it once through the webroot. Afterwards check with `sudo certbot renew --dry-run`.
