@@ -128,6 +128,11 @@ export const en: Record<MessageId, string> = {
   "form.resolutionOther": "Other",
   "form.resolutionCustom": "Width × height",
   "form.resolutionOtherHint": "choose “Other” to type width × height",
+  // The API already returns these localized on validation.resolution.tooSmall/tooLarge field
+  // errors (see lib/errors.ts); kept here too so the copy is easy to find alongside the rest of
+  // the resolution field's messages.
+  "validation.resolution.tooSmall": "The shorter side must be at least 480 pixels",
+  "validation.resolution.tooLarge": "The longer side can't be more than 20,000 pixels",
   "form.tags": "Tags",
   "form.tagsHint": "Help advertisers find your screen · {n} of {max}",
   "form.availability": "Availability",

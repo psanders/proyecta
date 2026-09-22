@@ -38,6 +38,29 @@ describe("screen schema", () => {
     expect(twice.resolution).to.equal("1920x1080");
   });
 
+  it("should reject a resolution outside the screen bounds", () => {
+    // Act + Assert
+    expect(issues({ ...base, resolution: "640x360" })).to.deep.include([
+      "resolution",
+      "validation.resolution.tooSmall"
+    ]);
+    expect(issues({ ...base, resolution: "50000x2000" })).to.deep.include([
+      "resolution",
+      "validation.resolution.tooLarge"
+    ]);
+    // Free-form width x height stays free-form: a tiled LED panel isn't rejected as an odd shape.
+    expect(createScreenSchema.parse({ ...base, resolution: "2048x512" }).resolution).to.equal(
+      "2048x512"
+    );
+    expect(
+      updateScreenSchema.safeParse({
+        ...base,
+        id: "7f9c2f3e-3b8a-4a8e-9d0a-2a3b4c5d6e7f",
+        resolution: "640x360"
+      }).success
+    ).to.equal(false);
+  });
+
   it("should reject invalid resolution, coordinates, tags and description", () => {
     // Act + Assert
     expect(issues({ ...base, resolution: "full hd" })).to.deep.include([

@@ -4,6 +4,7 @@
 import { z } from "zod/v4";
 import {
   checkPairingCodeSchema,
+  isResolutionInBounds,
   linkDeviceSchema,
   normalizeResolution,
   screenIdSchema,
@@ -93,7 +94,10 @@ export function createLinkDevice(deps: DeviceSyncDeps) {
       throw err;
     }
     // Resolution reported by the player fills an empty screen field, larger dimension first.
-    if (!screen.resolution && device.resolution) {
+    // A device is never rejected for an odd resolution, but it also never writes an out-of-bounds
+    // one onto a screen; the screen's resolution is left unset instead, same as a device reporting
+    // nothing.
+    if (!screen.resolution && device.resolution && isResolutionInBounds(device.resolution)) {
       await deps.db.screen.update({
         where: { id: screen.id },
         data: { resolution: normalizeResolution(device.resolution) }

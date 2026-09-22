@@ -16,7 +16,43 @@ const SCREEN = "7f3c2a8e-1b2d-4c5e-9f00-112233445566";
 const DEVICE = "0b1c2d3e-4f50-4a6b-8c7d-8e9fa0b1c2d3";
 
 function deps(db: Record<string, unknown>, hub = new EventHub()) {
-  return { db: db as never, hub, now: () => NOW, loadRotation: async () => null };
+  return {
+    db: db as never,
+    hub,
+    now: () => NOW,
+    loadRotation: async () => null,
+    loadScreenRotation: async () => null
+  };
+}
+
+/** A full screen row, shaped for `toScreenView`, as `createLinkDevice` re-reads it after linking. */
+function screenRow(overrides: Record<string, unknown> = {}) {
+  return {
+    id: SCREEN,
+    name: "Valla Churchill",
+    placeType: null,
+    environment: null,
+    city: "Santo Domingo",
+    address: null,
+    description: null,
+    latitude: null,
+    longitude: null,
+    tags: [] as string[],
+    widthCm: null,
+    heightCm: null,
+    orientation: null,
+    resolution: null,
+    availableDays: [] as number[],
+    startTime: null,
+    endTime: null,
+    ratePerFiveSecondsCents: null,
+    status: "ACTIVE",
+    deletedAt: null,
+    createdAt: NOW,
+    updatedAt: NOW,
+    bindings: [] as unknown[],
+    ...overrides
+  };
 }
 
 describe("pairing and play attribution", () => {
@@ -75,6 +111,59 @@ describe("pairing and play attribution", () => {
   });
 
   describe("createLinkDevice", () => {
+    function withLinkableDevice(resolution: string | null) {
+      return {
+        device: {
+          findUnique: sinon.stub().resolves({ id: DEVICE, lastSeenAt: NOW, resolution })
+        },
+        screen: {
+          findFirst: sinon.stub().resolves({ id: SCREEN, status: "ACTIVE", resolution: null }),
+          update: sinon.stub().resolves(undefined),
+          findUniqueOrThrow: sinon.stub().resolves(screenRow())
+        },
+        deviceBinding: {
+          create: sinon.stub().resolves(undefined),
+          findFirst: sinon.stub().resolves(null)
+        }
+      };
+    }
+
+    it("should auto-fill an empty screen's resolution from an in-bounds device resolution", async () => {
+      // Arrange
+      const db = withLinkableDevice("1080x1920");
+
+      // Act
+      await createLinkDevice(deps(db))({
+        screenId: SCREEN,
+        code: "8F3K2QLM",
+        workspaceAccessKeyId: "WO1"
+      });
+
+      // Assert
+      expect(db.screen.update.calledOnce).to.equal(true);
+      expect(db.screen.update.firstCall.args[0]).to.deep.equal({
+        where: { id: SCREEN },
+        data: { resolution: "1920x1080" }
+      });
+    });
+
+    it("should leave the screen's resolution unset when the device's is out of bounds", async () => {
+      // Arrange
+      const db = withLinkableDevice("640x360");
+
+      // Act
+      const view = await createLinkDevice(deps(db))({
+        screenId: SCREEN,
+        code: "8F3K2QLM",
+        workspaceAccessKeyId: "WO1"
+      });
+
+      // Assert: the link still succeeds and the screen stays unset, not clamped or fabricated.
+      expect(db.screen.update.called).to.equal(false);
+      expect(db.deviceBinding.create.calledOnce).to.equal(true);
+      expect(view.resolution).to.equal(null);
+    });
+
     it("should turn a lost race (unique violation) into a conflict", async () => {
       // Arrange
       const db = {

@@ -1,9 +1,24 @@
 /**
  * Copyright (C) 2026 by Proyecta. All rights reserved.
  */
+import { MIN_SHORT_SIDE_PX } from "../schemas/asset.schema.js";
 
 /** A resolution as the device protocol writes it, e.g. `1920x1080`. */
 export const RESOLUTION_PATTERN = /^\d{2,5}x\d{2,5}$/;
+
+/**
+ * A screen's shorter side must clear the same floor an uploaded asset's short side already must
+ * (`MIN_SHORT_SIDE_PX`): a screen below it could never receive a conforming ad. Re-exported under
+ * its own name for callers that only care about screens.
+ */
+export const MIN_SCREEN_SHORT_SIDE_PX = MIN_SHORT_SIDE_PX;
+
+/**
+ * A sanity ceiling on a screen's longer side, not a technical one — comfortably above the widest
+ * tiled LED ribbon or multi-panel wall seen in DR DOOH inventory, while still catching a typo like
+ * a stray extra digit.
+ */
+export const MAX_SCREEN_LONG_SIDE_PX = 20_000;
 
 /** Common native panel resolutions, offered in the screen form (custom values are allowed too). */
 export const RESOLUTION_PRESETS = ["1280x720", "1920x1080", "2560x1440", "3840x2160"] as const;
@@ -39,6 +54,20 @@ export function normalizeResolution(value: string): string {
   if (!parsed) return value.trim();
   const { width, height } = parsed;
   return width >= height ? `${width}x${height}` : `${height}x${width}`;
+}
+
+/**
+ * Whether a resolution's shorter side clears {@link MIN_SCREEN_SHORT_SIDE_PX} and its longer side
+ * stays within {@link MAX_SCREEN_LONG_SIDE_PX}. A value that isn't a parseable resolution (including
+ * `null`/`undefined`, i.e. no resolution set) is treated as in bounds — shape is the format check's
+ * job, not this one's.
+ */
+export function isResolutionInBounds(value: string | null | undefined): boolean {
+  const parsed = parseResolution(value);
+  if (!parsed) return true;
+  const short = Math.min(parsed.width, parsed.height);
+  const long = Math.max(parsed.width, parsed.height);
+  return short >= MIN_SCREEN_SHORT_SIDE_PX && long <= MAX_SCREEN_LONG_SIDE_PX;
 }
 
 /** SD / HD / Full HD / 4K / 8K by the shorter side, so portrait and landscape agree. */

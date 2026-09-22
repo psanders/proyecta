@@ -46,6 +46,8 @@ const es = {
   "validation.centimeters.integer": "Usa centímetros enteros",
   "validation.centimeters.min": "Debe ser mayor que 0",
   "validation.resolution.format": "Usa el formato 1920x1080",
+  "validation.resolution.tooSmall": "El lado más corto debe ser de al menos 480 píxeles",
+  "validation.resolution.tooLarge": "El lado más largo no puede superar los 20,000 píxeles",
   "validation.description.max": "La descripción no puede tener más de 500 caracteres",
   "validation.coordinates.format":
     "Pega las coordenadas como 18.4861, -69.9312 o un enlace de Google Maps",
@@ -171,6 +173,8 @@ const en: Record<ApiMessageId, string> = {
   "validation.centimeters.integer": "Use whole centimeters",
   "validation.centimeters.min": "Must be greater than 0",
   "validation.resolution.format": "Use the 1920x1080 format",
+  "validation.resolution.tooSmall": "The shorter side must be at least 480 pixels",
+  "validation.resolution.tooLarge": "The longer side can't be more than 20,000 pixels",
   "validation.description.max": "Description can't be longer than 500 characters",
   "validation.coordinates.format": "Paste coordinates like 18.4861, -69.9312 or a Google Maps link",
   "validation.coordinates.both": "Enter both latitude and longitude",

@@ -83,7 +83,6 @@ export function createUpdateScreen(deps: ScreenDeps) {
           "widthCm",
           "heightCm",
           "orientation",
-          "resolution",
           "startTime",
           "endTime"
         ] as const
@@ -93,6 +92,11 @@ export function createUpdateScreen(deps: ScreenDeps) {
       where: { id },
       data: {
         ...unset,
+        // Unlike the fields above, an absent resolution leaves the stored value untouched rather
+        // than clearing it. The dashboard omits it on a save that didn't touch it, so a screen
+        // whose resolution already falls outside the current bounds (from before they existed)
+        // isn't blocked from unrelated edits, and doesn't get silently wiped by them either.
+        ...(fields.resolution !== undefined ? { resolution: fields.resolution } : {}),
         ratePerFiveSecondsCents:
           fields.ratePerFiveSecondsDollars === undefined
             ? null
