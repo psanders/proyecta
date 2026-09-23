@@ -13,6 +13,7 @@ import check from "@material-symbols/svg-400/sharp/check.svg?raw";
 import chevronDown from "@material-symbols/svg-400/sharp/keyboard_arrow_down.svg?raw";
 import close from "@material-symbols/svg-400/sharp/close.svg?raw";
 import desktopWindows from "@material-symbols/svg-400/sharp/desktop_windows.svg?raw";
+import download from "@material-symbols/svg-400/sharp/download.svg?raw";
 import dragPan from "@material-symbols/svg-400/sharp/drag_pan.svg?raw";
 import factCheck from "@material-symbols/svg-400/sharp/fact_check.svg?raw";
 import help from "@material-symbols/svg-400/sharp/help.svg?raw";
@@ -21,6 +22,7 @@ import link from "@material-symbols/svg-400/sharp/link.svg?raw";
 import map from "@material-symbols/svg-400/sharp/map.svg?raw";
 import memory from "@material-symbols/svg-400/sharp/memory.svg?raw";
 import menu from "@material-symbols/svg-400/sharp/menu.svg?raw";
+import terminal from "@material-symbols/svg-400/sharp/terminal.svg?raw";
 import tv from "@material-symbols/svg-400/sharp/tv.svg?raw";
 import upload from "@material-symbols/svg-400/sharp/upload.svg?raw";
 import usb from "@material-symbols/svg-400/sharp/usb.svg?raw";
@@ -38,6 +40,7 @@ const ICONS = {
   chevronDown,
   close,
   desktopWindows,
+  download,
   dragPan,
   factCheck,
   help,
@@ -46,6 +49,7 @@ const ICONS = {
   map,
   memory,
   menu,
+  terminal,
   tv,
   upload,
   usb,

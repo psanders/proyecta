@@ -8,5 +8,7 @@ import tailwindcss from "@tailwindcss/vite";
 export default defineConfig({
   base: process.env.VITE_BASE ?? "/",
   plugins: [react(), tailwindcss()],
-  server: { port: 5176, strictPort: true }
+  server: { port: 5176, strictPort: true },
+  // Two pages: the home page and /download/ (installers, Pencil frame web-download).
+  build: { rollupOptions: { input: { main: "index.html", download: "download/index.html" } } }
 });

@@ -1,0 +1,188 @@
+name: Shells
+
+# Builds the installers for every platform (the Android APK, a Linux .deb per architecture and the
+# Windows installer), attaches them to the GitHub release and publishes them to the downloads store
+# on the droplet (api.proyecta.do/downloads/v<version>/ + latest.json), which proyecta.do/download
+# reads. Called from release.yml when release-please creates a release; can also be run by hand
+# for an existing tag.
+#
+# Android release signing needs these repository secrets. The key must never change: ANDROID_ID,
+# and so every screen's pairing code, is scoped to it (see shells/android/README.md).
+#   ANDROID_KEYSTORE_BASE64, ANDROID_KEYSTORE_PASSWORD, ANDROID_KEY_ALIAS, ANDROID_KEY_PASSWORD
+
+on:
+  workflow_call:
+    inputs:
+      tag:
+        type: string
+        required: true
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Release tag to build and attach to (e.g. v0.9.0)
+        type: string
+        required: true
+
+permissions:
+  contents: write
+
+jobs:
+  android:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ inputs.tag }}
+
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - run: npm ci
+
+      - name: Build the signed APK
+        working-directory: shells/android
+        env:
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+        run: |
+          echo "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" | base64 --decode > "$RUNNER_TEMP/release.jks"
+          export ANDROID_KEYSTORE_PATH="$RUNNER_TEMP/release.jks"
+          ./gradlew --no-daemon assembleRelease
+          cp app/build/outputs/apk/release/app-release.apk "$RUNNER_TEMP/Proyecta-${{ inputs.tag }}.apk"
+
+      - name: Attach to the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release upload "${{ inputs.tag }}" "$RUNNER_TEMP/Proyecta-${{ inputs.tag }}.apk" --clobber
+
+      - uses: actions/upload-artifact@v5
+        with:
+          name: installer-android
+          path: ${{ runner.temp }}/Proyecta-${{ inputs.tag }}.apk
+
+  kiosk-linux:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ inputs.tag }}
+
+      - uses: actions/setup-go@v6
+        with:
+          go-version-file: shells/kiosk/helper/go.mod
+          cache-dependency-path: shells/kiosk/helper/go.sum
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - run: npm ci
+
+      - name: Build the helper and the .deb packages
+        run: |
+          go install github.com/goreleaser/nfpm/v2/cmd/nfpm@v2.41.3
+          shells/kiosk/build.sh "${TAG#v}"
+        env:
+          TAG: ${{ inputs.tag }}
+
+      - name: Attach the .deb packages to the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release upload "${{ inputs.tag }}" shells/kiosk/build/*.deb --clobber
+
+      - uses: actions/upload-artifact@v5
+        with:
+          name: installer-linux
+          path: shells/kiosk/build/*.deb
+
+      # The Windows installer is compiled on Windows, from this job's helper and player build.
+      - uses: actions/upload-artifact@v5
+        with:
+          name: kiosk-windows-inputs
+          path: |
+            shells/kiosk/build/windows-amd64/
+            packages/player/dist/
+
+  kiosk-windows:
+    needs: kiosk-linux
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ inputs.tag }}
+
+      - uses: actions/download-artifact@v6
+        with:
+          name: kiosk-windows-inputs
+
+      - name: Build the installer
+        shell: pwsh
+        run: |
+          $version = "${{ inputs.tag }}".TrimStart("v")
+          & "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe" "/DVersion=$version" shells\kiosk\windows\proyecta-kiosk.iss
+
+      - name: Attach to the release
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release upload "${{ inputs.tag }}" (Get-ChildItem shells\kiosk\build\ProyectaKiosk-*.exe).FullName --clobber
+
+      - uses: actions/upload-artifact@v5
+        with:
+          name: installer-windows
+          path: shells/kiosk/build/ProyectaKiosk-*.exe
+
+  # The downloads store on the droplet (api.proyecta.do/downloads), which proyecta.do/download
+  # reads. The version's folder goes up first; latest.json is swapped last and atomically, so the
+  # page never points at a file that isn't there yet. Uses the deploy's SSH secrets, so it runs in
+  # the same "production" environment (and waits for the same approval).
+  publish-downloads:
+    needs: [android, kiosk-linux, kiosk-windows]
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ inputs.tag }}
+
+      - uses: actions/download-artifact@v6
+        with:
+          pattern: installer-*
+          merge-multiple: true
+          path: installers
+
+      - name: Build latest.json
+        env:
+          TAG: ${{ inputs.tag }}
+        run: node scripts/downloads/manifest.mjs "${TAG#v}" installers > latest.json && cat latest.json
+
+      - name: Upload to the downloads store
+        env:
+          TAG: ${{ inputs.tag }}
+          COMPOSE_DIR: ${{ vars.DEPLOY_COMPOSE_DIR }}
+          SSH_HOST: ${{ secrets.DEPLOY_SSH_HOST }}
+          SSH_USER: ${{ secrets.DEPLOY_SSH_USER }}
+        run: |
+          case "$COMPOSE_DIR" in /?*) ;; *) echo "vars.DEPLOY_COMPOSE_DIR must be an absolute path" >&2; exit 1 ;; esac
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "${{ secrets.DEPLOY_SSH_KEY }}" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          ssh-keyscan -H "$SSH_HOST" >> ~/.ssh/known_hosts 2>/dev/null
+          ssh_=(ssh -i ~/.ssh/deploy_key -o IdentitiesOnly=yes "$SSH_USER@$SSH_HOST")
+          store="$COMPOSE_DIR/downloads"
+
+          "${ssh_[@]}" "mkdir -p '$store/$TAG'"
+          rsync -av -e "ssh -i ~/.ssh/deploy_key -o IdentitiesOnly=yes" \
+            installers/ "$SSH_USER@$SSH_HOST:$store/$TAG/"
+          rsync -av -e "ssh -i ~/.ssh/deploy_key -o IdentitiesOnly=yes" \
+            latest.json "$SSH_USER@$SSH_HOST:$store/latest.json.next"
+          "${ssh_[@]}" "chmod -R a+rX '$store' && mv '$store/latest.json.next' '$store/latest.json'"

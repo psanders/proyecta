@@ -135,6 +135,8 @@ services:
       - ./config/nginx/proxy.conf.template:/etc/nginx/templates/default.conf.template:ro
       - ./config/certs:/etc/nginx/certs:ro
       - ./.data/acme:/var/www/acme:ro
+      # Shell installers by version plus latest.json, written by .github/workflows/shells.yml.
+      - ./downloads:/usr/share/nginx/downloads:ro
     ports:
       - "80:80"
       - "443:443"

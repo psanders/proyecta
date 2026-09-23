@@ -4,7 +4,7 @@
 import { useEffect, useState } from "react";
 import { Icon } from "../components/Icon.js";
 import { ButtonLink, Logo } from "../components/ui.js";
-import { ANCHORS, APP_URL, href } from "../links.js";
+import { ANCHORS, APP_URL, HOME_URL, href } from "../links.js";
 import { strings } from "../strings.js";
 
 export const NAV_LINKS = [
@@ -28,7 +28,7 @@ export function Nav() {
   return (
     <header className="sticky top-0 z-50 border-b border-stage-line bg-stage/80 backdrop-blur-md">
       <nav className="mx-auto flex h-16 max-w-[1440px] items-center justify-between px-5 md:px-10 lg:h-20 xl:px-[120px]">
-        <a href="#" aria-label={strings.brand}>
+        <a href={HOME_URL} aria-label={strings.brand}>
           <Logo />
         </a>
         <ul className="hidden items-center gap-9 lg:flex">
