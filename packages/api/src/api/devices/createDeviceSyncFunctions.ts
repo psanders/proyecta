@@ -6,7 +6,8 @@ import {
   heartbeatSchema,
   playLogBatchSchema,
   unitsForDurationMs,
-  withErrorHandlingAndValidation
+  withErrorHandlingAndValidation,
+  type Heartbeat
 } from "@proyecta/common";
 import { logger } from "../../logger.js";
 import type { DeviceSyncDeps } from "../screens/deps.js";
@@ -33,6 +34,18 @@ export function createAuthenticateDevice(deps: Pick<DeviceSyncDeps, "db" | "now"
 }
 
 /**
+ * Drops RAM figures from heartbeats without a `shellVersion`. Only native shells can read device
+ * RAM, and players before `player-shells` sent the page's JS heap under the same names.
+ */
+function withoutUnverifiedRam<T extends Heartbeat>(health: T) {
+  if (health.shellVersion) return health;
+  const rest = { ...health };
+  delete rest.memoryUsedMb;
+  delete rest.memoryTotalMb;
+  return rest;
+}
+
+/**
  * Creates a function that stores a device heartbeat (health shown on the screen detail) and pushes
  * a status update to the linked screen's workspace.
  *
@@ -43,7 +56,8 @@ export function createRecordHeartbeat(deps: DeviceSyncDeps) {
   const schema = heartbeatSchema.extend({ deviceId: z.uuid() });
 
   const fn = async (params: z.infer<typeof schema>): Promise<{ ok: true }> => {
-    const { deviceId, resolution, chromiumVersion, ...health } = params;
+    const { deviceId, resolution, chromiumVersion, ...reported } = params;
+    const health = withoutUnverifiedRam(reported);
     const at = now();
     const device = await deps.db.device.update({
       where: { id: deviceId },

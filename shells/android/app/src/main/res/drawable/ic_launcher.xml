@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright (C) 2026 by Proyecta. All rights reserved. -->
+<!-- Material Symbols Sharp "tv" in the signal color on the stage color, as in the player's logo. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="48dp"
+    android:height="48dp"
+    android:viewportWidth="1200"
+    android:viewportHeight="1200">
+    <path
+        android:fillColor="#0E0E10"
+        android:pathData="M0,0h1200v1200h-1200z" />
+    <path
+        android:fillColor="#EC5E2B"
+        android:pathData="M450,1080v-80H200v-640h800v640H750v80H450ZM260,940h680v-520H260v520Z" />
+</vector>

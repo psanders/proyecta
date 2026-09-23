@@ -26,6 +26,8 @@ export const deviceEventSchema = z.discriminatedUnion("type", [
   z.object({ type: z.literal("rotation.updated"), data: deviceStateSchema })
 ]);
 
+export const cpuScopeSchema = z.enum(["system", "process"]);
+
 export const heartbeatSchema = z.object({
   playerVersion: z.string().max(32),
   uptimeSec: z.number().int().min(0),
@@ -36,12 +38,49 @@ export const heartbeatSchema = z.object({
     .regex(/^\d{2,5}x\d{2,5}$/)
     .optional(),
   chromiumVersion: z.string().max(32).optional(),
-  /** CPU load 0–100, when the shell can measure it (browsers can't). */
+  /** CPU load 0–100, when the shell can measure it (browsers can't). Scope in `cpuScope`. */
   cpuPercent: z.number().min(0).max(100).optional(),
+  /** Device RAM, reported by a native shell only. Never the page's JS heap. */
   memoryUsedMb: z.number().min(0).optional(),
   memoryTotalMb: z.number().min(0).optional(),
+  /** The player's own cache (origin usage) and the quota the engine grants it; not the disk. */
   storageUsedMb: z.number().min(0).optional(),
-  storageQuotaMb: z.number().min(0).optional()
+  storageQuotaMb: z.number().min(0).optional(),
+  // Additive (player-shells). All optional so older players stay valid.
+  shellVersion: z.string().max(32).optional(),
+  deviceModel: z.string().max(80).optional(),
+  osVersion: z.string().max(40).optional(),
+  cpuCores: z.number().int().min(1).max(1024).optional(),
+  /** Whether `cpuPercent` covers the whole device or only the player app's process. */
+  cpuScope: cpuScopeSchema.optional(),
+  /** Browser-only approximation (`navigator.deviceMemory`, bucketed, capped at 8). */
+  deviceMemoryApproxGb: z.number().min(0).max(1024).optional(),
+  /** The storage volume holding the player's data; shells only. */
+  diskUsedMb: z.number().min(0).optional(),
+  diskTotalMb: z.number().min(0).optional(),
+  /** The player page's JS heap, for leak detection. Never shown as RAM. */
+  jsHeapUsedMb: z.number().min(0).optional()
+});
+
+/** What a native shell tells the player about itself (Android bridge `info()`, kiosk `/shell/info`). */
+export const shellInfoSchema = z.object({
+  shell: z.enum(["ANDROID", "KIOSK_LINUX", "KIOSK_WINDOWS"]),
+  version: z.string().min(1).max(32),
+  hwId: z.string().min(1).max(200).optional(),
+  deviceModel: z.string().max(80).optional(),
+  osVersion: z.string().max(40).optional(),
+  cpuCores: z.number().int().min(1).max(1024).optional(),
+  webviewVersion: z.string().max(32).optional()
+});
+
+/** Live figures from a native shell (Android bridge `metrics()`, kiosk `/shell/metrics`). */
+export const shellMetricsSchema = z.object({
+  cpuPercent: z.number().min(0).max(100).optional(),
+  cpuScope: cpuScopeSchema.optional(),
+  memoryUsedMb: z.number().min(0).optional(),
+  memoryTotalMb: z.number().min(0).optional(),
+  diskUsedMb: z.number().min(0).optional(),
+  diskTotalMb: z.number().min(0).optional()
 });
 
 export const playLogBatchSchema = z.object({
@@ -72,3 +111,5 @@ export type DeviceState = z.infer<typeof deviceStateSchema>;
 export type DeviceEvent = z.infer<typeof deviceEventSchema>;
 export type Heartbeat = z.infer<typeof heartbeatSchema>;
 export type PlayLogBatch = z.infer<typeof playLogBatchSchema>;
+export type ShellInfo = z.infer<typeof shellInfoSchema>;
+export type ShellMetrics = z.infer<typeof shellMetricsSchema>;

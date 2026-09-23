@@ -1,0 +1,26 @@
+# Copyright (C) 2026 by Proyecta. All rights reserved.
+#
+# Chromium in kiosk mode under cage (a Wayland kiosk compositor) on tty1, showing the player the
+# helper serves. Starts after the helper; if the helper dies, the loaded player keeps playing and
+# systemd restarts the helper on its own.
+[Unit]
+Description=Proyecta kiosk (Chromium)
+Wants=proyecta-helper.service
+After=proyecta-helper.service systemd-user-sessions.service
+Conflicts=getty@tty1.service
+
+[Service]
+User=proyecta
+PAMName=login
+TTYPath=/dev/tty1
+StandardInput=tty
+EnvironmentFile=-/etc/default/proyecta-kiosk
+Environment=XDG_RUNTIME_DIR=/run/proyecta
+RuntimeDirectory=proyecta
+RuntimeDirectoryMode=0700
+ExecStart=/usr/lib/proyecta/kiosk-session
+Restart=always
+RestartSec=3
+
+[Install]
+WantedBy=graphical.target

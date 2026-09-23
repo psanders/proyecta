@@ -1,0 +1,4 @@
+# Proyecta kiosk settings. Edit and run: systemctl restart proyecta-helper proyecta-kiosk
+PROYECTA_API=https://api.proyecta.do
+# LED panels: place the player in a window instead of full screen, as "x,y,width,height".
+#PROYECTA_WINDOW=0,0,1920,1080

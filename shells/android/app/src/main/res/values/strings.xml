@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright (C) 2026 by Proyecta. All rights reserved. -->
+<resources>
+    <string name="app_name">Proyecta</string>
+    <!-- Shown only when the WebView can't be created at all; otherwise unsupported.html is shown. -->
+    <string name="no_webview">Este equipo no es compatible. Instala o actualiza Android System WebView, o usa otro dispositivo.</string>
+</resources>
