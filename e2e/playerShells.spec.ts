@@ -114,7 +114,7 @@ test.describe("player shells", () => {
     page,
     request
   }) => {
-    test.use({ viewport: { width: 1600, height: 900 } });
+    await page.setViewportSize({ width: 1600, height: 900 });
     const stamp = Date.now();
     await page.goto(`${PLAYER}?debug=1&slotMs=1500&hw=e2e-offline-${stamp}`);
     const code = await playerCode(page);
