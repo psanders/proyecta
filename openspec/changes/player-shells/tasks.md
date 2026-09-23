@@ -26,13 +26,13 @@
 - [x] 4.4 Offline rotation: store the last rotation, cache renditions in Cache Storage `proyecta-media-v1`, play from cache first, evict after a full sync, and start from the stored rotation when there's no network (D7)
 - [x] 4.5 Add `VITE_API_BASE` for absolute API URLs in the Android build; leave it empty for the browser and kiosk builds
 - [x] 4.6 Add `@vitejs/plugin-legacy` with the target from 1.2, and update the `vite.config.ts` comment (working value `MIN_CHROMIUM = 69`; revisit after 1.2)
-- [ ] 4.7 E2E: with a mocked `window.ProyectaShell`, the heartbeat carries the shell figures; after going offline and reloading, the player resumes the cached rotation
+- [x] 4.7 E2E: with a mocked `window.ProyectaShell`, the heartbeat carries the shell figures; after going offline and reloading, the player resumes the cached rotation
 
 ## 5. Dashboard
 
 - [x] 5.1 Add message ids in `messages/{es,en}.ts`: the player type labels, "Requiere la app Proyecta" plus its hint, "No disponible en este equipo" and "Sin datos todavía"
 - [x] 5.2 `DevicePanel.tsx`: add player type, shell version and model rows, and `missingReason()` for CPU, RAM and disk; relabel storage as the player cache
-- [ ] 5.3 E2E: a browser player shows "Requiere la app Proyecta"; a shell heartbeat shows RAM and model
+- [x] 5.3 E2E: a browser player shows "Requiere la app Proyecta"; a shell heartbeat shows RAM and model
 
 ## 6. Android shell
 
@@ -68,4 +68,4 @@
 - [x] 8.1 Add a `shells` job to `release.yml`: build the APK (signed from secrets), both `.deb` files and the Windows installer, and attach them to the release
 - [x] 8.2 Record the production-side needs. Nothing goes in `docs/deploy/PENDING.md`: the WebView CORS rule is code (`shellCors.ts`) and `api.proyecta.do` already exists. The Android signing-key secrets and their offline backup are documented in `shells/android/README.md` and `.github/workflows/shells.yml`
 - [x] 8.3 Update CLAUDE.md with the measured engine floor and the kiosk helper, and replace the placeholder READMEs in `shells/android` and `shells/kiosk`
-- [ ] 8.4 Green gate: `npm run lint && npm run typecheck && npm test`, plus the integration and e2e runs
+- [x] 8.4 Green gate: `npm run lint && npm run typecheck && npm test`, plus the integration and e2e runs

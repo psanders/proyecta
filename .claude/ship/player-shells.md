@@ -18,7 +18,7 @@ E2E: yes (Playwright, `e2e/`)
 | 1 | Design (Pencil) | done | `player-unsupported` (PP793) approved ("continue") |
 | 2 | Spec reconcile | done | No behavior change from design. Later: RAM guard simplified to "no shellVersion" (spec + D8), D10 became a static page |
 | 3 | Build | in-progress | All code done. Open: device spike (1.1–1.3), real-device/VM checks (6.7, 7.5, 7.6) |
-| 4 | Test | in-progress | Lint, typecheck, unit (TS, Go, Kotlin) and 27 integration tests pass. `e2e/playerShells.spec.ts` written, not run: the main checkout's dev servers hold 5174–5176 |
+| 4 | Test | done | CI on PR #55: lint, typecheck, unit (TS, Go, Kotlin), 27 integration and 28 e2e tests pass |
 | 5 | Sync | pending | |
 | 6 | Archive | pending | |
 
