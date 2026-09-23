@@ -28,6 +28,7 @@ Status values: `pending` · `in-progress` · `done` · `skipped` (with reason).
 
 Newest first. One line per meaningful decision or stage transition.
 
+- 2026-09-23 — Scope added: proyecta.do/download page (Pencil web-download frames, approved without the install-steps section and the changelog link), downloads store at api.proyecta.do/downloads (droplet folder mounted in the proxy), shells.yml publishes installers + latest.json. PR #55 opened with two commits.
 - 2026-09-23 — Emulator try-out showed a black slot: the WebView upgraded `http://10.0.2.2` media on the https asset origin and blocked it. Media now always downloads first and plays from local blob URLs (D7 updated), which also stops mid-session network loss from blacking out slots.
 - 2026-09-23 — nfpm needed `type: tree` for the player's dist/ (it had flattened assets/) and a staged helper path (no variable expansion in `contents`).
 - 2026-09-23 — AndroidX core 1.19 / webkit 1.17 need compileSdk 37 (not installed); pinned core-ktx 1.16.0, webkit 1.14.0, compileSdk 36, targetSdk 35.
