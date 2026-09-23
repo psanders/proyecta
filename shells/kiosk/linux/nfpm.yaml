@@ -1,0 +1,37 @@
+# Copyright (C) 2026 by Proyecta. All rights reserved.
+#
+# One .deb per architecture: the helper, the player, the systemd units and the kiosk session.
+# Built by shells/kiosk/build.sh with ARCH and VERSION set; it copies that architecture's helper
+# to build/stage/ first, because nfpm doesn't expand variables in content paths.
+name: proyecta-kiosk
+arch: ${ARCH}
+version: ${VERSION}
+maintainer: Proyecta <hola@proyecta.do>
+description: Proyecta screen player for Linux kiosks (Chromium + local helper).
+homepage: https://proyecta.do
+license: Proprietary
+depends:
+  - chromium | chromium-browser
+  - cage
+  - curl
+contents:
+  - src: build/stage/proyecta-helper
+    dst: /usr/bin/proyecta-helper
+    file_info: { mode: 0755 }
+  # "tree" keeps dist/'s layout (the player's HTML loads /assets/...).
+  - src: ../../packages/player/dist
+    dst: /usr/share/proyecta/player
+    type: tree
+  - src: linux/kiosk-session
+    dst: /usr/lib/proyecta/kiosk-session
+    file_info: { mode: 0755 }
+  - src: linux/proyecta-helper.service
+    dst: /lib/systemd/system/proyecta-helper.service
+  - src: linux/proyecta-kiosk.service
+    dst: /lib/systemd/system/proyecta-kiosk.service
+  - src: linux/proyecta-kiosk.default
+    dst: /etc/default/proyecta-kiosk
+    type: config|noreplace
+scripts:
+  postinstall: linux/postinstall.sh
+  preremove: linux/preremove.sh

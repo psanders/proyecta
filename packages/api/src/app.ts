@@ -4,6 +4,7 @@
 import express, { type Express } from "express";
 import { createExpressMiddleware } from "@trpc/server/adapters/express";
 import { createDeviceRouter } from "./device/router.js";
+import { shellCors } from "./device/shellCors.js";
 import { CONTENT_URL_PREFIX } from "./media/contentStore.js";
 import { resolveContext, type Services } from "./trpc/context.js";
 import { appRouter } from "./trpc/router.js";
@@ -28,6 +29,7 @@ export function createApp(services: Services, options: AppOptions = {}): Express
   // Uploads stream their raw body, so they're mounted before the JSON body parser.
   app.use("/uploads", createUploadRouter(services));
   app.use(express.json({ limit: "1mb" }));
+  app.use(["/device/v1", "/media", CONTENT_URL_PREFIX], shellCors());
   app.use("/device/v1", createDeviceRouter(services.sync));
   // express.static answers Range requests, which video elements rely on.
   if (options.mediaDir) app.use("/media", express.static(options.mediaDir, { maxAge: "1h" }));

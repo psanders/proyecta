@@ -7,6 +7,7 @@ import { relativeTime } from "../lib/format.js";
 import { errorMessage } from "../lib/errors.js";
 import { trpc } from "../lib/trpc.js";
 import type { Translate } from "../lib/i18n.js";
+import type { MessageId } from "../lib/messages/es.js";
 import { useI18n } from "../lib/useI18n.js";
 import { CodeInput } from "./CodeInput.js";
 import { StatusBadge } from "./StatusBadge.js";
@@ -18,32 +19,38 @@ import { MoreMenu } from "./ui/MoreMenu.js";
 
 export interface DeviceData {
   code: string;
+  /** DeviceShell: BROWSER, ANDROID, KIOSK_LINUX or KIOSK_WINDOWS. */
+  shell: string;
   lastSeenAt: string;
   chromiumVersion: string | null;
   health: Record<string, unknown> | null;
 }
 
 const MB = 1024;
+const SHELLS = new Set(["BROWSER", "ANDROID", "KIOSK_LINUX", "KIOSK_WINDOWS"]);
 
 function formatMb(mb: number): string {
   return mb >= MB ? `${Number((mb / MB).toFixed(1))} GB` : `${Math.round(mb)} MB`;
 }
 
+/** A meter's reading, or why there is none. */
+type Reading = { value: string; percent: number | null; hint?: string };
+
 /** One column of the Pencil "Device Metrics" row: label, value, 8 px bar. */
-function Meter({
-  label,
-  value,
-  percent
-}: {
-  label: string;
-  value: string;
-  percent: number | null;
-}) {
+function Meter({ label, value, percent, hint }: { label: string } & Reading) {
   return (
-    <div className="flex min-w-0 flex-1 flex-col gap-2" data-testid="device-metric">
+    <div className="flex min-w-0 flex-1 flex-col gap-2" data-testid="device-metric" title={hint}>
       <div className="flex items-center justify-between gap-2 text-[13px]">
         <span className="truncate text-muted-foreground">{label}</span>
-        <span className="shrink-0 font-semibold text-foreground">{value}</span>
+        <span
+          className={
+            percent === null
+              ? "shrink-0 text-muted-foreground"
+              : "shrink-0 font-semibold text-foreground"
+          }
+        >
+          {value}
+        </span>
       </div>
       <div className="h-2 overflow-hidden rounded-full bg-secondary">
         <div className="h-full rounded-full bg-primary" style={{ width: `${percent ?? 0}%` }} />
@@ -52,19 +59,35 @@ function Meter({
   );
 }
 
-/** Used/total meter; "—" and an empty bar when the player didn't report it. */
-function capacity(
-  used: unknown,
-  total: unknown,
-  t: Translate
-): { value: string; percent: number | null } {
-  if (typeof used !== "number" || typeof total !== "number" || total <= 0) {
-    return { value: t("detail.notReported"), percent: null };
+/**
+ * Why a hardware figure is missing: no heartbeat yet, a plain browser (which can't read it), or a
+ * shell that didn't measure it. See the `device-sync` spec.
+ */
+function missing(shell: string, health: Record<string, unknown> | null, t: Translate): Reading {
+  if (!health) return { value: t("metric.noData"), percent: null };
+  if (shell === "BROWSER") {
+    return { value: t("metric.requiresApp"), percent: null, hint: t("metric.requiresAppHint") };
   }
+  return { value: t("metric.unavailable"), percent: null };
+}
+
+/** Used/total reading, or the reason it's missing. */
+function capacity(used: unknown, total: unknown, fallback: Reading): Reading {
+  if (typeof used !== "number" || typeof total !== "number" || total <= 0) return fallback;
   return {
     value: `${formatMb(used)} / ${formatMb(total)}`,
     percent: Math.min(100, (used / total) * 100)
   };
+}
+
+/** A label/value line under the code (player type, app version, model, cache). */
+function InfoRow({ label, value, testId }: { label: string; value: string; testId: string }) {
+  return (
+    <div className="flex items-center justify-between gap-4 text-[13px]" data-testid={testId}>
+      <span className="text-muted-foreground">{label}</span>
+      <span className="text-foreground">{value}</span>
+    </div>
+  );
 }
 
 /** Pairing code chip with a copy-to-clipboard button (Pencil "Code Row"). */
@@ -144,6 +167,9 @@ export function DevicePanel({
       : null;
   const health = (device?.health ?? {}) as Record<string, number | string | undefined>;
   const linked = !!device;
+  const gap = device ? missing(device.shell, device.health, t) : missing("BROWSER", null, t);
+  // RAM stored before player-shells may be the page's JS heap; only a shell's figure is RAM.
+  const ram = health.shellVersion ? capacity(health.memoryUsedMb, health.memoryTotalMb, gap) : gap;
 
   const moreMenu =
     canManage && !archived ? (
@@ -193,20 +219,48 @@ export function DevicePanel({
             <span className="text-sm text-muted-foreground">{t("detail.code")}</span>
             <CodeChip code={device.code} />
           </div>
+          <div className="flex flex-col gap-1.5">
+            <InfoRow
+              label={t("detail.playerType")}
+              value={
+                SHELLS.has(device.shell) ? t(`shell.${device.shell}` as MessageId) : device.shell
+              }
+              testId="player-type"
+            />
+            {typeof health.shellVersion === "string" ? (
+              <InfoRow
+                label={t("detail.shellVersion")}
+                value={health.shellVersion}
+                testId="shell-version"
+              />
+            ) : null}
+            {typeof health.deviceModel === "string" ? (
+              <InfoRow
+                label={t("detail.deviceModel")}
+                value={health.deviceModel}
+                testId="device-model"
+              />
+            ) : null}
+            {typeof health.storageUsedMb === "number" &&
+            typeof health.storageQuotaMb === "number" ? (
+              <InfoRow
+                label={t("detail.playerCache")}
+                value={`${formatMb(health.storageUsedMb)} / ${formatMb(health.storageQuotaMb)}`}
+                testId="player-cache"
+              />
+            ) : null}
+          </div>
           <div className="flex gap-6">
             <Meter
               label={t("detail.cpu")}
               {...(typeof health.cpuPercent === "number"
                 ? { value: `${Math.round(health.cpuPercent)}%`, percent: health.cpuPercent }
-                : { value: t("detail.notReported"), percent: null })}
+                : gap)}
             />
+            <Meter label={t("detail.memory")} {...ram} />
             <Meter
-              label={t("detail.storage")}
-              {...capacity(health.storageUsedMb, health.storageQuotaMb, t)}
-            />
-            <Meter
-              label={t("detail.memory")}
-              {...capacity(health.memoryUsedMb, health.memoryTotalMb, t)}
+              label={t("detail.disk")}
+              {...capacity(health.diskUsedMb, health.diskTotalMb, gap)}
             />
           </div>
         </>

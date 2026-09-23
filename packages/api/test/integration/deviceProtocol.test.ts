@@ -280,6 +280,35 @@ describe("device-protocol (integration: HTTP + Postgres)", function () {
     expect((await post("heartbeat", { uptimeSec: -1 })).status).to.equal(400);
   });
 
+  it("keeps device RAM only from shells, dropping the JS heap older players sent under that name", async () => {
+    const device = await register(`hw-ram-${stamp}`);
+    const owner = await dashboard(`WO-ram-${stamp}`);
+    const screen = await owner.screens.create({ name: "Pantalla RAM", city: "Santiago" });
+    await owner.screens.link({ screenId: screen.id, code: device.code });
+    const heartbeat = (body: Record<string, unknown>) =>
+      fetch(`${base}/device/v1/heartbeat`, {
+        method: "POST",
+        headers: {
+          authorization: `Bearer ${device.deviceToken}`,
+          "content-type": "application/json"
+        },
+        body: JSON.stringify({ playerVersion: "0.9.0", uptimeSec: 60, ...body })
+      });
+
+    expect((await heartbeat({ memoryUsedMb: 40, memoryTotalMb: 4096 })).status).to.equal(200);
+    const fromBrowser = (await owner.screens.get({ id: screen.id })).device?.health;
+    expect(fromBrowser).to.not.have.any.keys("memoryUsedMb", "memoryTotalMb");
+
+    await heartbeat({
+      shellVersion: "0.9.0",
+      deviceModel: "Mi Box S",
+      memoryUsedMb: 900,
+      memoryTotalMb: 1900
+    });
+    const fromShell = (await owner.screens.get({ id: screen.id })).device?.health;
+    expect(fromShell).to.include({ shellVersion: "0.9.0", memoryUsedMb: 900, memoryTotalMb: 1900 });
+  });
+
   it("bills pay-per-display plays by the reported duration, falling back to the rotation and snapshotting the rate", async () => {
     const device = await register(`hw-ppd-${stamp}`);
     const owner = await dashboard(`WO-ppd-${stamp}`);

@@ -47,6 +47,17 @@ jobs:
       tag: ${{ needs.release-please.outputs.tag }}
       latest: true
 
+  # The installers (APK, .deb, Windows) attached to the same release. Independent of the deploy.
+  shells:
+    needs: release-please
+    if: needs.release-please.outputs.released == 'true'
+    permissions:
+      contents: write
+    uses: ./.github/workflows/shells.yml
+    with:
+      tag: ${{ needs.release-please.outputs.tag }}
+    secrets: inherit
+
   deploy:
     needs: [release-please, publish]
     permissions:

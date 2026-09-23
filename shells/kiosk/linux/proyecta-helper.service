@@ -1,0 +1,21 @@
+# Copyright (C) 2026 by Proyecta. All rights reserved.
+#
+# Serves the player to the kiosk browser from local disk and reports this machine's figures. A
+# separate process from the browser; it never plays media. Settings: /etc/default/proyecta-kiosk.
+[Unit]
+Description=Proyecta kiosk helper
+After=network.target
+
+[Service]
+User=proyecta
+EnvironmentFile=-/etc/default/proyecta-kiosk
+ExecStart=/usr/bin/proyecta-helper -api ${PROYECTA_API}
+Restart=always
+RestartSec=2
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target

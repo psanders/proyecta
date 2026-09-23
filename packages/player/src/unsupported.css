@@ -1,0 +1,112 @@
+/**
+ * Copyright (C) 2026 by Proyecta. All rights reserved.
+ *
+ * Pencil frame player-unsupported (1600x900), a copy of player-pairing. Colors are the
+ * theme.css tokens written out, because this page targets engines too old for custom properties
+ * and min(): 1 design px = 0.0625vw.
+ */
+@import "@fontsource/jetbrains-mono/500.css";
+@import "@fontsource/jetbrains-mono/700.css";
+@import "@fontsource/geist-sans/400.css";
+
+html,
+body {
+  margin: 0;
+  height: 100%;
+  background: #0e0e10; /* --stage */
+  color: #ffffff; /* --text */
+  overflow: hidden;
+  cursor: none;
+  -webkit-font-smoothing: antialiased;
+}
+
+.unsupported {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-flex-direction: column;
+  flex-direction: column;
+  -webkit-align-items: center;
+  align-items: center;
+  -webkit-justify-content: center;
+  justify-content: center;
+  text-align: center;
+  font-family: "Geist Sans", "Geist", sans-serif;
+}
+
+.unsupported > * + * {
+  margin-top: 2.25vw; /* gap 36 */
+}
+
+.logo {
+  display: -webkit-flex;
+  display: flex;
+  -webkit-align-items: center;
+  align-items: center;
+  font-family: "JetBrains Mono", monospace;
+  font-weight: 700;
+  font-size: 2vw; /* 32 */
+}
+
+.logo svg {
+  width: 2.5vw; /* 40 */
+  height: 2.5vw;
+  margin-right: 0.75vw; /* gap 12 */
+  fill: #ec5e2b; /* --signal */
+}
+
+.domain {
+  font-size: 0.9375vw; /* 15 */
+  letter-spacing: 0.125vw;
+  color: #71717a; /* --muted-2 */
+}
+
+.head {
+  width: 35vw; /* 560 */
+}
+
+h1 {
+  margin: 0 0 0.625vw; /* gap 10 */
+  font-family: "JetBrains Mono", monospace;
+  font-weight: 500;
+  font-size: 1.75vw; /* 28 */
+}
+
+p {
+  margin: 0;
+  font-size: 1vw; /* 16 */
+  line-height: 1.5;
+  color: #a1a1aa; /* --muted */
+}
+
+.version-box {
+  padding: 1.75vw 3.5vw; /* 28 56 */
+  border-radius: 1.25vw; /* 20 */
+  background: #18181b; /* --surface */
+  border: 1px solid #2e2e32; /* --line */
+  font-family: "JetBrains Mono", monospace;
+  font-weight: 700;
+  font-size: 2vw; /* 32 */
+  color: #ec5e2b; /* --signal */
+}
+
+.help {
+  display: -webkit-flex;
+  display: flex;
+  -webkit-align-items: center;
+  align-items: center;
+  font-size: 0.875vw; /* 14 */
+  color: #71717a; /* --muted-2 */
+}
+
+.help svg {
+  width: 1.125vw; /* 18 */
+  height: 1.125vw;
+  margin-right: 0.625vw; /* gap 10 */
+  fill: #71717a;
+}

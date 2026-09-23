@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright (C) 2026 by Proyecta. All rights reserved. -->
+<!-- Android TV launcher banner (320x180): the logo mark centered on the stage color. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="320dp"
+    android:height="180dp"
+    android:viewportWidth="3200"
+    android:viewportHeight="1800">
+    <path
+        android:fillColor="#0E0E10"
+        android:pathData="M0,0h3200v1800h-3200z" />
+    <path
+        android:fillColor="#EC5E2B"
+        android:pathData="M1250,1380v-80H1000v-640h1200v640H1950v80H1250ZM1060,1240h1080v-520H1060v520Z" />
+</vector>

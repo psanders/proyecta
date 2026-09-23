@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright (C) 2026 by Proyecta. All rights reserved. -->
+<resources>
+    <!-- The stage token from packages/player/src/theme.css, so no white flash before the player paints. -->
+    <color name="stage">#0E0E10</color>
+    <color name="muted">#A1A1AA</color>
+
+    <style name="Theme.Proyecta" parent="android:Theme.Material.NoActionBar.Fullscreen">
+        <item name="android:windowBackground">@color/stage</item>
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+    </style>
+</resources>

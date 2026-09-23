@@ -14,6 +14,8 @@ on:
       - "packages/api/**"
       - "packages/dashboard/**"
       - "packages/player/**"
+      - "shells/**"
+      - "scripts/downloads/**"
       - "package.json"
       - "package-lock.json"
       - "tsconfig.base.json"
@@ -61,3 +63,41 @@ jobs:
 
       - name: Format check
         run: npx prettier --check .
+
+  shells:
+    # The native shells live outside npm workspaces: the Go kiosk helper and the Kotlin Android app.
+    if: "!startsWith(github.event.head_commit.message, 'chore(release):')"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-go@v6
+        with:
+          go-version-file: shells/kiosk/helper/go.mod
+          cache-dependency-path: shells/kiosk/helper/go.sum
+
+      - name: Kiosk helper tests
+        working-directory: shells/kiosk/helper
+        run: |
+          go vet ./...
+          GOOS=windows go vet ./...
+          go test ./...
+
+      - name: Downloads manifest tests
+        run: node --test scripts/downloads/manifest.test.mjs
+
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - run: npm ci
+
+      - name: Android unit tests and lint
+        working-directory: shells/android
+        run: ./gradlew --no-daemon testDebugUnitTest lintDebug assembleDebug

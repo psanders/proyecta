@@ -205,6 +205,57 @@ export const strings = {
     ctaScreens: "Publica tu pantalla",
     ctaAdvertise: "Anuncia en pantallas"
   },
+  download: {
+    title: "Descarga Proyecta",
+    metaDescription:
+      "Instala Proyecta en tu TV box Android, PC con Linux o Windows. Arranca solo, sigue reproduciendo sin internet y se vincula con un código.",
+    eyebrow: "DESCARGAS",
+    eyebrowVersion: (version: string) => `DESCARGAS · VERSIÓN ${version}`,
+    heading: "Descarga Proyecta.",
+    sub: "Instala Proyecta en el equipo de tu pantalla. Arranca solo al encenderlo, sigue reproduciendo sin internet y se vincula con un código de 8 caracteres.",
+    versionChip: (version: string, date: string) => `v${version} · ${date}`,
+    shotAlt: "Pantalla de Proyecta mostrando el código para vincularla",
+    platformsEyebrow: "ELIGE TU EQUIPO",
+    platformsTitle: "Un instalador por plataforma.",
+    popular: "MÁS USADO",
+    platforms: {
+      android: {
+        name: "Android",
+        body: "TV boxes, televisores Android y tabletas.",
+        requirements: ["Android 5.0 o más reciente", "Ideal si tu equipo no tiene Play Store"],
+        button: "Descargar APK"
+      },
+      linux: {
+        name: "Linux",
+        body: "PCs y Raspberry Pi en modo kiosco con Chromium.",
+        requirements: [
+          "Debian 12, Ubuntu 22.04 o Raspberry Pi OS",
+          "Instala todo lo necesario en un paso"
+        ],
+        button: "Descargar .deb · x64",
+        buttonArm: "ARM64 · Raspberry Pi"
+      },
+      windows: {
+        name: "Windows",
+        body: "PCs y reproductores de pantallas LED con Edge.",
+        requirements: [
+          "Windows 10 u 11 de 64 bits",
+          "Se abre a pantalla completa al iniciar sesión"
+        ],
+        button: "Descargar instalador"
+      }
+    },
+    fallbackFile: "Última versión en GitHub",
+    nextEyebrow: "DESPUÉS DE INSTALAR",
+    nextTitle: "¿Ya lo instalaste? Vincula tu pantalla.",
+    nextBody:
+      "Al abrir Proyecta, la pantalla muestra un código de 8 caracteres. Escríbelo en tu panel y empieza a reproducir en segundos.",
+    openPanel: "Abrir mi panel",
+    signUp: "Crear cuenta",
+    helpTitle: "¿Tu equipo no aparece aquí?",
+    helpBody: "Cuéntanos qué pantalla tienes y te ayudamos a ponerla en la red.",
+    helpCta: "Escríbenos"
+  },
   footer: {
     tagline: "Plataforma dominicana de publicidad en pantallas digitales.",
     platformHeading: "PLATAFORMA",
