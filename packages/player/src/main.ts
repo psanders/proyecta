@@ -27,7 +27,7 @@ import "./pairing.css";
  * resumes playing. Query flags: ?debug=1 operator overlay (or press "d"); ?slotMs=2000 caps slots
  * (tests); ?hw=<id> hardware id from a launcher.
  */
-const PLAYER_VERSION = "0.8.1"; // x-release-please-version
+const PLAYER_VERSION = "0.9.0"; // x-release-please-version
 const HEARTBEAT_MS = 60_000;
 const PLAY_LOG_FLUSH_MS = 30_000;
 const MAX_QUEUED_PLAYS = 5000;
