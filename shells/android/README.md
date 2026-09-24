@@ -52,6 +52,13 @@ release key lives in the repository secrets (`ANDROID_KEYSTORE_BASE64`,
 `ANDROID_KEYSTORE_PASSWORD`, `ANDROID_KEY_ALIAS`, `ANDROID_KEY_PASSWORD`; see
 `.github/workflows/shells.yml`). Keep an offline backup of the keystore and its passwords.
 
+The release certificate (created 2026-09-23, `CN=Proyecta, O=Proyecta, L=Santo Domingo, C=DO`, alias `proyecta`)
+has this SHA-256 fingerprint. Check a downloaded APK against it with `apksigner verify --print-certs`:
+
+```
+86:40:9e:ee:77:59:3b:c8:47:c5:89:54:54:2c:63:fe:07:eb:24:3b:31:c6:e0:3a:e1:9f:3f:7d:41:6d:15:b6
+```
+
 ## Device matrix
 
 Filled in by the device spike (`player-shells` task 1.1). It sets `MIN_WEBVIEW_MAJOR`.
