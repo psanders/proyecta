@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.9.1](https://github.com/psanders/proyecta/compare/v0.9.0...v0.9.1) (2026-09-24)
+
+
+### Bug Fixes
+
+* **dashboard:** keep the Ads menu group visible under ad blockers ([#54](https://github.com/psanders/proyecta/issues/54)) ([d0d7154](https://github.com/psanders/proyecta/commit/d0d715425d730863f45b00fd16f2b8db299a2508))
+
 ## [0.9.0](https://github.com/psanders/proyecta/compare/v0.8.1...v0.9.0) (2026-09-23)
 
 
