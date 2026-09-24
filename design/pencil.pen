@@ -1,5 +1,5 @@
 {
-  "version": "2.18",
+  "version": "2.19",
   "children": [
     {
       "type": "frame",
@@ -37,8 +37,7 @@
               "x": 0,
               "y": 2
             },
-            "blur": 3.5,
-            "spread": -1
+            "blur": 3.5
           },
           "gap": 8,
           "padding": [
@@ -3099,8 +3098,7 @@
               "x": 0,
               "y": 2
             },
-            "blur": 3.5,
-            "spread": -1
+            "blur": 3.5
           },
           "layout": "vertical",
           "alignItems": "center"
@@ -3165,8 +3163,7 @@
               "x": 0,
               "y": 1
             },
-            "blur": 3.5,
-            "spread": -1
+            "blur": 3.5
           },
           "gap": 8,
           "padding": [
@@ -3735,8 +3732,7 @@
               "x": 0,
               "y": 1
             },
-            "blur": 3.5,
-            "spread": -1
+            "blur": 3.5
           },
           "justifyContent": "center",
           "alignItems": "center",
@@ -15239,8 +15235,7 @@
               "x": 0,
               "y": 40
             },
-            "blur": 80,
-            "spread": -20
+            "blur": 80
           },
           "layout": "vertical",
           "padding": 10,
@@ -15521,8 +15516,7 @@
               "x": 0,
               "y": 30
             },
-            "blur": 60,
-            "spread": -20
+            "blur": 60
           },
           "layout": "vertical",
           "children": [
@@ -26114,8 +26108,7 @@
                   "x": 0,
                   "y": 8
                 },
-                "blur": 16,
-                "spread": -2
+                "blur": 16
               },
               "layout": "vertical",
               "padding": [
@@ -46022,6 +46015,2170 @@
               }
             }
           ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "PP793",
+      "x": 10584,
+      "y": 6680,
+      "name": "player-unsupported",
+      "clip": true,
+      "width": 1600,
+      "height": 900,
+      "fill": "#0E0E10",
+      "layout": "vertical",
+      "justifyContent": "center",
+      "alignItems": "center",
+      "children": [
+        {
+          "type": "frame",
+          "id": "m3TN4",
+          "name": "Content",
+          "width": 900,
+          "layout": "vertical",
+          "gap": 36,
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "pv4Rs",
+              "name": "Logo",
+              "gap": 12,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon",
+                  "id": "GZFmk",
+                  "width": 40,
+                  "height": 40,
+                  "icon": "tv",
+                  "library": "Material Symbols Sharp",
+                  "fill": "#EC5E2B"
+                },
+                {
+                  "type": "text",
+                  "id": "FRAvg",
+                  "fill": "#FFFFFF",
+                  "content": "PROYECTA",
+                  "fontFamily": "JetBrains Mono",
+                  "fontSize": 32,
+                  "fontWeight": "700"
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "id": "RXDFY",
+              "fill": "#71717A",
+              "content": "proyecta.do",
+              "fontFamily": "Geist",
+              "fontSize": 15,
+              "fontWeight": "normal",
+              "letterSpacing": 2
+            },
+            {
+              "type": "frame",
+              "id": "Ash6y",
+              "name": "Head Text",
+              "layout": "vertical",
+              "gap": 10,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "Ke7g0",
+                  "fill": "#FFFFFF",
+                  "content": "Este equipo no es compatible",
+                  "textAlign": "center",
+                  "fontFamily": "JetBrains Mono",
+                  "fontSize": 28,
+                  "fontWeight": "500"
+                },
+                {
+                  "type": "text",
+                  "id": "c6xEAa",
+                  "fill": "#A1A1AA",
+                  "textGrowth": "fixed-width",
+                  "width": 560,
+                  "content": "El navegador interno de este equipo (Android System WebView) es demasiado antiguo para reproducir anuncios de Proyecta.",
+                  "lineHeight": 1.5,
+                  "textAlign": "center",
+                  "fontFamily": "Geist",
+                  "fontSize": 16,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "NLQXP",
+              "name": "Version Box",
+              "fill": "#18181B",
+              "cornerRadius": 20,
+              "stroke": "#2E2E32",
+              "strokeWidth": 1,
+              "strokeAlignment": "inner",
+              "padding": [
+                28,
+                56
+              ],
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "BgOmF",
+                  "fill": "#EC5E2B",
+                  "content": "WebView 58 · requiere 69+",
+                  "fontFamily": "JetBrains Mono",
+                  "fontSize": 32,
+                  "fontWeight": "700",
+                  "letterSpacing": 6
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "w7Oug",
+              "name": "Help Row",
+              "gap": 10,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon",
+                  "id": "wZo45",
+                  "name": "Info Icon",
+                  "width": 18,
+                  "height": 18,
+                  "icon": "info",
+                  "library": "Material Symbols Sharp",
+                  "fill": "#71717A"
+                },
+                {
+                  "type": "text",
+                  "id": "rSOVe",
+                  "fill": "#71717A",
+                  "content": "Actualiza Android System WebView desde la tienda del equipo o usa otro dispositivo.",
+                  "fontFamily": "Geist",
+                  "fontSize": 14,
+                  "fontWeight": "normal"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "ZbkHf",
+      "x": -3128,
+      "y": 26050,
+      "name": "web-download",
+      "clip": true,
+      "width": 1440,
+      "fill": "$web-paper",
+      "layout": "vertical",
+      "children": [
+        {
+          "id": "mHTEY",
+          "type": "ref",
+          "ref": "c0O3q",
+          "name": "Nav",
+          "width": "fill_container"
+        },
+        {
+          "type": "frame",
+          "id": "s88o4O",
+          "name": "Hero",
+          "width": "fill_container",
+          "fill": "$web-stage",
+          "gap": 64,
+          "padding": [
+            64,
+            "$web-gutter",
+            88,
+            "$web-gutter"
+          ],
+          "justifyContent": "space_between",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "x7ZIus",
+              "name": "Copy",
+              "width": 620,
+              "layout": "vertical",
+              "gap": 28,
+              "children": [
+                {
+                  "id": "M4t5Sd",
+                  "type": "ref",
+                  "ref": "QXzMv",
+                  "name": "Eyebrow",
+                  "descendants": {
+                    "aeD65": {
+                      "content": "DESCARGAS · VERSIÓN 0.9.0"
+                    }
+                  }
+                },
+                {
+                  "type": "text",
+                  "id": "Zdsiq",
+                  "name": "H1",
+                  "fill": "#FFFFFF",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Descarga Proyecta.",
+                  "lineHeight": 1.05,
+                  "fontFamily": "$--font-primary",
+                  "fontSize": "$web-display",
+                  "fontWeight": "600",
+                  "letterSpacing": -2
+                },
+                {
+                  "type": "text",
+                  "id": "E17k3m",
+                  "name": "Sub",
+                  "fill": "#C9CAC7",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Instala Proyecta en el equipo de tu pantalla. Arranca solo al encenderlo, sigue reproduciendo sin internet y se vincula con un código de 8 caracteres.",
+                  "lineHeight": 1.55,
+                  "fontFamily": "$--font-secondary",
+                  "fontSize": 19,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "frame",
+                  "id": "HvIvX",
+                  "name": "Release Meta",
+                  "gap": 12,
+                  "padding": [
+                    8,
+                    0,
+                    0,
+                    0
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "EXr6j",
+                      "name": "Version Chip",
+                      "cornerRadius": 999,
+                      "stroke": "$web-stage-line",
+                      "strokeWidth": 1,
+                      "gap": 8,
+                      "padding": [
+                        6,
+                        14
+                      ],
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "ellipse",
+                          "id": "LM66r",
+                          "name": "Dot",
+                          "fill": "$web-signal",
+                          "width": 8,
+                          "height": 8
+                        },
+                        {
+                          "type": "text",
+                          "id": "T5fRhB",
+                          "name": "Label",
+                          "fill": "#FFFFFF",
+                          "content": "v0.9.0 · 23 sep 2026",
+                          "fontFamily": "$--font-primary",
+                          "fontSize": 13,
+                          "fontWeight": "500"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "iJk5w",
+              "type": "ref",
+              "ref": "i61Gzc",
+              "name": "TV",
+              "width": "fill_container",
+              "descendants": {
+                "qoeyM": {
+                  "height": 300,
+                  "fill": {
+                    "type": "image",
+                    "enabled": true,
+                    "url": "assets/app-player-pairing.png",
+                    "mode": "fill"
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "io9pc",
+          "name": "Platforms",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 48,
+          "padding": [
+            96,
+            "$web-gutter",
+            72,
+            "$web-gutter"
+          ],
+          "children": [
+            {
+              "type": "frame",
+              "id": "odnab",
+              "name": "Head",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 16,
+              "children": [
+                {
+                  "id": "zloJG",
+                  "type": "ref",
+                  "ref": "QXzMv",
+                  "name": "Eyebrow",
+                  "descendants": {
+                    "aeD65": {
+                      "content": "ELIGE TU EQUIPO",
+                      "fill": "$web-ink-muted"
+                    }
+                  }
+                },
+                {
+                  "type": "text",
+                  "id": "yXtB6",
+                  "name": "H2",
+                  "fill": "$web-ink",
+                  "content": "Un instalador por plataforma.",
+                  "fontFamily": "$--font-primary",
+                  "fontSize": "$web-h2",
+                  "fontWeight": "600",
+                  "letterSpacing": -1
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "L81D5c",
+              "name": "Cards",
+              "width": "fill_container",
+              "height": 530,
+              "gap": 24,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "cTpAg",
+                  "name": "Android Card",
+                  "width": "fill_container",
+                  "height": "fill_container",
+                  "fill": "#FFFFFF",
+                  "cornerRadius": 16,
+                  "stroke": "#CBCCC9",
+                  "strokeWidth": 1,
+                  "strokeAlignment": "inner",
+                  "layout": "vertical",
+                  "gap": 24,
+                  "padding": 32,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "Wdt4F",
+                      "name": "Top",
+                      "width": "fill_container",
+                      "justifyContent": "space_between",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "zhZLF",
+                          "name": "Icon Tile",
+                          "width": 52,
+                          "height": 52,
+                          "fill": "$web-stage",
+                          "cornerRadius": 12,
+                          "justifyContent": "center",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "icon",
+                              "id": "q4qkWG",
+                              "name": "Icon",
+                              "width": 26,
+                              "height": 26,
+                              "icon": "tv",
+                              "library": "Material Symbols Sharp",
+                              "fill": "$web-signal"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "fqueI",
+                          "name": "Tag",
+                          "cornerRadius": 999,
+                          "stroke": "#CBCCC9",
+                          "strokeWidth": 1,
+                          "padding": [
+                            5,
+                            12
+                          ],
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "JKFsJ",
+                              "name": "Label",
+                              "fill": "$web-ink-muted",
+                              "content": "MÁS USADO",
+                              "fontFamily": "$--font-primary",
+                              "fontSize": 11,
+                              "fontWeight": "500",
+                              "letterSpacing": 1.5
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "I5BOP",
+                      "name": "Text",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 8,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "wwjJz",
+                          "name": "Title",
+                          "fill": "$web-ink",
+                          "content": "Android",
+                          "fontFamily": "$--font-primary",
+                          "fontSize": "$web-h3",
+                          "fontWeight": "600"
+                        },
+                        {
+                          "type": "text",
+                          "id": "IzwGa",
+                          "name": "Body",
+                          "fill": "$web-ink-muted",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "TV boxes, televisores Android y tabletas.",
+                          "lineHeight": 1.5,
+                          "fontFamily": "$--font-secondary",
+                          "fontSize": 16,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "o1SsO6",
+                      "name": "Requirements",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 10,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "qN4Ey",
+                          "name": "Req",
+                          "width": "fill_container",
+                          "gap": 10,
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "icon",
+                              "id": "bkYoA",
+                              "name": "Check",
+                              "width": 18,
+                              "height": 18,
+                              "icon": "check",
+                              "library": "Material Symbols Sharp",
+                              "fill": "$web-signal"
+                            },
+                            {
+                              "type": "text",
+                              "id": "Dbc0x",
+                              "name": "Text",
+                              "fill": "$web-ink",
+                              "textGrowth": "fixed-width",
+                              "width": "fill_container",
+                              "content": "Android 5.0 o más reciente",
+                              "fontFamily": "$--font-secondary",
+                              "fontSize": 15,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "PcMCN",
+                          "name": "Req",
+                          "width": "fill_container",
+                          "gap": 10,
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "icon",
+                              "id": "njiVg",
+                              "name": "Check",
+                              "width": 18,
+                              "height": 18,
+                              "icon": "check",
+                              "library": "Material Symbols Sharp",
+                              "fill": "$web-signal"
+                            },
+                            {
+                              "type": "text",
+                              "id": "pJoac",
+                              "name": "Text",
+                              "fill": "$web-ink",
+                              "textGrowth": "fixed-width",
+                              "width": "fill_container",
+                              "content": "Ideal si tu equipo no tiene Play Store",
+                              "fontFamily": "$--font-secondary",
+                              "fontSize": 15,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "jdgVD",
+                      "name": "Spacer",
+                      "width": "fill_container",
+                      "height": "fill_container"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "OOmFW",
+                      "name": "Actions",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 10,
+                      "children": [
+                        {
+                          "id": "Uh1YD",
+                          "type": "ref",
+                          "ref": "ZGI9Z",
+                          "name": "Download",
+                          "width": "fill_container",
+                          "height": 52,
+                          "descendants": {
+                            "oNDwn": {
+                              "enabled": false
+                            },
+                            "J3Z6N": {
+                              "content": "↓  Descargar APK",
+                              "fontSize": 15
+                            }
+                          }
+                        },
+                        {
+                          "type": "text",
+                          "id": "I8iwJ",
+                          "name": "File",
+                          "fill": "$web-ink-muted",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "Proyecta-v0.9.0.apk · 3 MB",
+                          "textAlign": "center",
+                          "fontFamily": "$--font-primary",
+                          "fontSize": 12,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "LaT8d",
+                  "name": "Linux Card",
+                  "width": "fill_container",
+                  "height": "fill_container",
+                  "fill": "#FFFFFF",
+                  "cornerRadius": 16,
+                  "stroke": "#CBCCC9",
+                  "strokeWidth": 1,
+                  "strokeAlignment": "inner",
+                  "layout": "vertical",
+                  "gap": 24,
+                  "padding": 32,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "P7qz0",
+                      "name": "Top",
+                      "width": "fill_container",
+                      "justifyContent": "space_between",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "q1v5KZ",
+                          "name": "Icon Tile",
+                          "width": 52,
+                          "height": 52,
+                          "fill": "$web-stage",
+                          "cornerRadius": 12,
+                          "justifyContent": "center",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "icon",
+                              "id": "PUK6H",
+                              "name": "Icon",
+                              "width": 26,
+                              "height": 26,
+                              "icon": "terminal",
+                              "library": "Material Symbols Sharp",
+                              "fill": "$web-signal"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "xqzeq",
+                      "name": "Text",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 8,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "w3z5Hf",
+                          "name": "Title",
+                          "fill": "$web-ink",
+                          "content": "Linux",
+                          "fontFamily": "$--font-primary",
+                          "fontSize": "$web-h3",
+                          "fontWeight": "600"
+                        },
+                        {
+                          "type": "text",
+                          "id": "yWJh6",
+                          "name": "Body",
+                          "fill": "$web-ink-muted",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "PCs y Raspberry Pi en modo kiosco con Chromium.",
+                          "lineHeight": 1.5,
+                          "fontFamily": "$--font-secondary",
+                          "fontSize": 16,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "N5oUA",
+                      "name": "Requirements",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 10,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "C6j3xG",
+                          "name": "Req",
+                          "width": "fill_container",
+                          "gap": 10,
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "icon",
+                              "id": "l4ZhZ",
+                              "name": "Check",
+                              "width": 18,
+                              "height": 18,
+                              "icon": "check",
+                              "library": "Material Symbols Sharp",
+                              "fill": "$web-signal"
+                            },
+                            {
+                              "type": "text",
+                              "id": "S4rqP",
+                              "name": "Text",
+                              "fill": "$web-ink",
+                              "textGrowth": "fixed-width",
+                              "width": "fill_container",
+                              "content": "Debian 12, Ubuntu 22.04 o Raspberry Pi OS",
+                              "fontFamily": "$--font-secondary",
+                              "fontSize": 15,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "ZQILl",
+                          "name": "Req",
+                          "width": "fill_container",
+                          "gap": 10,
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "icon",
+                              "id": "zdaFT",
+                              "name": "Check",
+                              "width": 18,
+                              "height": 18,
+                              "icon": "check",
+                              "library": "Material Symbols Sharp",
+                              "fill": "$web-signal"
+                            },
+                            {
+                              "type": "text",
+                              "id": "EiXAa",
+                              "name": "Text",
+                              "fill": "$web-ink",
+                              "textGrowth": "fixed-width",
+                              "width": "fill_container",
+                              "content": "Instala todo lo necesario en un paso",
+                              "fontFamily": "$--font-secondary",
+                              "fontSize": 15,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "V7JfS",
+                      "name": "Spacer",
+                      "width": "fill_container",
+                      "height": "fill_container"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "ARpkf",
+                      "name": "Actions",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 10,
+                      "children": [
+                        {
+                          "id": "YfTZL",
+                          "type": "ref",
+                          "ref": "ZGI9Z",
+                          "name": "Download",
+                          "width": "fill_container",
+                          "height": 52,
+                          "descendants": {
+                            "oNDwn": {
+                              "enabled": false
+                            },
+                            "J3Z6N": {
+                              "content": "↓  Descargar .deb · x64",
+                              "fontSize": 15
+                            }
+                          }
+                        },
+                        {
+                          "id": "iOWV3",
+                          "type": "ref",
+                          "ref": "EAwax",
+                          "name": "Download Alt",
+                          "width": "fill_container",
+                          "height": 52,
+                          "fill": "#FFFFFF",
+                          "stroke": "#CBCCC9",
+                          "descendants": {
+                            "nHmDC": {
+                              "enabled": false
+                            },
+                            "kqX7U": {
+                              "content": "↓  ARM64 · Raspberry Pi",
+                              "fontSize": 15,
+                              "fill": "$web-ink"
+                            }
+                          }
+                        },
+                        {
+                          "type": "text",
+                          "id": "mYkwj",
+                          "name": "File",
+                          "fill": "$web-ink-muted",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "proyecta-kiosk_0.9.0_amd64.deb · 7 MB",
+                          "textAlign": "center",
+                          "fontFamily": "$--font-primary",
+                          "fontSize": 12,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "SL33u",
+                  "name": "Windows Card",
+                  "width": "fill_container",
+                  "height": "fill_container",
+                  "fill": "#FFFFFF",
+                  "cornerRadius": 16,
+                  "stroke": "#CBCCC9",
+                  "strokeWidth": 1,
+                  "strokeAlignment": "inner",
+                  "layout": "vertical",
+                  "gap": 24,
+                  "padding": 32,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "QmRmh",
+                      "name": "Top",
+                      "width": "fill_container",
+                      "justifyContent": "space_between",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "hyKNF",
+                          "name": "Icon Tile",
+                          "width": 52,
+                          "height": 52,
+                          "fill": "$web-stage",
+                          "cornerRadius": 12,
+                          "justifyContent": "center",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "icon",
+                              "id": "HU7iw",
+                              "name": "Icon",
+                              "width": 26,
+                              "height": 26,
+                              "icon": "desktop_windows",
+                              "library": "Material Symbols Sharp",
+                              "fill": "$web-signal"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "SiIcY",
+                      "name": "Text",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 8,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "g44Ndn",
+                          "name": "Title",
+                          "fill": "$web-ink",
+                          "content": "Windows",
+                          "fontFamily": "$--font-primary",
+                          "fontSize": "$web-h3",
+                          "fontWeight": "600"
+                        },
+                        {
+                          "type": "text",
+                          "id": "gtySf",
+                          "name": "Body",
+                          "fill": "$web-ink-muted",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "PCs y reproductores de pantallas LED con Edge.",
+                          "lineHeight": 1.5,
+                          "fontFamily": "$--font-secondary",
+                          "fontSize": 16,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "VABn8",
+                      "name": "Requirements",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 10,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "xMRcw",
+                          "name": "Req",
+                          "width": "fill_container",
+                          "gap": 10,
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "icon",
+                              "id": "X5VYcu",
+                              "name": "Check",
+                              "width": 18,
+                              "height": 18,
+                              "icon": "check",
+                              "library": "Material Symbols Sharp",
+                              "fill": "$web-signal"
+                            },
+                            {
+                              "type": "text",
+                              "id": "Qcq6m",
+                              "name": "Text",
+                              "fill": "$web-ink",
+                              "textGrowth": "fixed-width",
+                              "width": "fill_container",
+                              "content": "Windows 10 u 11 de 64 bits",
+                              "fontFamily": "$--font-secondary",
+                              "fontSize": 15,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "kwCWp",
+                          "name": "Req",
+                          "width": "fill_container",
+                          "gap": 10,
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "icon",
+                              "id": "dHhOw",
+                              "name": "Check",
+                              "width": 18,
+                              "height": 18,
+                              "icon": "check",
+                              "library": "Material Symbols Sharp",
+                              "fill": "$web-signal"
+                            },
+                            {
+                              "type": "text",
+                              "id": "sPtsR",
+                              "name": "Text",
+                              "fill": "$web-ink",
+                              "textGrowth": "fixed-width",
+                              "width": "fill_container",
+                              "content": "Se abre a pantalla completa al iniciar sesión",
+                              "fontFamily": "$--font-secondary",
+                              "fontSize": 15,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "FJUUy",
+                      "name": "Spacer",
+                      "width": "fill_container",
+                      "height": "fill_container"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "guAxJ",
+                      "name": "Actions",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 10,
+                      "children": [
+                        {
+                          "id": "W6g9IK",
+                          "type": "ref",
+                          "ref": "ZGI9Z",
+                          "name": "Download",
+                          "width": "fill_container",
+                          "height": 52,
+                          "descendants": {
+                            "oNDwn": {
+                              "enabled": false
+                            },
+                            "J3Z6N": {
+                              "content": "↓  Descargar instalador",
+                              "fontSize": 15
+                            }
+                          }
+                        },
+                        {
+                          "type": "text",
+                          "id": "z2OMg",
+                          "name": "File",
+                          "fill": "$web-ink-muted",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "ProyectaKiosk-0.9.0.exe · 8 MB",
+                          "textAlign": "center",
+                          "fontFamily": "$--font-primary",
+                          "fontSize": 12,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "A86Nh",
+          "name": "Next Step",
+          "width": "fill_container",
+          "fill": "$web-stage",
+          "gap": 64,
+          "padding": [
+            120,
+            "$web-gutter"
+          ],
+          "justifyContent": "space_between",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "DiC5b",
+              "name": "Copy",
+              "width": 640,
+              "layout": "vertical",
+              "gap": 24,
+              "children": [
+                {
+                  "id": "pFQI9",
+                  "type": "ref",
+                  "ref": "QXzMv",
+                  "name": "Eyebrow",
+                  "descendants": {
+                    "aeD65": {
+                      "content": "DESPUÉS DE INSTALAR"
+                    }
+                  }
+                },
+                {
+                  "type": "text",
+                  "id": "G2OEn",
+                  "name": "H2",
+                  "fill": "#FFFFFF",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "¿Ya lo instalaste? Vincula tu pantalla.",
+                  "lineHeight": 1.15,
+                  "fontFamily": "$--font-primary",
+                  "fontSize": "$web-h2",
+                  "fontWeight": "600",
+                  "letterSpacing": -1
+                },
+                {
+                  "type": "text",
+                  "id": "rVwYy",
+                  "name": "Body",
+                  "fill": "$web-stage-muted",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Al abrir Proyecta, la pantalla muestra un código de 8 caracteres. Escríbelo en tu panel y empieza a reproducir en segundos.",
+                  "lineHeight": 1.55,
+                  "fontFamily": "$--font-secondary",
+                  "fontSize": 17,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "frame",
+                  "id": "bQ1wf",
+                  "name": "CTAs",
+                  "gap": 12,
+                  "padding": [
+                    8,
+                    0,
+                    0,
+                    0
+                  ],
+                  "children": [
+                    {
+                      "id": "sBlD4",
+                      "type": "ref",
+                      "ref": "ZGI9Z",
+                      "name": "CTA Panel",
+                      "height": 56,
+                      "padding": [
+                        16,
+                        28
+                      ],
+                      "descendants": {
+                        "oNDwn": {
+                          "enabled": false
+                        },
+                        "J3Z6N": {
+                          "content": "Abrir mi panel",
+                          "fontSize": 15
+                        }
+                      }
+                    },
+                    {
+                      "id": "ltw6d",
+                      "type": "ref",
+                      "ref": "EAwax",
+                      "name": "CTA Sign Up",
+                      "height": 56,
+                      "padding": [
+                        16,
+                        28
+                      ],
+                      "fill": "#0B0B0B66",
+                      "stroke": "#FFFFFF40",
+                      "descendants": {
+                        "nHmDC": {
+                          "enabled": false
+                        },
+                        "kqX7U": {
+                          "content": "Crear cuenta",
+                          "fontSize": 15
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "zVy56",
+              "name": "Help",
+              "width": 420,
+              "fill": "$web-stage-2",
+              "cornerRadius": 16,
+              "stroke": "$web-stage-line",
+              "strokeWidth": 1,
+              "strokeAlignment": "inner",
+              "layout": "vertical",
+              "gap": 20,
+              "padding": 28,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "SQTeP",
+                  "name": "Text",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 6,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "OOiXB",
+                      "name": "Title",
+                      "fill": "#FFFFFF",
+                      "content": "¿Tu equipo no aparece aquí?",
+                      "fontFamily": "$--font-primary",
+                      "fontSize": 18,
+                      "fontWeight": "500"
+                    },
+                    {
+                      "type": "text",
+                      "id": "u7G6fW",
+                      "name": "Body",
+                      "fill": "$web-stage-muted",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Cuéntanos qué pantalla tienes y te ayudamos a ponerla en la red.",
+                      "lineHeight": 1.5,
+                      "fontFamily": "$--font-secondary",
+                      "fontSize": 15,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "id": "Tfmg6",
+                  "type": "ref",
+                  "ref": "EAwax",
+                  "name": "Contact",
+                  "height": 48,
+                  "fill": "#0B0B0B66",
+                  "stroke": "#FFFFFF40",
+                  "width": "fill_container",
+                  "descendants": {
+                    "nHmDC": {
+                      "enabled": false
+                    },
+                    "kqX7U": {
+                      "content": "Escríbenos"
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "I3xK3x",
+          "type": "ref",
+          "ref": "OF0n4",
+          "name": "Footer",
+          "width": "fill_container"
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "oVj74",
+      "x": -1528,
+      "y": 26050,
+      "name": "web-download-mobile",
+      "clip": true,
+      "width": 390,
+      "fill": "$web-paper",
+      "layout": "vertical",
+      "children": [
+        {
+          "id": "G0ETpO",
+          "type": "ref",
+          "ref": "d3tJI",
+          "name": "Nav",
+          "width": "fill_container"
+        },
+        {
+          "type": "frame",
+          "id": "jdoyd",
+          "name": "Hero",
+          "width": "fill_container",
+          "fill": "$web-stage",
+          "layout": "vertical",
+          "gap": 20,
+          "padding": [
+            40,
+            "$web-gutter-mobile",
+            48,
+            "$web-gutter-mobile"
+          ],
+          "children": [
+            {
+              "id": "Ve8mv",
+              "type": "ref",
+              "ref": "QXzMv",
+              "name": "Eyebrow",
+              "descendants": {
+                "aeD65": {
+                  "content": "DESCARGAS · VERSIÓN 0.9.0",
+                  "fontSize": "$web-eyebrow-mobile"
+                }
+              }
+            },
+            {
+              "type": "text",
+              "id": "u2n1g",
+              "name": "H1",
+              "fill": "#FFFFFF",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "Descarga Proyecta.",
+              "lineHeight": 1.1,
+              "fontFamily": "$--font-primary",
+              "fontSize": "$web-display-mobile",
+              "fontWeight": "600",
+              "letterSpacing": -1
+            },
+            {
+              "type": "text",
+              "id": "V2pel",
+              "name": "Sub",
+              "fill": "#C9CAC7",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "Instala Proyecta en el equipo de tu pantalla. Arranca solo al encenderlo, sigue reproduciendo sin internet y se vincula con un código de 8 caracteres.",
+              "lineHeight": 1.55,
+              "fontFamily": "$--font-secondary",
+              "fontSize": "$web-body-mobile",
+              "fontWeight": "normal"
+            },
+            {
+              "type": "frame",
+              "id": "YTYGx",
+              "name": "Version Chip",
+              "cornerRadius": 999,
+              "stroke": "$web-stage-line",
+              "strokeWidth": 1,
+              "gap": 8,
+              "padding": [
+                6,
+                14
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "ellipse",
+                  "id": "cbQLi",
+                  "name": "Dot",
+                  "fill": "$web-signal",
+                  "width": 8,
+                  "height": 8
+                },
+                {
+                  "type": "text",
+                  "id": "QkDMr",
+                  "name": "Label",
+                  "fill": "#FFFFFF",
+                  "content": "v0.9.0 · 23 sep 2026",
+                  "fontFamily": "$--font-primary",
+                  "fontSize": 12,
+                  "fontWeight": "500"
+                }
+              ]
+            },
+            {
+              "id": "rWqn8",
+              "type": "ref",
+              "ref": "i61Gzc",
+              "name": "TV",
+              "width": "fill_container",
+              "padding": 6,
+              "descendants": {
+                "qoeyM": {
+                  "height": 190,
+                  "fill": {
+                    "type": "image",
+                    "enabled": true,
+                    "url": "assets/app-player-pairing.png",
+                    "mode": "fill"
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "cckaX",
+          "name": "Platforms",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 24,
+          "padding": [
+            "$web-section-y-mobile",
+            "$web-gutter-mobile"
+          ],
+          "children": [
+            {
+              "id": "qay0p",
+              "type": "ref",
+              "ref": "QXzMv",
+              "name": "Eyebrow",
+              "descendants": {
+                "aeD65": {
+                  "content": "ELIGE TU EQUIPO",
+                  "fill": "$web-ink-muted",
+                  "fontSize": "$web-eyebrow-mobile"
+                }
+              }
+            },
+            {
+              "type": "text",
+              "id": "Uaaoo",
+              "name": "H2",
+              "fill": "$web-ink",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "Un instalador por plataforma.",
+              "lineHeight": 1.15,
+              "fontFamily": "$--font-primary",
+              "fontSize": "$web-h2-mobile",
+              "fontWeight": "600"
+            },
+            {
+              "type": "frame",
+              "id": "s4WoVG",
+              "name": "Android Card",
+              "width": "fill_container",
+              "fill": "#FFFFFF",
+              "cornerRadius": 16,
+              "stroke": "#CBCCC9",
+              "strokeWidth": 1,
+              "strokeAlignment": "inner",
+              "layout": "vertical",
+              "gap": 18,
+              "padding": 22,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "m75rr",
+                  "name": "Top",
+                  "width": "fill_container",
+                  "gap": 14,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "N4fsIK",
+                      "name": "Icon Tile",
+                      "width": 44,
+                      "height": 44,
+                      "fill": "$web-stage",
+                      "cornerRadius": 10,
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "icon",
+                          "id": "Tcpl4",
+                          "name": "Icon",
+                          "width": 22,
+                          "height": 22,
+                          "icon": "tv",
+                          "library": "Material Symbols Sharp",
+                          "fill": "$web-signal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "text",
+                      "id": "xFlK6",
+                      "name": "Title",
+                      "fill": "$web-ink",
+                      "content": "Android",
+                      "fontFamily": "$--font-primary",
+                      "fontSize": "$web-h3-mobile",
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "su5p2",
+                      "name": "Push",
+                      "width": "fill_container",
+                      "height": 1
+                    },
+                    {
+                      "type": "frame",
+                      "id": "gghAb",
+                      "name": "Tag",
+                      "cornerRadius": 999,
+                      "stroke": "#CBCCC9",
+                      "strokeWidth": 1,
+                      "padding": [
+                        4,
+                        10
+                      ],
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "jLj8F",
+                          "name": "Label",
+                          "fill": "$web-ink-muted",
+                          "content": "MÁS USADO",
+                          "fontFamily": "$--font-primary",
+                          "fontSize": 10,
+                          "fontWeight": "500",
+                          "letterSpacing": 1.2
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "q7N9c",
+                  "name": "Body",
+                  "fill": "$web-ink-muted",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "TV boxes, televisores Android y tabletas.",
+                  "lineHeight": 1.5,
+                  "fontFamily": "$--font-secondary",
+                  "fontSize": 15,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "frame",
+                  "id": "mKh7v",
+                  "name": "Requirements",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 8,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "qNh7X",
+                      "name": "Req",
+                      "width": "fill_container",
+                      "gap": 8,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "icon",
+                          "id": "KfKJJ",
+                          "name": "Check",
+                          "width": 16,
+                          "height": 16,
+                          "icon": "check",
+                          "library": "Material Symbols Sharp",
+                          "fill": "$web-signal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "MGzAK",
+                          "name": "Text",
+                          "fill": "$web-ink",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "Android 5.0 o más reciente",
+                          "fontFamily": "$--font-secondary",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "BImqx",
+                      "name": "Req",
+                      "width": "fill_container",
+                      "gap": 8,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "icon",
+                          "id": "i3xGzu",
+                          "name": "Check",
+                          "width": 16,
+                          "height": 16,
+                          "icon": "check",
+                          "library": "Material Symbols Sharp",
+                          "fill": "$web-signal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "LLKO7",
+                          "name": "Text",
+                          "fill": "$web-ink",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "Ideal si tu equipo no tiene Play Store",
+                          "fontFamily": "$--font-secondary",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "b04gE",
+                  "name": "Actions",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 8,
+                  "children": [
+                    {
+                      "id": "MVaUR",
+                      "type": "ref",
+                      "ref": "ZGI9Z",
+                      "name": "Download",
+                      "width": "fill_container",
+                      "height": 50,
+                      "descendants": {
+                        "oNDwn": {
+                          "enabled": false
+                        },
+                        "J3Z6N": {
+                          "content": "↓  Descargar APK",
+                          "fontSize": 14
+                        }
+                      }
+                    },
+                    {
+                      "type": "text",
+                      "id": "Gub4t",
+                      "name": "File",
+                      "fill": "$web-ink-muted",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Proyecta-v0.9.0.apk · 3 MB",
+                      "textAlign": "center",
+                      "fontFamily": "$--font-primary",
+                      "fontSize": 11,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "S5Zlp",
+              "name": "Linux Card",
+              "width": "fill_container",
+              "fill": "#FFFFFF",
+              "cornerRadius": 16,
+              "stroke": "#CBCCC9",
+              "strokeWidth": 1,
+              "strokeAlignment": "inner",
+              "layout": "vertical",
+              "gap": 18,
+              "padding": 22,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "HTOXK",
+                  "name": "Top",
+                  "width": "fill_container",
+                  "gap": 14,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "KU9DX",
+                      "name": "Icon Tile",
+                      "width": 44,
+                      "height": 44,
+                      "fill": "$web-stage",
+                      "cornerRadius": 10,
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "icon",
+                          "id": "Nq91h",
+                          "name": "Icon",
+                          "width": 22,
+                          "height": 22,
+                          "icon": "terminal",
+                          "library": "Material Symbols Sharp",
+                          "fill": "$web-signal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "text",
+                      "id": "JkIV4",
+                      "name": "Title",
+                      "fill": "$web-ink",
+                      "content": "Linux",
+                      "fontFamily": "$--font-primary",
+                      "fontSize": "$web-h3-mobile",
+                      "fontWeight": "600"
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "IOuZk",
+                  "name": "Body",
+                  "fill": "$web-ink-muted",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "PCs y Raspberry Pi en modo kiosco con Chromium.",
+                  "lineHeight": 1.5,
+                  "fontFamily": "$--font-secondary",
+                  "fontSize": 15,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "frame",
+                  "id": "vstbm",
+                  "name": "Requirements",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 8,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "ujjgH",
+                      "name": "Req",
+                      "width": "fill_container",
+                      "gap": 8,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "icon",
+                          "id": "v8XAWl",
+                          "name": "Check",
+                          "width": 16,
+                          "height": 16,
+                          "icon": "check",
+                          "library": "Material Symbols Sharp",
+                          "fill": "$web-signal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "sNGNt",
+                          "name": "Text",
+                          "fill": "$web-ink",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "Debian 12, Ubuntu 22.04 o Raspberry Pi OS",
+                          "fontFamily": "$--font-secondary",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "D2CVf",
+                      "name": "Req",
+                      "width": "fill_container",
+                      "gap": 8,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "icon",
+                          "id": "D3B7PC",
+                          "name": "Check",
+                          "width": 16,
+                          "height": 16,
+                          "icon": "check",
+                          "library": "Material Symbols Sharp",
+                          "fill": "$web-signal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "LKmHh",
+                          "name": "Text",
+                          "fill": "$web-ink",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "Instala todo lo necesario en un paso",
+                          "fontFamily": "$--font-secondary",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "B9DAed",
+                  "name": "Actions",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 8,
+                  "children": [
+                    {
+                      "id": "J5MlD9",
+                      "type": "ref",
+                      "ref": "ZGI9Z",
+                      "name": "Download",
+                      "width": "fill_container",
+                      "height": 50,
+                      "descendants": {
+                        "oNDwn": {
+                          "enabled": false
+                        },
+                        "J3Z6N": {
+                          "content": "↓  Descargar .deb · x64",
+                          "fontSize": 14
+                        }
+                      }
+                    },
+                    {
+                      "id": "YING0",
+                      "type": "ref",
+                      "ref": "EAwax",
+                      "name": "Download Alt",
+                      "width": "fill_container",
+                      "height": 50,
+                      "fill": "#FFFFFF",
+                      "stroke": "#CBCCC9",
+                      "descendants": {
+                        "nHmDC": {
+                          "enabled": false
+                        },
+                        "kqX7U": {
+                          "content": "↓  ARM64 · Raspberry Pi",
+                          "fontSize": 14,
+                          "fill": "$web-ink"
+                        }
+                      }
+                    },
+                    {
+                      "type": "text",
+                      "id": "UKyzZ",
+                      "name": "File",
+                      "fill": "$web-ink-muted",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "proyecta-kiosk_0.9.0_amd64.deb · 7 MB",
+                      "textAlign": "center",
+                      "fontFamily": "$--font-primary",
+                      "fontSize": 11,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "T3JR9v",
+              "name": "Windows Card",
+              "width": "fill_container",
+              "fill": "#FFFFFF",
+              "cornerRadius": 16,
+              "stroke": "#CBCCC9",
+              "strokeWidth": 1,
+              "strokeAlignment": "inner",
+              "layout": "vertical",
+              "gap": 18,
+              "padding": 22,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "R1S3IN",
+                  "name": "Top",
+                  "width": "fill_container",
+                  "gap": 14,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "H0wqC",
+                      "name": "Icon Tile",
+                      "width": 44,
+                      "height": 44,
+                      "fill": "$web-stage",
+                      "cornerRadius": 10,
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "icon",
+                          "id": "hPb3K",
+                          "name": "Icon",
+                          "width": 22,
+                          "height": 22,
+                          "icon": "desktop_windows",
+                          "library": "Material Symbols Sharp",
+                          "fill": "$web-signal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "text",
+                      "id": "qvtzi",
+                      "name": "Title",
+                      "fill": "$web-ink",
+                      "content": "Windows",
+                      "fontFamily": "$--font-primary",
+                      "fontSize": "$web-h3-mobile",
+                      "fontWeight": "600"
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "vdCu7",
+                  "name": "Body",
+                  "fill": "$web-ink-muted",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "PCs y reproductores de pantallas LED con Edge.",
+                  "lineHeight": 1.5,
+                  "fontFamily": "$--font-secondary",
+                  "fontSize": 15,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "frame",
+                  "id": "I4sv6g",
+                  "name": "Requirements",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 8,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "s0fj7B",
+                      "name": "Req",
+                      "width": "fill_container",
+                      "gap": 8,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "icon",
+                          "id": "R94dH",
+                          "name": "Check",
+                          "width": 16,
+                          "height": 16,
+                          "icon": "check",
+                          "library": "Material Symbols Sharp",
+                          "fill": "$web-signal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "PPLRe",
+                          "name": "Text",
+                          "fill": "$web-ink",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "Windows 10 u 11 de 64 bits",
+                          "fontFamily": "$--font-secondary",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "se0sF",
+                      "name": "Req",
+                      "width": "fill_container",
+                      "gap": 8,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "icon",
+                          "id": "N9xo1I",
+                          "name": "Check",
+                          "width": 16,
+                          "height": 16,
+                          "icon": "check",
+                          "library": "Material Symbols Sharp",
+                          "fill": "$web-signal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "uRxI6",
+                          "name": "Text",
+                          "fill": "$web-ink",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "Se abre a pantalla completa al iniciar sesión",
+                          "fontFamily": "$--font-secondary",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "HUWsw",
+                  "name": "Actions",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 8,
+                  "children": [
+                    {
+                      "id": "xoqpP",
+                      "type": "ref",
+                      "ref": "ZGI9Z",
+                      "name": "Download",
+                      "width": "fill_container",
+                      "height": 50,
+                      "descendants": {
+                        "oNDwn": {
+                          "enabled": false
+                        },
+                        "J3Z6N": {
+                          "content": "↓  Descargar instalador",
+                          "fontSize": 14
+                        }
+                      }
+                    },
+                    {
+                      "type": "text",
+                      "id": "GgdJf",
+                      "name": "File",
+                      "fill": "$web-ink-muted",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "ProyectaKiosk-0.9.0.exe · 8 MB",
+                      "textAlign": "center",
+                      "fontFamily": "$--font-primary",
+                      "fontSize": 11,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "Bp7hn",
+          "name": "Next Step",
+          "width": "fill_container",
+          "fill": "$web-stage",
+          "layout": "vertical",
+          "gap": 20,
+          "padding": [
+            "$web-section-y-mobile",
+            "$web-gutter-mobile"
+          ],
+          "children": [
+            {
+              "id": "aKoTp",
+              "type": "ref",
+              "ref": "QXzMv",
+              "name": "Eyebrow",
+              "descendants": {
+                "aeD65": {
+                  "content": "DESPUÉS DE INSTALAR",
+                  "fontSize": "$web-eyebrow-mobile"
+                }
+              }
+            },
+            {
+              "type": "text",
+              "id": "d79xhy",
+              "name": "H2",
+              "fill": "#FFFFFF",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "¿Ya lo instalaste? Vincula tu pantalla.",
+              "lineHeight": 1.15,
+              "fontFamily": "$--font-primary",
+              "fontSize": "$web-h2-mobile",
+              "fontWeight": "600"
+            },
+            {
+              "type": "text",
+              "id": "TJkAj",
+              "name": "Body",
+              "fill": "$web-stage-muted",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "Al abrir Proyecta, la pantalla muestra un código de 8 caracteres. Escríbelo en tu panel y empieza a reproducir en segundos.",
+              "lineHeight": 1.55,
+              "fontFamily": "$--font-secondary",
+              "fontSize": "$web-body-mobile",
+              "fontWeight": "normal"
+            },
+            {
+              "type": "frame",
+              "id": "lYkS6",
+              "name": "CTAs",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 10,
+              "padding": [
+                4,
+                0,
+                12,
+                0
+              ],
+              "children": [
+                {
+                  "id": "r08Lt4",
+                  "type": "ref",
+                  "ref": "ZGI9Z",
+                  "name": "CTA Panel",
+                  "width": "fill_container",
+                  "height": 52,
+                  "descendants": {
+                    "oNDwn": {
+                      "enabled": false
+                    },
+                    "J3Z6N": {
+                      "content": "Abrir mi panel",
+                      "fontSize": 14
+                    }
+                  }
+                },
+                {
+                  "id": "JJw8h",
+                  "type": "ref",
+                  "ref": "EAwax",
+                  "name": "CTA Sign Up",
+                  "width": "fill_container",
+                  "height": 52,
+                  "fill": "#0B0B0B66",
+                  "stroke": "#FFFFFF40",
+                  "descendants": {
+                    "nHmDC": {
+                      "enabled": false
+                    },
+                    "kqX7U": {
+                      "content": "Crear cuenta",
+                      "fontSize": 14
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "AEsxR",
+              "name": "Help",
+              "width": "fill_container",
+              "fill": "$web-stage-2",
+              "cornerRadius": 16,
+              "stroke": "$web-stage-line",
+              "strokeWidth": 1,
+              "strokeAlignment": "inner",
+              "layout": "vertical",
+              "gap": 16,
+              "padding": 22,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "gx0oC",
+                  "name": "Title",
+                  "fill": "#FFFFFF",
+                  "content": "¿Tu equipo no aparece aquí?",
+                  "fontFamily": "$--font-primary",
+                  "fontSize": 16,
+                  "fontWeight": "500"
+                },
+                {
+                  "type": "text",
+                  "id": "hgaWv",
+                  "name": "Body",
+                  "fill": "$web-stage-muted",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Cuéntanos qué pantalla tienes y te ayudamos a ponerla en la red.",
+                  "lineHeight": 1.5,
+                  "fontFamily": "$--font-secondary",
+                  "fontSize": 14,
+                  "fontWeight": "normal"
+                },
+                {
+                  "id": "oUxb2",
+                  "type": "ref",
+                  "ref": "EAwax",
+                  "name": "Contact",
+                  "width": "fill_container",
+                  "height": 48,
+                  "fill": "#0B0B0B66",
+                  "stroke": "#FFFFFF40",
+                  "descendants": {
+                    "nHmDC": {
+                      "enabled": false
+                    },
+                    "kqX7U": {
+                      "content": "Escríbenos"
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "eEIO9",
+          "type": "ref",
+          "ref": "Z75xhc",
+          "name": "Footer",
+          "width": "fill_container"
         }
       ]
     }
